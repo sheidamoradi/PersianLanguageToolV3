@@ -1,31 +1,31 @@
+
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { type Project } from "@shared/schema";
 import ProjectCard from "@/components/project/ProjectCard";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 
-export default function Projects() {
+export default function Library() {
   const [searchTerm, setSearchTerm] = useState("");
   
   const { data: projects = [], isLoading } = useQuery<Project[]>({ 
     queryKey: ['/api/projects'] 
   });
   
-  // Filter only webinars (projects with type "project")
-  const webinars = projects.filter(project => {
+  // Filter only magazines
+  const magazines = projects.filter(project => {
     const matchesSearch = project.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
                         project.description.toLowerCase().includes(searchTerm.toLowerCase());
-    const isWebinar = project.type === "project";
-    return matchesSearch && isWebinar;
+    const isMagazine = project.type === "magazine";
+    return matchesSearch && isMagazine;
   });
   
   return (
     <div>
       <div className="mb-6">
-        <h2 className="text-2xl font-semibold text-neutral-500 mb-2">وبینارهای آموزشی پیستاط</h2>
-        <p className="text-neutral-300">مشاهده تمام وبینارهای آموزشی موجود</p>
+        <h2 className="text-2xl font-semibold text-neutral-500 mb-2">فصلنامه رویش سبز</h2>
+        <p className="text-neutral-300">مشاهده تمام شماره‌های فصلنامه رویش سبز</p>
       </div>
       
       <div className="mb-6">
@@ -37,7 +37,7 @@ export default function Projects() {
           </div>
           <Input
             type="text"
-            placeholder="جستجوی وبینارها..."
+            placeholder="جستجوی فصلنامه‌ها..."
             className="pl-10 pr-4 py-2"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -60,8 +60,8 @@ export default function Projects() {
               </div>
             </div>
           ))
-        ) : webinars.length > 0 ? (
-          webinars.map(project => (
+        ) : magazines.length > 0 ? (
+          magazines.map(project => (
             <ProjectCard
               key={project.id}
               id={project.id}
@@ -76,7 +76,7 @@ export default function Projects() {
           ))
         ) : (
           <div className="col-span-full text-center py-8">
-            <p className="text-neutral-400">هیچ وبیناری با معیارهای شما یافت نشد.</p>
+            <p className="text-neutral-400">هیچ فصلنامه‌ای با معیارهای شما یافت نشد.</p>
             <button 
               className="text-primary hover:underline mt-2"
               onClick={() => setSearchTerm("")}

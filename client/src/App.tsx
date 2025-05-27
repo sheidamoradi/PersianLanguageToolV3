@@ -11,6 +11,7 @@ import MobileNavbar from "@/components/layout/MobileNavbar";
 import Home from "@/pages/home";
 import Courses from "@/pages/courses";
 import Projects from "@/pages/projects";
+import Library from "@/pages/library";
 import DocumentViewer from "@/pages/document-viewer";
 import MediaPlayer from "@/pages/media-player";
 import Admin from "@/pages/admin";
@@ -92,7 +93,7 @@ function Router() {
       </Route>
       <Route path="/library">
         <Layout>
-          <Courses />
+          <Library />
         </Layout>
       </Route>
       <Route path="/documents/:id">
