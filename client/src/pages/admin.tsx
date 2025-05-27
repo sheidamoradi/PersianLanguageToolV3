@@ -38,9 +38,9 @@ export default function AdminPage() {
 
       <Tabs defaultValue="courses" onValueChange={setActiveTab} value={activeTab}>
         <TabsList className="grid grid-cols-6 mb-8">
-          <TabsTrigger value="courses">دوره‌ها</TabsTrigger>
-          <TabsTrigger value="projects">پروژه‌ها</TabsTrigger>
-          <TabsTrigger value="magazines">مجلات</TabsTrigger>
+          <TabsTrigger value="courses">کارگاه‌های آموزشی</TabsTrigger>
+          <TabsTrigger value="projects">وبینارها</TabsTrigger>
+          <TabsTrigger value="magazines">فصلنامه رویش سبز</TabsTrigger>
           <TabsTrigger value="documents">اسناد</TabsTrigger>
           <TabsTrigger value="media">رسانه</TabsTrigger>
           <TabsTrigger value="slides">اسلایدر</TabsTrigger>
@@ -116,10 +116,10 @@ function CoursesTab() {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-semibold text-neutral-700">مدیریت دوره‌ها</h2>
+        <h2 className="text-2xl font-semibold text-neutral-700">مدیریت کارگاه‌های آموزشی</h2>
         <Button onClick={handleAddCourse} className="flex items-center gap-2">
           <Plus className="h-4 w-4" />
-          افزودن کارگاه جدید
+          افزودن کارگاه آموزشی جدید
         </Button>
       </div>
 
@@ -169,7 +169,7 @@ function CoursesTab() {
               {courses.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={6} className="text-center py-8 text-neutral-400">
-                    هیچ دوره‌ای یافت نشد. اولین دوره خود را اضافه کنید!
+                    هیچ کارگاه آموزشی‌ای یافت نشد. اولین کارگاه خود را اضافه کنید!
                   </TableCell>
                 </TableRow>
               ) : (
@@ -453,8 +453,8 @@ function MagazinesTab() {
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-semibold text-neutral-700">
           {showArticles && selectedMagazine 
-            ? `مقالات مجله "${selectedMagazine.title}"` 
-            : "مدیریت مجلات"}
+            ? `مقالات فصلنامه "${selectedMagazine.title}"` 
+            : "مدیریت فصلنامه رویش سبز"}
         </h2>
         <div className="flex gap-2">
           {showArticles && (
@@ -464,7 +464,7 @@ function MagazinesTab() {
               className="flex items-center gap-2"
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
-              بازگشت به لیست مجلات
+              بازگشت به لیست فصلنامه‌ها
             </Button>
           )}
           <Button 
@@ -472,7 +472,7 @@ function MagazinesTab() {
             className="flex items-center gap-2"
           >
             <Plus className="h-4 w-4" />
-            {showArticles ? 'افزودن مقاله جدید' : 'افزودن مجله جدید'}
+            {showArticles ? 'افزودن مقاله جدید' : 'افزودن شماره جدید فصلنامه'}
           </Button>
         </div>
       </div>
@@ -526,7 +526,7 @@ function MagazinesTab() {
               {magazines.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={6} className="text-center py-8 text-neutral-400">
-                    هیچ مجله‌ای یافت نشد. اولین مجله خود را اضافه کنید!
+                    هیچ شماره‌ای از فصلنامه یافت نشد. اولین شماره را اضافه کنید!
                   </TableCell>
                 </TableRow>
               ) : (
@@ -1145,10 +1145,10 @@ function ProjectsTab() {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-semibold text-neutral-700">مدیریت پروژه‌ها و مجلات</h2>
+        <h2 className="text-2xl font-semibold text-neutral-700">مدیریت وبینارها</h2>
         <Button onClick={() => setShowForm(true)} className="flex items-center gap-2">
           <Plus className="h-4 w-4" />
-          افزودن مورد جدید
+          افزودن وبینار جدید
         </Button>
       </div>
 
@@ -1180,7 +1180,7 @@ function ProjectsTab() {
             <TableHeader>
               <TableRow>
                 <TableHead>عنوان</TableHead>
-                <TableHead>نوع</TableHead>
+                <TableHead>مدت زمان</TableHead>
                 <TableHead>وضعیت</TableHead>
                 <TableHead>عملیات</TableHead>
               </TableRow>
@@ -1189,7 +1189,7 @@ function ProjectsTab() {
               {projects.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={4} className="text-center py-8 text-neutral-400">
-                    هیچ پروژه یا مجله‌ای یافت نشد. اولین مورد خود را اضافه کنید!
+                    هیچ وبیناری یافت نشد. اولین وبینار خود را اضافه کنید!
                   </TableCell>
                 </TableRow>
               ) : (
@@ -1197,7 +1197,7 @@ function ProjectsTab() {
                   <TableRow key={project.id}>
                     <TableCell className="font-medium">{project.title}</TableCell>
                     <TableCell>
-                      {project.type === 'project' ? 'پروژه' : 'مجله'}
+                      {project.dueDate || 'نامحدود'}
                     </TableCell>
                     <TableCell>
                       {project.isLocked ? (
@@ -1267,11 +1267,11 @@ function ProjectForm({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{mode === 'create' ? 'افزودن پروژه/مجله جدید' : 'ویرایش مورد'}</CardTitle>
+        <CardTitle>{mode === 'create' ? 'افزودن وبینار جدید' : 'ویرایش وبینار'}</CardTitle>
         <CardDescription>
           {mode === 'create' 
-            ? 'اطلاعات مورد جدید خود را وارد کنید.' 
-            : 'اطلاعات مورد را ویرایش کنید.'}
+            ? 'اطلاعات وبینار جدید خود را وارد کنید.' 
+            : 'اطلاعات وبینار را ویرایش کنید.'}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -1282,7 +1282,7 @@ function ProjectForm({
                 <Label htmlFor="title">عنوان *</Label>
                 <Input 
                   id="title" 
-                  placeholder="پروژه نمونه کار وب"
+                  placeholder="وبینار آموزشی برنامه‌نویسی"
                   value={formData.title}
                   onChange={(e) => handleChange('title', e.target.value)}
                   required
@@ -1314,19 +1314,13 @@ function ProjectForm({
 
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="type">نوع</Label>
-                <Select 
-                  value={formData.type} 
-                  onValueChange={(value) => handleChange('type', value)}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="نوع مورد را انتخاب کنید" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="project">پروژه</SelectItem>
-                    <SelectItem value="magazine">مجله</SelectItem>
-                  </SelectContent>
-                </Select>
+                <Label htmlFor="duration">مدت زمان وبینار</Label>
+                <Input 
+                  id="duration" 
+                  placeholder="90 دقیقه"
+                  value={formData.dueDate}
+                  onChange={(e) => handleChange('dueDate', e.target.value)}
+                />
               </div>
 
               <div className="space-y-2">
@@ -1339,28 +1333,15 @@ function ProjectForm({
                 />
               </div>
 
-              {formData.type === 'project' ? (
-                <div className="space-y-2">
-                  <Label htmlFor="dueDate">مهلت پروژه</Label>
-                  <Input 
-                    id="dueDate" 
-                    placeholder="7 روز"
-                    value={formData.dueDate}
-                    onChange={(e) => handleChange('dueDate', e.target.value)}
-                  />
-                </div>
-              ) : (
-                <div className="space-y-2">
-                  <Label htmlFor="pages">تعداد صفحات</Label>
-                  <Input 
-                    id="pages" 
-                    type="number"
-                    min={0}
-                    value={formData.pages}
-                    onChange={(e) => handleChange('pages', parseInt(e.target.value) || 0)}
-                  />
-                </div>
-              )}
+              <div className="space-y-2">
+                <Label htmlFor="contentUrl">لینک وبینار</Label>
+                <Input 
+                  id="contentUrl" 
+                  placeholder="https://zoom.us/j/..."
+                  value={formData.contentUrl}
+                  onChange={(e) => handleChange('contentUrl', e.target.value)}
+                />
+              </div>
 
               <div className="flex items-center space-x-2 space-x-reverse pt-4">
                 <Switch 
@@ -1368,7 +1349,7 @@ function ProjectForm({
                   checked={formData.isLocked}
                   onCheckedChange={(checked) => handleChange('isLocked', checked)}
                 />
-                <Label htmlFor="isLocked">قفل کردن محتوا (فقط برای کاربران ویژه)</Label>
+                <Label htmlFor="isLocked">محدود کردن دسترسی (فقط برای کاربران ویژه)</Label>
               </div>
             </div>
           </div>
