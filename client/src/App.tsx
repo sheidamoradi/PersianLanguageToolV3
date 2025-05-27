@@ -17,56 +17,34 @@ import MediaPlayer from "@/pages/media-player";
 import Admin from "@/pages/admin";
 import { User } from "@shared/schema";
 import { lazy, Suspense } from "react";
-import { SidebarProvider } from "@/components/layout/SidebarProvider";
-import AppSidebar from "@/components/layout/AppSidebar";
 
 // Import Magazine component
 const Magazine = lazy(() => import("./pages/magazine"));
 
 function Layout({ children }: { children: React.ReactNode }) {
   // Fetch user data (for now using a static ID of 1)
-  const { data: user } = useQuery<User>({
+  const { data: user, isLoading } = useQuery<User>({
     queryKey: ['/api/user/1'],
-    retry: false,
-    // Return null if not found so the app doesn't crash
-    queryFn: async ({ queryKey }) => {
-      try {
-        const res = await fetch(queryKey[0] as string);
-        if (res.status === 404) return null;
-        await throwIfResNotOk(res);
-        return await res.json();
-      } catch (err) {
-        console.error(err);
-        return null;
-      }
-    }
   });
 
-  // Default user if not found
-  const userProfile = user ? {
-    name: user.name || "کاربر",
-    username: user.username,
-    membershipType: user.membershipType || "ساده",
-    progress: user.progress || 0
-  } : {
-    name: "کاربر مهمان",
-    username: "مهمان",
-    membershipType: "ساده",
-    progress: 0
-  };
+  if (isLoading) {
+    return <div>در حال بارگذاری...</div>;
+  }
+
+  if (!user) {
+    return <div>خطا در بارگذاری کاربر</div>;
+  }
 
   return (
-    <SidebarProvider>
-      <div className="min-h-screen flex flex-col md:flex-row flex-1" dir="rtl">
-        <Sidebar user={userProfile} />
-
-        <main className="flex-1 p-4 md:p-6 pb-20 md:pb-6">
+    <div className="min-h-screen bg-neutral-50" dir="rtl">
+      <Header />
+      <main className="pb-16 md:pb-0">
+        <div className="container mx-auto px-4 py-6">
           {children}
-        </main>
-      </div>
-
+        </div>
+      </main>
       <MobileNavbar />
-    </SidebarProvider>
+    </div>
   );
 }
 
