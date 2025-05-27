@@ -17,13 +17,15 @@ import MediaPlayer from "@/pages/media-player";
 import Admin from "@/pages/admin";
 import { User } from "@shared/schema";
 import { lazy, Suspense } from "react";
+import { SidebarProvider } from "@/components/layout/SidebarProvider";
+import AppSidebar from "@/components/layout/AppSidebar";
 
 // Import Magazine component
 const Magazine = lazy(() => import("./pages/magazine"));
 
 function Layout({ children }: { children: React.ReactNode }) {
   // Fetch user data (for now using a static ID of 1)
-  const { data: user } = useQuery<User>({ 
+  const { data: user } = useQuery<User>({
     queryKey: ['/api/user/1'],
     retry: false,
     // Return null if not found so the app doesn't crash
@@ -54,10 +56,8 @@ function Layout({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <Header />
-
-      <div className="flex flex-col md:flex-row flex-1">
+    <SidebarProvider>
+      <div className="min-h-screen flex flex-col md:flex-row flex-1" dir="rtl">
         <Sidebar user={userProfile} />
 
         <main className="flex-1 p-4 md:p-6 pb-20 md:pb-6">
@@ -66,7 +66,7 @@ function Layout({ children }: { children: React.ReactNode }) {
       </div>
 
       <MobileNavbar />
-    </div>
+    </SidebarProvider>
   );
 }
 
