@@ -16,7 +16,10 @@ import DocumentViewer from "@/pages/document-viewer";
 import MediaPlayer from "@/pages/media-player";
 import Admin from "@/pages/admin";
 import { User } from "@shared/schema";
-import { lazy } from "react";
+import { lazy, Suspense } from "react";
+
+// Import Magazine component
+const Magazine = lazy(() => import("./pages/magazine"));
 
 function Layout({ children }: { children: React.ReactNode }) {
   // Fetch user data (for now using a static ID of 1)
@@ -114,8 +117,9 @@ function Router() {
       </Route>
       <Route path="/magazine">
         <Layout>
-          {/* @ts-expect-error */}
-          <lazy={() => import("./pages/magazine")} />
+          <Suspense fallback={<div>در حال بارگذاری...</div>}>
+            <Magazine />
+          </Suspense>
         </Layout>
       </Route>
       <Route>
