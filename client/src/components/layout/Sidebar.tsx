@@ -90,26 +90,46 @@ export default function Sidebar({ user }: SidebarProps) {
         <nav>
           <p className="text-xs uppercase text-neutral-300 font-medium mb-2">منوی اصلی</p>
           <ul className="space-y-1 mb-6">
-            {mainNavLinks.map((link) => (
-              <li key={link.path}>
-                <Link href={link.path} className={`flex items-center p-2 rounded-lg ${link.active ? 'text-primary bg-blue-50' : 'text-neutral-400 hover:bg-neutral-100'}`}>
-                  <span className="material-icons ml-3">{link.icon}</span>
-                  <span>{link.label}</span>
-                </Link>
-              </li>
-            ))}
+            <li>
+              <Link href="/" className="flex items-center p-2 rounded-lg text-neutral-400 hover:bg-neutral-100">
+                <span className="material-icons ml-3">home</span>
+                <span>خانه</span>
+              </Link>
+            </li>
+            <li>
+              <Link href="/courses" className="flex items-center p-2 rounded-lg text-neutral-400 hover:bg-neutral-100">
+                <span className="material-icons ml-3">menu_book</span>
+                <span>کارگاه‌های آموزشی</span>
+              </Link>
+            </li>
+            <li>
+              <Link href="/projects" className="flex items-center p-2 rounded-lg text-neutral-400 hover:bg-neutral-100">
+                <span className="material-icons ml-3">assignment</span>
+                <span>وبینارها</span>
+              </Link>
+            </li>
+            <li>
+              <Link href="/library" className="flex items-center p-2 rounded-lg text-neutral-400 hover:bg-neutral-100">
+                <span className="material-icons ml-3">library_books</span>
+                <span>فصلنامه رویش سبز</span>
+              </Link>
+            </li>
           </ul>
           
           <p className="text-xs uppercase text-neutral-300 font-medium mb-2">حساب کاربری</p>
           <ul className="space-y-1">
-            {accountNavLinks.map((link) => (
-              <li key={link.path}>
-                <Link href={link.path} className={`flex items-center p-2 rounded-lg ${link.active ? 'text-primary bg-blue-50' : 'text-neutral-400 hover:bg-neutral-100'}`}>
-                  <span className="material-icons ml-3">{link.icon}</span>
-                  <span>{link.label}</span>
-                </Link>
-              </li>
-            ))}
+            <li>
+              <Link href="/admin" className="flex items-center p-2 rounded-lg text-neutral-400 hover:bg-neutral-100">
+                <span className="material-icons ml-3">dashboard</span>
+                <span>پنل مدیریت</span>
+              </Link>
+            </li>
+            <li>
+              <Link href="/profile" className="flex items-center p-2 rounded-lg text-neutral-400 hover:bg-neutral-100">
+                <span className="material-icons ml-3">person</span>
+                <span>پروفایل</span>
+              </Link>
+            </li>
           </ul>
         </nav>
       </div>
