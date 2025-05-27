@@ -143,6 +143,23 @@ export const workshopContents = pgTable("workshop_contents", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+// Slides table for homepage carousel
+export const slides = pgTable("slides", {
+  id: serial("id").primaryKey(),
+  title: text("title").notNull(),
+  description: text("description").notNull(),
+  imageUrl: text("image_url"),
+  buttonText: text("button_text").notNull(),
+  buttonUrl: text("button_url").notNull(),
+  isActive: boolean("is_active").default(true),
+  order: integer("order").default(0),
+  gradientFrom: text("gradient_from"),
+  gradientTo: text("gradient_to"),
+  iconName: text("icon_name"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 // Insert Schemas
 export const insertUserSchema = createInsertSchema(users).omit({ id: true });
 export const insertCourseSchema = createInsertSchema(courses).omit({ id: true });
@@ -215,18 +232,3 @@ export const selectSlideSchema = selectSlideSchemaBase;
 
 export type InsertSlide = z.infer<typeof insertSlideSchema>;
 export type Slide = z.infer<typeof selectSlideSchema>;
-export const slides = pgTable("slides", {
-    id: serial("id").primaryKey(),
-    title: text("title").notNull(),
-    description: text("description").notNull(),
-    imageUrl: text("image_url"),
-    buttonText: text("button_text").notNull(),
-    buttonUrl: text("button_url").notNull(),
-    isActive: boolean("is_active").default(true),
-    order: integer("order").default(0),
-    gradientFrom: text("gradient_from"),
-    gradientTo: text("gradient_to"),
-    iconName: text("icon_name"),
-    createdAt: timestamp("created_at").defaultNow(),
-    updatedAt: timestamp("updated_at").defaultNow(),
-});
