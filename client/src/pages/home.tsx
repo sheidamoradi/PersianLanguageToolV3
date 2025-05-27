@@ -36,30 +36,131 @@ export default function Home() {
     <div id="dashboard" className="mb-10" dir="rtl">
       {/* Hero Slider */}
       <div className="mb-10 -mt-2">
-        <div className="bg-gradient-to-l from-primary/20 to-secondary/20 rounded-xl overflow-hidden">
-          <div className="flex flex-col md:flex-row items-center justify-between p-6 md:p-10">
-            <div className="text-right mb-6 md:mb-0">
-              <h2 className="text-2xl md:text-3xl font-bold text-neutral-700 mb-3">به مرکز پیستاط خوش آمدید</h2>
-              <p className="text-neutral-500 mb-6 max-w-md">بهترین دوره‌های آموزشی در حوزه کشاورزی</p>
-              <div className="flex gap-3 flex-wrap">
-                <Button className="rounded-full">
-                  <BookOpen className="ml-2 h-4 w-4" />
-                  مشاهده دوره‌ها
-                </Button>
-                <Button variant="outline" className="rounded-full">
-                  درباره ما
-                </Button>
-              </div>
-            </div>
-            <div className="flex items-center justify-center">
-              <div className="bg-white rounded-full h-48 w-48 p-3 shadow-lg">
-                <div className="bg-gradient-to-br from-primary/10 to-primary/30 h-full w-full rounded-full flex items-center justify-center">
-                  <GraduationCap className="h-24 w-24 text-primary" />
+        <Carousel className="w-full" opts={{ align: "start", loop: true }}>
+          <CarouselContent>
+            {/* Slide 1 - Welcome */}
+            <CarouselItem>
+              <Link href="/courses" className="block">
+                <div className="bg-gradient-to-l from-primary/20 to-secondary/20 rounded-xl overflow-hidden cursor-pointer hover:shadow-lg transition-shadow">
+                  <div className="flex flex-col md:flex-row items-center justify-between p-6 md:p-10">
+                    <div className="text-right mb-6 md:mb-0">
+                      <h2 className="text-2xl md:text-3xl font-bold text-neutral-700 mb-3">به مرکز پیستاط خوش آمدید</h2>
+                      <p className="text-neutral-500 mb-6 max-w-md">بهترین دوره‌های آموزشی در حوزه کشاورزی</p>
+                      <div className="flex gap-3 flex-wrap">
+                        <Button className="rounded-full">
+                          <BookOpen className="ml-2 h-4 w-4" />
+                          مشاهده دوره‌ها
+                        </Button>
+                        <Button variant="outline" className="rounded-full">
+                          درباره ما
+                        </Button>
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-center">
+                      <div className="bg-white rounded-full h-48 w-48 p-3 shadow-lg">
+                        <div className="bg-gradient-to-br from-primary/10 to-primary/30 h-full w-full rounded-full flex items-center justify-center">
+                          <GraduationCap className="h-24 w-24 text-primary" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-          </div>
-        </div>
+              </Link>
+            </CarouselItem>
+
+            {/* Slide 2 - Webinars */}
+            <CarouselItem>
+              <Link href="/projects" className="block">
+                <div className="bg-gradient-to-l from-secondary/20 to-purple-500/20 rounded-xl overflow-hidden cursor-pointer hover:shadow-lg transition-shadow">
+                  <div className="flex flex-col md:flex-row items-center justify-between p-6 md:p-10">
+                    <div className="text-right mb-6 md:mb-0">
+                      <h2 className="text-2xl md:text-3xl font-bold text-neutral-700 mb-3">وبینارهای تخصصی</h2>
+                      <p className="text-neutral-500 mb-6 max-w-md">آموزش‌های زنده و تعاملی با متخصصان</p>
+                      <div className="flex gap-3 flex-wrap">
+                        <Button className="rounded-full">
+                          <Layers className="ml-2 h-4 w-4" />
+                          مشاهده وبینارها
+                        </Button>
+                        <Button variant="outline" className="rounded-full">
+                          ثبت نام
+                        </Button>
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-center">
+                      <div className="bg-white rounded-full h-48 w-48 p-3 shadow-lg">
+                        <div className="bg-gradient-to-br from-secondary/10 to-secondary/30 h-full w-full rounded-full flex items-center justify-center">
+                          <Layers className="h-24 w-24 text-secondary" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            </CarouselItem>
+
+            {/* Slide 3 - Library */}
+            <CarouselItem>
+              <Link href="/library" className="block">
+                <div className="bg-gradient-to-l from-purple-500/20 to-amber-500/20 rounded-xl overflow-hidden cursor-pointer hover:shadow-lg transition-shadow">
+                  <div className="flex flex-col md:flex-row items-center justify-between p-6 md:p-10">
+                    <div className="text-right mb-6 md:mb-0">
+                      <h2 className="text-2xl md:text-3xl font-bold text-neutral-700 mb-3">کتابخانه دیجیتال</h2>
+                      <p className="text-neutral-500 mb-6 max-w-md">مجموعه غنی از منابع و کتب تخصصی</p>
+                      <div className="flex gap-3 flex-wrap">
+                        <Button className="rounded-full">
+                          <Book className="ml-2 h-4 w-4" />
+                          مطالعه کتب
+                        </Button>
+                        <Button variant="outline" className="rounded-full">
+                          جستجو
+                        </Button>
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-center">
+                      <div className="bg-white rounded-full h-48 w-48 p-3 shadow-lg">
+                        <div className="bg-gradient-to-br from-purple-500/10 to-purple-500/30 h-full w-full rounded-full flex items-center justify-center">
+                          <Book className="h-24 w-24 text-purple-500" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            </CarouselItem>
+
+            {/* Slide 4 - Magazine */}
+            <CarouselItem>
+              <Link href="/magazine" className="block">
+                <div className="bg-gradient-to-l from-amber-500/20 to-primary/20 rounded-xl overflow-hidden cursor-pointer hover:shadow-lg transition-shadow">
+                  <div className="flex flex-col md:flex-row items-center justify-between p-6 md:p-10">
+                    <div className="text-right mb-6 md:mb-0">
+                      <h2 className="text-2xl md:text-3xl font-bold text-neutral-700 mb-3">فصلنامه رویش سبز</h2>
+                      <p className="text-neutral-500 mb-6 max-w-md">آخرین اخبار و مقالات تخصصی کشاورزی</p>
+                      <div className="flex gap-3 flex-wrap">
+                        <Button className="rounded-full">
+                          <Bookmark className="ml-2 h-4 w-4" />
+                          مطالعه مجله
+                        </Button>
+                        <Button variant="outline" className="rounded-full">
+                          اشتراک
+                        </Button>
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-center">
+                      <div className="bg-white rounded-full h-48 w-48 p-3 shadow-lg">
+                        <div className="bg-gradient-to-br from-amber-500/10 to-amber-500/30 h-full w-full rounded-full flex items-center justify-center">
+                          <TrendingUp className="h-24 w-24 text-amber-500" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            </CarouselItem>
+          </CarouselContent>
+          <CarouselPrevious className="right-4" />
+          <CarouselNext className="left-4" />
+        </Carousel>
       </div>
 
       {/* Category Cards */}
