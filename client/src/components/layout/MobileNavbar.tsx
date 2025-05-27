@@ -14,11 +14,11 @@ export default function MobileNavbar() {
         </Link>
         <Link href="/courses" className={`flex flex-col items-center ${isActive('/courses') ? 'text-primary' : 'text-neutral-300'}`}>
           <span className="material-icons">menu_book</span>
-          <span className="text-xs mt-1">دوره‌ها</span>
+          <span className="text-xs mt-1">کارگاه‌ها</span>
         </Link>
         <Link href="/projects" className={`flex flex-col items-center ${isActive('/projects') ? 'text-primary' : 'text-neutral-300'}`}>
           <span className="material-icons">assignment</span>
-          <span className="text-xs mt-1">پروژه‌ها</span>
+          <span className="text-xs mt-1">وبینارها</span>
         </Link>
         <Link href="/library" className={`flex flex-col items-center ${isActive('/library') ? 'text-primary' : 'text-neutral-300'}`}>
           <span className="material-icons">library_books</span>

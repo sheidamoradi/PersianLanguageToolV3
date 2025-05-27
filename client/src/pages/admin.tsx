@@ -44,23 +44,23 @@ export default function AdminPage() {
           <TabsTrigger value="documents">اسناد</TabsTrigger>
           <TabsTrigger value="media">رسانه</TabsTrigger>
         </TabsList>
-        
+
         <TabsContent value="courses">
           <CoursesTab />
         </TabsContent>
-        
+
         <TabsContent value="projects">
           <ProjectsTab />
         </TabsContent>
-        
+
         <TabsContent value="magazines">
           <MagazinesTab />
         </TabsContent>
-        
+
         <TabsContent value="documents">
           <DocumentsTab />
         </TabsContent>
-        
+
         <TabsContent value="media">
           <MediaTab />
         </TabsContent>
@@ -114,7 +114,7 @@ function CoursesTab() {
         <h2 className="text-2xl font-semibold text-neutral-700">مدیریت دوره‌ها</h2>
         <Button onClick={handleAddCourse} className="flex items-center gap-2">
           <Plus className="h-4 w-4" />
-          افزودن دوره جدید
+          افزودن کارگاه جدید
         </Button>
       </div>
 
@@ -261,7 +261,7 @@ function CourseForm({
                   required
                 />
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="description">توضیحات *</Label>
                 <Textarea 
@@ -273,7 +273,7 @@ function CourseForm({
                   rows={4}
                 />
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="thumbnailUrl">آدرس تصویر</Label>
                 <Input 
@@ -284,7 +284,7 @@ function CourseForm({
                 />
               </div>
             </div>
-            
+
             <div className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="category">دسته‌بندی</Label>
@@ -295,7 +295,7 @@ function CourseForm({
                   onChange={(e) => handleChange('category', e.target.value)}
                 />
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="level">سطح</Label>
                 <Select 
@@ -312,7 +312,7 @@ function CourseForm({
                   </SelectContent>
                 </Select>
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="totalModules">تعداد کل مدول‌ها</Label>
                 <Input 
@@ -323,7 +323,7 @@ function CourseForm({
                   onChange={(e) => handleChange('totalModules', parseInt(e.target.value) || 0)}
                 />
               </div>
-              
+
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2 space-x-reverse">
                   <Switch 
@@ -333,7 +333,7 @@ function CourseForm({
                   />
                   <Label htmlFor="isNew">نشان دادن به عنوان جدید</Label>
                 </div>
-                
+
                 <div className="flex items-center space-x-2 space-x-reverse">
                   <Switch 
                     id="isPopular"
@@ -345,7 +345,7 @@ function CourseForm({
               </div>
             </div>
           </div>
-          
+
           <div className="flex justify-end mt-6 space-x-2 space-x-reverse">
             <Button type="button" variant="outline" onClick={onCancel}>انصراف</Button>
             <Button type="submit">{mode === 'create' ? 'ایجاد دوره' : 'بروزرسانی'}</Button>
@@ -639,7 +639,7 @@ function MagazineForm({
                   required
                 />
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="description">توضیحات</Label>
                 <Textarea 
@@ -650,7 +650,7 @@ function MagazineForm({
                   rows={4}
                 />
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="coverImageUrl">آدرس تصویر جلد</Label>
                 <Input 
@@ -671,7 +671,7 @@ function MagazineForm({
                 />
               </div>
             </div>
-            
+
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
@@ -684,7 +684,7 @@ function MagazineForm({
                     onChange={(e) => handleChange('issueNumber', parseInt(e.target.value) || 0)}
                   />
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="totalPages">تعداد صفحات</Label>
                   <Input 
@@ -696,7 +696,7 @@ function MagazineForm({
                   />
                 </div>
               </div>
-              
+
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="publishDate">تاریخ انتشار</Label>
@@ -707,7 +707,7 @@ function MagazineForm({
                     onChange={(e) => handleChange('publishDate', e.target.value)}
                   />
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="season">فصل</Label>
                   <Select 
@@ -726,7 +726,7 @@ function MagazineForm({
                   </Select>
                 </div>
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="year">سال</Label>
                 <Input 
@@ -736,7 +736,7 @@ function MagazineForm({
                   onChange={(e) => handleChange('year', parseInt(e.target.value) || new Date().getFullYear())}
                 />
               </div>
-              
+
               <div className="flex items-center space-x-2 space-x-reverse">
                 <Switch 
                   id="isActive"
@@ -747,7 +747,7 @@ function MagazineForm({
               </div>
             </div>
           </div>
-          
+
           <div className="flex justify-end mt-6 space-x-2 space-x-reverse">
             <Button type="button" variant="outline" onClick={onCancel}>انصراف</Button>
             <Button type="submit">{mode === 'create' ? 'ایجاد مجله' : 'بروزرسانی'}</Button>
@@ -1009,7 +1009,7 @@ function ArticleForm({
                   required
                 />
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="author">نویسنده</Label>
                 <Input 
@@ -1019,7 +1019,7 @@ function ArticleForm({
                   onChange={(e) => handleChange('author', e.target.value)}
                 />
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="summary">خلاصه</Label>
                 <Textarea 
@@ -1030,7 +1030,7 @@ function ArticleForm({
                   rows={3}
                 />
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="content">محتوا</Label>
                 <Textarea 
@@ -1042,7 +1042,7 @@ function ArticleForm({
                 />
               </div>
             </div>
-            
+
             <div className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="featuredImageUrl">آدرس تصویر شاخص</Label>
@@ -1053,7 +1053,7 @@ function ArticleForm({
                   onChange={(e) => handleChange('featuredImageUrl', e.target.value)}
                 />
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="thumbnailUrl">آدرس تصویر بندانگشتی</Label>
                 <Input 
@@ -1063,7 +1063,7 @@ function ArticleForm({
                   onChange={(e) => handleChange('thumbnailUrl', e.target.value)}
                 />
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="pdfUrl">آدرس فایل PDF</Label>
                 <Input 
@@ -1073,7 +1073,7 @@ function ArticleForm({
                   onChange={(e) => handleChange('pdfUrl', e.target.value)}
                 />
               </div>
-              
+
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="publishDate">تاریخ انتشار</Label>
@@ -1084,7 +1084,7 @@ function ArticleForm({
                     onChange={(e) => handleChange('publishDate', e.target.value)}
                   />
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="readTime">زمان مطالعه (دقیقه)</Label>
                   <Input 
@@ -1096,7 +1096,7 @@ function ArticleForm({
                   />
                 </div>
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="order">ترتیب</Label>
                 <Input 
@@ -1107,7 +1107,7 @@ function ArticleForm({
                   onChange={(e) => handleChange('order', parseInt(e.target.value) || 0)}
                 />
               </div>
-              
+
               <div className="flex items-center space-x-2 space-x-reverse">
                 <Switch 
                   id="isPublished"
@@ -1118,7 +1118,7 @@ function ArticleForm({
               </div>
             </div>
           </div>
-          
+
           <div className="flex justify-end mt-6 space-x-2 space-x-reverse">
             <Button type="button" variant="outline" onClick={onCancel}>انصراف</Button>
             <Button type="submit">{mode === 'create' ? 'ایجاد مقاله' : 'بروزرسانی'}</Button>
@@ -1283,7 +1283,7 @@ function ProjectForm({
                   required
                 />
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="description">توضیحات *</Label>
                 <Textarea 
@@ -1295,7 +1295,7 @@ function ProjectForm({
                   rows={4}
                 />
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="thumbnailUrl">آدرس تصویر</Label>
                 <Input 
@@ -1306,7 +1306,7 @@ function ProjectForm({
                 />
               </div>
             </div>
-            
+
             <div className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="type">نوع</Label>
@@ -1323,7 +1323,7 @@ function ProjectForm({
                   </SelectContent>
                 </Select>
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="contentUrl">آدرس محتوا</Label>
                 <Input 
@@ -1333,7 +1333,7 @@ function ProjectForm({
                   onChange={(e) => handleChange('contentUrl', e.target.value)}
                 />
               </div>
-              
+
               {formData.type === 'project' ? (
                 <div className="space-y-2">
                   <Label htmlFor="dueDate">مهلت پروژه</Label>
@@ -1356,7 +1356,7 @@ function ProjectForm({
                   />
                 </div>
               )}
-              
+
               <div className="flex items-center space-x-2 space-x-reverse pt-4">
                 <Switch 
                   id="isLocked"
@@ -1367,7 +1367,7 @@ function ProjectForm({
               </div>
             </div>
           </div>
-          
+
           <div className="flex justify-end mt-6 space-x-2 space-x-reverse">
             <Button type="button" variant="outline" onClick={onCancel}>انصراف</Button>
             <Button type="submit">{mode === 'create' ? 'ایجاد' : 'بروزرسانی'}</Button>
@@ -1525,7 +1525,7 @@ function DocumentForm({
                   required
                 />
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="fileName">نام فایل *</Label>
                 <Input 
@@ -1536,7 +1536,7 @@ function DocumentForm({
                   required
                 />
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="fileUrl">آدرس فایل *</Label>
                 <Input 
@@ -1565,7 +1565,7 @@ function DocumentForm({
                 </Select>
               </div>
             </div>
-            
+
             <div className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="totalPages">تعداد صفحات</Label>
@@ -1577,7 +1577,7 @@ function DocumentForm({
                   onChange={(e) => handleChange('totalPages', parseInt(e.target.value) || 0)}
                 />
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="lastUpdated">آخرین بروزرسانی</Label>
                 <Input 
@@ -1586,7 +1586,7 @@ function DocumentForm({
                   onChange={(e) => handleChange('lastUpdated', e.target.value)}
                 />
               </div>
-              
+
               <div className="flex items-center space-x-2 space-x-reverse pt-4">
                 <Switch 
                   id="allowDownload"
@@ -1595,7 +1595,7 @@ function DocumentForm({
                 />
                 <Label htmlFor="allowDownload">اجازه دانلود به کاربران</Label>
               </div>
-              
+
               <div className="border-2 border-dashed border-neutral-200 rounded-lg p-4 text-center">
                 <Input 
                   id="file-upload" 
@@ -1613,7 +1613,7 @@ function DocumentForm({
               </div>
             </div>
           </div>
-          
+
           <div className="flex justify-end mt-6 space-x-2 space-x-reverse">
             <Button type="button" variant="outline" onClick={onCancel}>انصراف</Button>
             <Button type="submit">{mode === 'create' ? 'ایجاد سند' : 'بروزرسانی'}</Button>
@@ -1775,7 +1775,7 @@ function MediaForm({
                   required
                 />
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="description">توضیحات</Label>
                 <Textarea 
@@ -1786,7 +1786,7 @@ function MediaForm({
                   rows={4}
                 />
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="thumbnailUrl">آدرس تصویر</Label>
                 <Input 
@@ -1814,7 +1814,7 @@ function MediaForm({
                 </Label>
               </div>
             </div>
-            
+
             <div className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="contentUrl">آدرس محتوا *</Label>
@@ -1826,7 +1826,7 @@ function MediaForm({
                   required
                 />
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="duration">مدت زمان</Label>
                 <Input 
@@ -1836,17 +1836,17 @@ function MediaForm({
                   onChange={(e) => handleChange('duration', e.target.value)}
                 />
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="instructorName">نام مدرس</Label>
                 <Input 
                   id="instructorName" 
                   placeholder="دکتر سارا جانسون"
                   value={formData.instructorName}
-                  onChange={(e) => handleChange('instructorName', e.target.value)}
+                  onChange={(e.target.value)}
                 />
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="instructorTitle">عنوان مدرس</Label>
                 <Input 
@@ -1856,7 +1856,7 @@ function MediaForm({
                   onChange={(e) => handleChange('instructorTitle', e.target.value)}
                 />
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="instructorAvatar">آدرس تصویر مدرس</Label>
                 <Input 
@@ -1868,7 +1868,7 @@ function MediaForm({
               </div>
             </div>
           </div>
-          
+
           <div className="flex justify-end mt-6 space-x-2 space-x-reverse">
             <Button type="button" variant="outline" onClick={onCancel}>انصراف</Button>
             <Button type="submit">{mode === 'create' ? 'ایجاد رسانه' : 'بروزرسانی'}</Button>

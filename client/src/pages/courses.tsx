@@ -29,8 +29,8 @@ export default function Courses() {
   return (
     <div id="course-library">
       <div className="mb-6">
-        <h2 className="text-2xl font-semibold text-neutral-500 mb-2">Course Library</h2>
-        <p className="text-neutral-300">Browse all available courses and content</p>
+        <h2 className="text-2xl font-semibold text-neutral-500 mb-2">کتابخانه کارگاه‌های آموزشی</h2>
+        <p className="text-neutral-300">مشاهده تمام کارگاه‌های آموزشی و محتوای موجود</p>
       </div>
       
       <div className="mb-6">
@@ -43,7 +43,7 @@ export default function Courses() {
             </div>
             <Input
               type="text"
-              placeholder="Search for courses, documents, or topics..."
+              placeholder="جستجوی کارگاه‌ها، اسناد یا موضوعات..."
               className="pl-10 pr-4 py-2"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -103,7 +103,7 @@ export default function Courses() {
           ))
         ) : (
           <div className="col-span-full text-center py-8">
-            <p className="text-neutral-400">No courses found matching your criteria.</p>
+            <p className="text-neutral-400">هیچ کارگاهی با معیارهای شما یافت نشد.</p>
             <Button 
               variant="link" 
               className="text-primary mt-2"

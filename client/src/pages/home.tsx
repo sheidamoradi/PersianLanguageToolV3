@@ -21,17 +21,17 @@ export default function Home() {
   } = useQuery<Course[]>({ 
     queryKey: ['/api/courses'] 
   });
-  
+
   const { 
     data: projects = [], 
     isLoading: isLoadingProjects 
   } = useQuery<Project[]>({ 
     queryKey: ['/api/projects'] 
   });
-  
+
   // Filter courses with progress > 0 for "Continue Learning" section
   const continueLearningCourses = courses.filter(course => course.progress && course.progress > 0);
-  
+
   return (
     <div id="dashboard" className="mb-10" dir="rtl">
       {/* Hero Slider */}
@@ -93,12 +93,12 @@ export default function Home() {
           <p className="text-xs text-neutral-500">8 پروژه</p>
         </div>
       </div>
-      
+
       <h2 className="text-2xl font-semibold text-neutral-700 mb-6 flex items-center">
         <BookOpen className="ml-2 h-6 w-6 text-primary" />
         ادامه یادگیری
       </h2>
-      
+
       {/* Recent Courses */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
         {isLoadingCourses ? (
@@ -136,12 +136,12 @@ export default function Home() {
           <div className="col-span-full text-center py-8">
             <p className="text-neutral-400">هیچ دوره‌ای در حال پیشرفت نیست. امروز یادگیری را شروع کنید!</p>
             <Link href="/courses" className="text-primary hover:underline mt-2 inline-block">
-              مشاهده دوره‌ها
+              مشاهده کارگاه‌ها
             </Link>
           </div>
         )}
       </div>
-      
+
       {/* Recent Projects */}
       <h2 className="text-2xl font-semibold text-neutral-700 mb-4 flex items-center">
         <Layers className="ml-2 h-6 w-6 text-secondary" />

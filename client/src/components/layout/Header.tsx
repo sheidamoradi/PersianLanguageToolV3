@@ -22,10 +22,10 @@ export default function Header() {
             خانه
           </Link>
           <Link href="/courses" className={location === "/courses" ? "text-primary font-medium" : "text-neutral-400 hover:text-primary transition-colors font-medium"}>
-            دوره‌ها
+            کارگاه‌ها
           </Link>
           <Link href="/projects" className={location === "/projects" ? "text-primary font-medium" : "text-neutral-400 hover:text-primary transition-colors font-medium"}>
-            پروژه‌ها
+            وبینارها
           </Link>
           <Link href="/library" className={location === "/library" ? "text-primary font-medium" : "text-neutral-400 hover:text-primary transition-colors font-medium"}>
             کتابخانه

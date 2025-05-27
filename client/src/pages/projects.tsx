@@ -25,17 +25,17 @@ export default function Projects() {
   return (
     <div>
       <div className="mb-6">
-        <h2 className="text-2xl font-semibold text-neutral-500 mb-2">Projects & Magazines</h2>
-        <p className="text-neutral-300">Browse all available projects and magazine articles</p>
+        <h2 className="text-2xl font-semibold text-neutral-500 mb-2">وبینارها و فصلنامه‌ها</h2>
+        <p className="text-neutral-300">مشاهده تمام وبینارها و مقالات فصلنامه موجود</p>
       </div>
       
       <div className="mb-6">
         <div className="flex items-center justify-between mb-4">
           <Tabs defaultValue="all" onValueChange={setProjectType} className="w-full">
             <TabsList>
-              <TabsTrigger value="all">All</TabsTrigger>
-              <TabsTrigger value="project">Projects</TabsTrigger>
-              <TabsTrigger value="magazine">Magazines</TabsTrigger>
+              <TabsTrigger value="all">همه</TabsTrigger>
+              <TabsTrigger value="project">وبینارها</TabsTrigger>
+              <TabsTrigger value="magazine">فصلنامه‌ها</TabsTrigger>
             </TabsList>
           </Tabs>
         </div>
@@ -48,7 +48,7 @@ export default function Projects() {
           </div>
           <Input
             type="text"
-            placeholder="Search projects and magazines..."
+            placeholder="جستجوی وبینارها و فصلنامه‌ها..."
             className="pl-10 pr-4 py-2"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -87,7 +87,7 @@ export default function Projects() {
           ))
         ) : (
           <div className="col-span-full text-center py-8">
-            <p className="text-neutral-400">No projects or magazines found matching your criteria.</p>
+            <p className="text-neutral-400">هیچ وبینار یا فصلنامه‌ای با معیارهای شما یافت نشد.</p>
             <button 
               className="text-primary hover:underline mt-2"
               onClick={() => {
