@@ -114,6 +114,12 @@ export default function Sidebar({ user }: SidebarProps) {
                 <span>کتابخانه</span>
               </Link>
             </li>
+            <li>
+              <Link href="/magazine" className="flex items-center p-2 rounded-lg text-neutral-400 hover:bg-neutral-100">
+                <span className="material-icons ml-3">auto_stories</span>
+                <span>فصلنامه رویش سبز</span>
+              </Link>
+            </li>
           </ul>
           
           <p className="text-xs uppercase text-neutral-300 font-medium mb-2">حساب کاربری</p>

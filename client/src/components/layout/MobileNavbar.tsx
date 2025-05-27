@@ -24,6 +24,10 @@ export default function MobileNavbar() {
           <span className="material-icons">library_books</span>
           <span className="text-xs mt-1">کتابخانه</span>
         </Link>
+        <Link href="/magazine" className={`flex flex-col items-center ${isActive('/magazine') ? 'text-primary' : 'text-neutral-300'}`}>
+          <span className="material-icons">auto_stories</span>
+          <span className="text-xs mt-1">رویش سبز</span>
+        </Link>
         <Link href="/admin" className={`flex flex-col items-center ${isActive('/admin') ? 'text-primary' : 'text-neutral-300'}`}>
           <span className="material-icons">dashboard</span>
           <span className="text-xs mt-1">مدیریت</span>

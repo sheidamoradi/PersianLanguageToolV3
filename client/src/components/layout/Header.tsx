@@ -30,6 +30,9 @@ export default function Header() {
           <Link href="/library" className={location === "/library" ? "text-primary font-medium" : "text-neutral-400 hover:text-primary transition-colors font-medium"}>
             کتابخانه
           </Link>
+          <Link href="/magazine" className={location === "/magazine" ? "text-primary font-medium" : "text-neutral-400 hover:text-primary transition-colors font-medium"}>
+            فصلنامه رویش سبز
+          </Link>
           <Link href="/admin" className={location === "/admin" ? "text-primary font-medium" : "text-neutral-400 hover:text-primary transition-colors font-medium"}>
             پنل مدیریت
           </Link>

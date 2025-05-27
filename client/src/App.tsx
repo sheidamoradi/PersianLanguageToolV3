@@ -16,6 +16,7 @@ import DocumentViewer from "@/pages/document-viewer";
 import MediaPlayer from "@/pages/media-player";
 import Admin from "@/pages/admin";
 import { User } from "@shared/schema";
+import { lazy } from "react";
 
 function Layout({ children }: { children: React.ReactNode }) {
   // Fetch user data (for now using a static ID of 1)
@@ -35,7 +36,7 @@ function Layout({ children }: { children: React.ReactNode }) {
       }
     }
   });
-  
+
   // Default user if not found
   const userProfile = user ? {
     name: user.name || "کاربر",
@@ -52,15 +53,15 @@ function Layout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
-      
+
       <div className="flex flex-col md:flex-row flex-1">
         <Sidebar user={userProfile} />
-        
+
         <main className="flex-1 p-4 md:p-6 pb-20 md:pb-6">
           {children}
         </main>
       </div>
-      
+
       <MobileNavbar />
     </div>
   );
@@ -109,6 +110,12 @@ function Router() {
       <Route path="/admin">
         <Layout>
           <Admin />
+        </Layout>
+      </Route>
+      <Route path="/magazine">
+        <Layout>
+          {/* @ts-expect-error */}
+          <lazy={() => import("./pages/magazine")} />
         </Layout>
       </Route>
       <Route>
