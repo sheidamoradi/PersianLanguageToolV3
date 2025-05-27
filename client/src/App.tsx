@@ -18,6 +18,7 @@ import Admin from "@/pages/admin";
 import { User } from "@shared/schema";
 import { lazy, Suspense } from "react";
 import { SidebarProvider } from "@/components/layout/SidebarProvider";
+import AppSidebar from "@/components/layout/AppSidebar";
 
 // Import Magazine component
 const Magazine = lazy(() => import("./pages/magazine"));

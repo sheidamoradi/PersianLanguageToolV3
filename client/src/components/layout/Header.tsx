@@ -1,10 +1,10 @@
 import { Link, useLocation } from "wouter";
 import { User } from "lucide-react";
-import { useSidebarContext } from "@/components/layout/SidebarProvider";
+import { useSidebar } from "@/components/ui/sidebar";
 
 export default function Header() {
   const [location] = useLocation();
-  const { toggleSidebar } = useSidebarContext();
+  const { toggleSidebar } = useSidebar();
   
   return (
     <header className="bg-white shadow-sm sticky top-0 z-20" dir="rtl">
