@@ -193,11 +193,11 @@ export default function Home() {
       </div>
 
       <h2 className="text-2xl font-semibold text-neutral-700 mb-6 flex items-center">
-        <BookOpen className="ml-2 h-6 w-6 text-primary" />
-        ادامه یادگیری
+        <GraduationCap className="ml-2 h-6 w-6 text-primary" />
+        کارگاه‌های آموزشی
       </h2>
 
-      {/* Recent Courses */}
+      {/* Workshop Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
         {isLoadingCourses ? (
           Array(3).fill(0).map((_, i) => (
@@ -213,8 +213,8 @@ export default function Home() {
               </div>
             </div>
           ))
-        ) : continueLearningCourses.length > 0 ? (
-          continueLearningCourses.map(course => (
+        ) : courses.length > 0 ? (
+          courses.slice(0, 6).map(course => (
             <CourseCard 
               key={course.id}
               id={course.id}
@@ -232,9 +232,9 @@ export default function Home() {
           ))
         ) : (
           <div className="col-span-full text-center py-8">
-            <p className="text-neutral-400">هیچ دوره‌ای در حال پیشرفت نیست. امروز یادگیری را شروع کنید!</p>
+            <p className="text-neutral-400">هیچ کارگاه آموزشی‌ای در دسترس نیست.</p>
             <Link href="/courses" className="text-primary hover:underline mt-2 inline-block">
-              مشاهده کارگاه‌ها
+              مشاهده همه کارگاه‌ها
             </Link>
           </div>
         )}

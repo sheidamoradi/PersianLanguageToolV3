@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
-import { type Course, type Project, type Document, type MediaContent, type Magazine, type Article, type ArticleContent, type Slide } from "@shared/schema";
+import { type Course, type Project, type Document, type MediaContent, type Magazine, type Article, type ArticleContent, type Slide, type Workshop, type WorkshopSection } from "@shared/schema";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
@@ -37,8 +37,9 @@ export default function AdminPage() {
       </div>
 
       <Tabs defaultValue="courses" onValueChange={setActiveTab} value={activeTab}>
-        <TabsList className="grid grid-cols-6 mb-8">
-          <TabsTrigger value="courses">کارگاه‌های آموزشی</TabsTrigger>
+        <TabsList className="grid grid-cols-7 mb-8">
+          <TabsTrigger value="courses">دوره‌ها</TabsTrigger>
+          <TabsTrigger value="workshops">کارگاه‌های آموزشی</TabsTrigger>
           <TabsTrigger value="projects">وبینارها</TabsTrigger>
           <TabsTrigger value="magazines">فصلنامه رویش سبز</TabsTrigger>
           <TabsTrigger value="documents">اسناد</TabsTrigger>
@@ -48,6 +49,10 @@ export default function AdminPage() {
 
         <TabsContent value="courses">
           <CoursesTab />
+        </TabsContent>
+
+        <TabsContent value="workshops">
+          <WorkshopsTab />
         </TabsContent>
 
         <TabsContent value="projects">
@@ -116,10 +121,10 @@ function CoursesTab() {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-semibold text-neutral-700">مدیریت کارگاه‌های آموزشی</h2>
+        <h2 className="text-2xl font-semibold text-neutral-700">مدیریت دوره‌ها</h2>
         <Button onClick={handleAddCourse} className="flex items-center gap-2">
           <Plus className="h-4 w-4" />
-          افزودن کارگاه آموزشی جدید
+          افزودن دوره جدید
         </Button>
       </div>
 
@@ -169,7 +174,7 @@ function CoursesTab() {
               {courses.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={6} className="text-center py-8 text-neutral-400">
-                    هیچ کارگاه آموزشی‌ای یافت نشد. اولین کارگاه خود را اضافه کنید!
+                    هیچ دوره‌ای یافت نشد. اولین دوره خود را اضافه کنید!
                   </TableCell>
                 </TableRow>
               ) : (
@@ -207,6 +212,236 @@ function CoursesTab() {
       )}
     </div>
   );
+}
+
+function WorkshopsTab() {
+  const [showForm, setShowForm] = useState(false);
+  const [showSections, setShowSections] = useState(false);
+  const [selectedWorkshop, setSelectedWorkshop] = useState<Workshop | null>(null);
+  const [formMode, setFormMode] = useState<'create' | 'edit'>('create');
+  const { toast } = useToast();
+
+  const { data: workshops = [], isLoading } = useQuery<Workshop[]>({
+    queryKey: ['/api/workshops']
+  });
+
+  const createWorkshopMutation = useMutation({
+    mutationFn: (workshopData: Omit<Workshop, 'id' | 'createdAt' | 'updatedAt'>) => 
+      apiRequest('/api/workshops', { method: 'POST', body: JSON.stringify(workshopData) }),
+    onSuccess: () => {
+      toast({ title: "کارگاه با موفقیت ایجاد شد", description: "کارگاه جدید شما به سیستم اضافه شد" });
+      queryClient.invalidateQueries({ queryKey: ['/api/workshops'] });
+      setShowForm(false);
+    },
+    onError: (error) => {
+      toast({ 
+        title: "خطا در ایجاد کارگاه", 
+        description: "لطفا دوباره تلاش کنید",
+        variant: "destructive"
+      });
+    }
+  });
+
+  const updateWorkshopMutation = useMutation({
+    mutationFn: ({ id, data }: { id: number; data: Partial<Workshop> }) => 
+      apiRequest(`/api/workshops/${id}`, { method: 'PATCH', body: JSON.stringify(data) }),
+    onSuccess: () => {
+      toast({ title: "کارگاه با موفقیت بروزرسانی شد" });
+      queryClient.invalidateQueries({ queryKey: ['/api/workshops'] });
+      setShowForm(false);
+    },
+    onError: (error) => {
+      toast({ 
+        title: "خطا در بروزرسانی کارگاه", 
+        description: "لطفا دوباره تلاش کنید",
+        variant: "destructive"
+      });
+    }
+  });
+
+  const deleteWorkshopMutation = useMutation({
+    mutationFn: (id: number) => 
+      apiRequest(`/api/workshops/${id}`, { method: 'DELETE' }),
+    onSuccess: () => {
+      toast({ title: "کارگاه با موفقیت حذف شد" });
+      queryClient.invalidateQueries({ queryKey: ['/api/workshops'] });
+    },
+    onError: (error) => {
+      toast({ 
+        title: "خطا در حذف کارگاه", 
+        description: "لطفا دوباره تلاش کنید",
+        variant: "destructive"
+      });
+    }
+  });
+
+  const handleAddWorkshop = () => {
+    setFormMode('create');
+    setSelectedWorkshop(null);
+    setShowForm(true);
+    setShowSections(false);
+  };
+
+  const handleEditWorkshop = (workshop: Workshop) => {
+    setFormMode('edit');
+    setSelectedWorkshop(workshop);
+    setShowForm(true);
+    setShowSections(false);
+  };
+
+  const handleDeleteWorkshop = (id: number) => {
+    if (window.confirm('آیا از حذف این کارگاه اطمینان دارید؟')) {
+      deleteWorkshopMutation.mutate(id);
+    }
+  };
+
+  const handleManageSections = (workshop: Workshop) => {
+    setSelectedWorkshop(workshop);
+    setShowSections(true);
+    setShowForm(false);
+  };
+
+  return (
+    <div>
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-semibold text-neutral-700">
+          {showSections && selectedWorkshop 
+            ? `بخش‌های کارگاه "${selectedWorkshop.title}"` 
+            : "مدیریت کارگاه‌های آموزشی"}
+        </h2>
+        <div className="flex gap-2">
+          {showSections && (
+            <Button 
+              onClick={() => setShowSections(false)} 
+              variant="outline" 
+              className="flex items-center gap-2"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+              بازگشت به لیست کارگاه‌ها
+            </Button>
+          )}
+          <Button 
+            onClick={showSections && selectedWorkshop ? () => handleAddSection(selectedWorkshop.id) : handleAddWorkshop} 
+            className="flex items-center gap-2"
+          >
+            <Plus className="h-4 w-4" />
+            {showSections ? 'افزودن بخش جدید' : 'افزودن کارگاه جدید'}
+          </Button>
+        </div>
+      </div>
+
+      {isLoading ? (
+        <div className="space-y-4">
+          {Array(3).fill(0).map((_, i) => (
+            <Card key={i}>
+              <CardHeader>
+                <Skeleton className="h-6 w-48" />
+                <Skeleton className="h-4 w-72" />
+              </CardHeader>
+              <CardContent>
+                <Skeleton className="h-24 w-full" />
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      ) : showForm ? (
+        <WorkshopForm 
+          mode={formMode}
+          workshop={selectedWorkshop}
+          onCancel={() => setShowForm(false)}
+          onSubmit={(data) => {
+            if (formMode === 'create') {
+              createWorkshopMutation.mutate(data as Omit<Workshop, 'id' | 'createdAt' | 'updatedAt'>);
+            } else if (selectedWorkshop) {
+              updateWorkshopMutation.mutate({ 
+                id: selectedWorkshop.id, 
+                data 
+              });
+            }
+          }}
+        />
+      ) : showSections && selectedWorkshop ? (
+        <WorkshopSectionsManager workshopId={selectedWorkshop.id} />
+      ) : (
+        <div className="bg-white rounded-lg shadow">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>عنوان</TableHead>
+                <TableHead>مدرس</TableHead>
+                <TableHead>دسته‌بندی</TableHead>
+                <TableHead>سطح</TableHead>
+                <TableHead>وضعیت</TableHead>
+                <TableHead>عملیات</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {workshops.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={6} className="text-center py-8 text-neutral-400">
+                    هیچ کارگاهی یافت نشد. اولین کارگاه خود را اضافه کنید!
+                  </TableCell>
+                </TableRow>
+              ) : (
+                workshops.map((workshop) => (
+                  <TableRow key={workshop.id}>
+                    <TableCell className="font-medium">{workshop.title}</TableCell>
+                    <TableCell>{workshop.instructor || "-"}</TableCell>
+                    <TableCell>{workshop.category || "-"}</TableCell>
+                    <TableCell>{workshop.level || "-"}</TableCell>
+                    <TableCell>
+                      {workshop.isActive ? (
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                          فعال
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                          غیرفعال
+                        </span>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-1">
+                        <Button 
+                          variant="ghost" 
+                          size="icon"
+                          onClick={() => handleManageSections(workshop)}
+                          title="مدیریت بخش‌ها"
+                        >
+                          <Folder className="h-4 w-4" />
+                        </Button>
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          onClick={() => handleEditWorkshop(workshop)}
+                          title="ویرایش کارگاه"
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button 
+                          variant="ghost" 
+                          size="icon"
+                          className="text-red-500"
+                          onClick={() => handleDeleteWorkshop(workshop.id)}
+                          title="حذف کارگاه"
+                        >
+                          <Trash className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </div>
+      )}
+    </div>
+  );
+
+  function handleAddSection(workshopId: number) {
+    // This will be handled in WorkshopSectionsManager
+  }
 }
 
 function CourseForm({ 
@@ -1858,6 +2093,606 @@ function MediaForm({
           <div className="flex justify-end mt-6 space-x-2 space-x-reverse">
             <Button type="button" variant="outline" onClick={onCancel}>انصراف</Button>
             <Button type="submit">{mode === 'create' ? 'ایجاد رسانه' : 'بروزرسانی'}</Button>
+          </div>
+        </form>
+      </CardContent>
+    </Card>
+  );
+}
+
+function WorkshopForm({ 
+  mode = 'create', 
+  workshop = null, 
+  onCancel, 
+  onSubmit 
+}: { 
+  mode?: 'create' | 'edit';
+  workshop?: Workshop | null;
+  onCancel: () => void;
+  onSubmit: (data: Partial<Workshop>) => void;
+}) {
+  const [formData, setFormData] = useState({
+    title: workshop?.title || '',
+    description: workshop?.description || '',
+    posterUrl: workshop?.posterUrl || '',
+    instructor: workshop?.instructor || '',
+    category: workshop?.category || '',
+    level: workshop?.level || 'مبتدی',
+    duration: workshop?.duration || '',
+    capacity: workshop?.capacity || 0,
+    location: workshop?.location || '',
+    eventDate: workshop?.eventDate || '',
+    isActive: workshop?.isActive ?? true,
+    registrationOpen: workshop?.registrationOpen ?? true
+  });
+
+  const handleChange = (field: string, value: string | number | boolean) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSubmit(formData);
+  };
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>{mode === 'create' ? 'افزودن کارگاه جدید' : 'ویرایش کارگاه'}</CardTitle>
+        <CardDescription>
+          {mode === 'create' 
+            ? 'اطلاعات کارگاه آموزشی جدید خود را وارد کنید.' 
+            : 'اطلاعات کارگاه آموزشی را ویرایش کنید.'}
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={handleSubmit}>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="title">عنوان کارگاه *</Label>
+                <Input 
+                  id="title" 
+                  placeholder="آبیاری درختان پسته"
+                  value={formData.title}
+                  onChange={(e) => handleChange('title', e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="description">توضیحات کلی</Label>
+                <Textarea 
+                  id="description" 
+                  placeholder="توضیحات کلی کارگاه را وارد کنید..."
+                  value={formData.description}
+                  onChange={(e) => handleChange('description', e.target.value)}
+                  rows={4}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="instructor">مدرس</Label>
+                <Input 
+                  id="instructor" 
+                  placeholder="نام مدرس"
+                  value={formData.instructor}
+                  onChange={(e) => handleChange('instructor', e.target.value)}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="posterUrl">آدرس پوستر</Label>
+                <Input 
+                  id="posterUrl" 
+                  placeholder="https://example.com/poster.jpg"
+                  value={formData.posterUrl}
+                  onChange={(e) => handleChange('posterUrl', e.target.value)}
+                />
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="category">دسته‌بندی</Label>
+                  <Input 
+                    id="category" 
+                    placeholder="کشاورزی"
+                    value={formData.category}
+                    onChange={(e) => handleChange('category', e.target.value)}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="level">سطح</Label>
+                  <Select 
+                    value={formData.level} 
+                    onValueChange={(value) => handleChange('level', value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="سطح را انتخاب کنید" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="مبتدی">مبتدی</SelectItem>
+                      <SelectItem value="متوسط">متوسط</SelectItem>
+                      <SelectItem value="پیشرفته">پیشرفته</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="duration">مدت زمان</Label>
+                  <Input 
+                    id="duration" 
+                    placeholder="2 ساعت"
+                    value={formData.duration}
+                    onChange={(e) => handleChange('duration', e.target.value)}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="capacity">ظرفیت</Label>
+                  <Input 
+                    id="capacity" 
+                    type="number"
+                    min={0}
+                    value={formData.capacity}
+                    onChange={(e) => handleChange('capacity', parseInt(e.target.value) || 0)}
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="location">مکان برگزاری</Label>
+                <Input 
+                  id="location" 
+                  placeholder="سالن کنفرانس مرکز پیستاط"
+                  value={formData.location}
+                  onChange={(e) => handleChange('location', e.target.value)}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="eventDate">تاریخ برگزاری</Label>
+                <Input 
+                  id="eventDate" 
+                  placeholder="1403/01/15"
+                  value={formData.eventDate}
+                  onChange={(e) => handleChange('eventDate', e.target.value)}
+                />
+              </div>
+
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2 space-x-reverse">
+                  <Switch 
+                    id="isActive"
+                    checked={formData.isActive}
+                    onCheckedChange={(checked) => handleChange('isActive', checked)}
+                  />
+                  <Label htmlFor="isActive">فعال</Label>
+                </div>
+
+                <div className="flex items-center space-x-2 space-x-reverse">
+                  <Switch 
+                    id="registrationOpen"
+                    checked={formData.registrationOpen}
+                    onCheckedChange={(checked) => handleChange('registrationOpen', checked)}
+                  />
+                  <Label htmlFor="registrationOpen">ثبت‌نام باز</Label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex justify-end mt-6 space-x-2 space-x-reverse">
+            <Button type="button" variant="outline" onClick={onCancel}>انصراف</Button>
+            <Button type="submit">{mode === 'create' ? 'ایجاد کارگاه' : 'بروزرسانی'}</Button>
+          </div>
+        </form>
+      </CardContent>
+    </Card>
+  );
+}
+
+function WorkshopSectionsManager({ workshopId }: { workshopId: number }) {
+  const [showForm, setShowForm] = useState(false);
+  const [selectedSection, setSelectedSection] = useState<WorkshopSection | null>(null);
+  const [formMode, setFormMode] = useState<'create' | 'edit'>('create');
+  const { toast } = useToast();
+
+  const { data: sections = [], isLoading } = useQuery<WorkshopSection[]>({
+    queryKey: [`/api/workshops/${workshopId}/sections`]
+  });
+
+  const createSectionMutation = useMutation({
+    mutationFn: (sectionData: Omit<WorkshopSection, 'id' | 'createdAt' | 'updatedAt'>) => 
+      apiRequest('/api/workshop-sections', { method: 'POST', body: JSON.stringify(sectionData) }),
+    onSuccess: () => {
+      toast({ title: "بخش با موفقیت ایجاد شد", description: "بخش جدید به کارگاه اضافه شد" });
+      queryClient.invalidateQueries({ queryKey: [`/api/workshops/${workshopId}/sections`] });
+      setShowForm(false);
+    },
+    onError: (error) => {
+      toast({ 
+        title: "خطا در ایجاد بخش", 
+        description: "لطفا دوباره تلاش کنید",
+        variant: "destructive"
+      });
+    }
+  });
+
+  const updateSectionMutation = useMutation({
+    mutationFn: ({ id, data }: { id: number; data: Partial<WorkshopSection> }) => 
+      apiRequest(`/api/workshop-sections/${id}`, { method: 'PATCH', body: JSON.stringify(data) }),
+    onSuccess: () => {
+      toast({ title: "بخش با موفقیت بروزرسانی شد" });
+      queryClient.invalidateQueries({ queryKey: [`/api/workshops/${workshopId}/sections`] });
+      setShowForm(false);
+    },
+    onError: (error) => {
+      toast({ 
+        title: "خطا در بروزرسانی بخش", 
+        description: "لطفا دوباره تلاش کنید",
+        variant: "destructive"
+      });
+    }
+  });
+
+  const deleteSectionMutation = useMutation({
+    mutationFn: (id: number) => 
+      apiRequest(`/api/workshop-sections/${id}`, { method: 'DELETE' }),
+    onSuccess: () => {
+      toast({ title: "بخش با موفقیت حذف شد" });
+      queryClient.invalidateQueries({ queryKey: [`/api/workshops/${workshopId}/sections`] });
+    },
+    onError: (error) => {
+      toast({ 
+        title: "خطا در حذف بخش", 
+        description: "لطفا دوباره تلاش کنید",
+        variant: "destructive"
+      });
+    }
+  });
+
+  const handleAddSection = () => {
+    setFormMode('create');
+    setSelectedSection(null);
+    setShowForm(true);
+  };
+
+  const handleEditSection = (section: WorkshopSection) => {
+    setFormMode('edit');
+    setSelectedSection(section);
+    setShowForm(true);
+  };
+
+  const handleDeleteSection = (id: number) => {
+    if (window.confirm('آیا از حذف این بخش اطمینان دارید؟')) {
+      deleteSectionMutation.mutate(id);
+    }
+  };
+
+  return (
+    <div>
+      {isLoading ? (
+        <div className="space-y-4">
+          {Array(3).fill(0).map((_, i) => (
+            <Card key={i}>
+              <CardHeader>
+                <Skeleton className="h-6 w-48" />
+                <Skeleton className="h-4 w-72" />
+              </CardHeader>
+              <CardContent>
+                <Skeleton className="h-24 w-full" />
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      ) : showForm ? (
+        <WorkshopSectionForm 
+          mode={formMode}
+          section={selectedSection}
+          workshopId={workshopId}
+          onCancel={() => setShowForm(false)}
+          onSubmit={(data) => {
+            if (formMode === 'create') {
+              createSectionMutation.mutate({
+                ...data,
+                workshopId
+              } as Omit<WorkshopSection, 'id' | 'createdAt' | 'updatedAt'>);
+            } else if (selectedSection) {
+              updateSectionMutation.mutate({ 
+                id: selectedSection.id, 
+                data 
+              });
+            }
+          }}
+        />
+      ) : (
+        <div className="bg-white rounded-lg shadow">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>عنوان بخش</TableHead>
+                <TableHead>ترتیب</TableHead>
+                <TableHead>فایل‌های ضمیمه</TableHead>
+                <TableHead>وضعیت</TableHead>
+                <TableHead>عملیات</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {sections.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={5} className="text-center py-8 text-neutral-400">
+                    هیچ بخشی یافت نشد. اولین بخش کارگاه خود را اضافه کنید!
+                  </TableCell>
+                </TableRow>
+              ) : (
+                sections
+                  .sort((a, b) => a.order - b.order)
+                  .map((section) => (
+                  <TableRow key={section.id}>
+                    <TableCell className="font-medium">{section.title}</TableCell>
+                    <TableCell>{section.order}</TableCell>
+                    <TableCell>
+                      <div className="flex gap-1">
+                        {section.videoUrl && (
+                          <span className="inline-flex items-center px-2 py-1 rounded text-xs bg-blue-100 text-blue-800">
+                            <Video className="h-3 w-3 mr-1" />
+                            ویدیو
+                          </span>
+                        )}
+                        {section.presentationUrl && (
+                          <span className="inline-flex items-center px-2 py-1 rounded text-xs bg-green-100 text-green-800">
+                            <File className="h-3 w-3 mr-1" />
+                            ارائه
+                          </span>
+                        )}
+                        {section.documentUrl && (
+                          <span className="inline-flex items-center px-2 py-1 rounded text-xs bg-orange-100 text-orange-800">
+                            <File className="h-3 w-3 mr-1" />
+                            سند
+                          </span>
+                        )}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      {section.isLocked ? (
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                          قفل شده
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                          آزاد
+                        </span>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-1">
+                        <Button 
+                          variant="ghost" 
+                          size="icon"
+                          title="مشاهده بخش"
+                        >
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          onClick={() => handleEditSection(section)}
+                          title="ویرایش بخش"
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button 
+                          variant="ghost" 
+                          size="icon"
+                          className="text-red-500"
+                          onClick={() => handleDeleteSection(section.id)}
+                          title="حذف بخش"
+                        >
+                          <Trash className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function WorkshopSectionForm({ 
+  mode = 'create', 
+  section = null,
+  workshopId,
+  onCancel, 
+  onSubmit 
+}: { 
+  mode?: 'create' | 'edit';
+  section?: WorkshopSection | null;
+  workshopId: number;
+  onCancel: () => void;
+  onSubmit: (data: Partial<WorkshopSection>) => void;
+}) {
+  const [formData, setFormData] = useState({
+    title: section?.title || '',
+    description: section?.description || '',
+    content: section?.content || '',
+    videoUrl: section?.videoUrl || '',
+    presentationUrl: section?.presentationUrl || '',
+    documentUrl: section?.documentUrl || '',
+    order: section?.order || 1,
+    isLocked: section?.isLocked ?? false
+  });
+
+  const handleChange = (field: string, value: string | number | boolean) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSubmit(formData);
+  };
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>{mode === 'create' ? 'افزودن بخش جدید' : 'ویرایش بخش'}</CardTitle>
+        <CardDescription>
+          {mode === 'create' 
+            ? 'اطلاعات بخش جدید کارگاه را وارد کنید.' 
+            : 'اطلاعات بخش را ویرایش کنید.'}
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={handleSubmit}>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="title">عنوان بخش *</Label>
+                <Input 
+                  id="title" 
+                  placeholder="بخش اول: آبیاری قطره‌ای"
+                  value={formData.title}
+                  onChange={(e) => handleChange('title', e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="description">توضیحات بخش</Label>
+                <Textarea 
+                  id="description" 
+                  placeholder="توضیحات این بخش از کارگاه..."
+                  value={formData.description}
+                  onChange={(e) => handleChange('description', e.target.value)}
+                  rows={3}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="content">محتوای متنی</Label>
+                <Textarea 
+                  id="content" 
+                  placeholder="متن کامل این بخش از کارگاه..."
+                  value={formData.content}
+                  onChange={(e) => handleChange('content', e.target.value)}
+                  rows={5}
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="order">ترتیب</Label>
+                  <Input 
+                    id="order" 
+                    type="number"
+                    min={1}
+                    value={formData.order}
+                    onChange={(e) => handleChange('order', parseInt(e.target.value) || 1)}
+                  />
+                </div>
+
+                <div className="flex items-center space-x-2 space-x-reverse pt-6">
+                  <Switch 
+                    id="isLocked"
+                    checked={formData.isLocked}
+                    onCheckedChange={(checked) => handleChange('isLocked', checked)}
+                  />
+                  <Label htmlFor="isLocked">قفل شده</Label>
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="videoUrl">آدرس ویدیو</Label>
+                <Input 
+                  id="videoUrl" 
+                  placeholder="/uploads/videos/section1.mp4"
+                  value={formData.videoUrl}
+                  onChange={(e) => handleChange('videoUrl', e.target.value)}
+                />
+                <div className="border-2 border-dashed border-neutral-200 rounded-lg p-4 text-center">
+                  <Input 
+                    id="video-upload" 
+                    type="file" 
+                    className="hidden" 
+                    accept="video/*"
+                  />
+                  <Label 
+                    htmlFor="video-upload" 
+                    className="cursor-pointer flex flex-col items-center justify-center gap-2 text-neutral-500"
+                  >
+                    <Video className="h-6 w-6" />
+                    <span className="text-sm">آپلود ویدیو</span>
+                  </Label>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="presentationUrl">آدرس فایل ارائه</Label>
+                <Input 
+                  id="presentationUrl" 
+                  placeholder="/uploads/presentations/section1.pptx"
+                  value={formData.presentationUrl}
+                  onChange={(e) => handleChange('presentationUrl', e.target.value)}
+                />
+                <div className="border-2 border-dashed border-neutral-200 rounded-lg p-4 text-center">
+                  <Input 
+                    id="presentation-upload" 
+                    type="file" 
+                    className="hidden" 
+                    accept=".ppt,.pptx,.pdf"
+                  />
+                  <Label 
+                    htmlFor="presentation-upload" 
+                    className="cursor-pointer flex flex-col items-center justify-center gap-2 text-neutral-500"
+                  >
+                    <File className="h-6 w-6" />
+                    <span className="text-sm">آپلود ارائه</span>
+                  </Label>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="documentUrl">آدرس سند</Label>
+                <Input 
+                  id="documentUrl" 
+                  placeholder="/uploads/documents/section1.pdf"
+                  value={formData.documentUrl}
+                  onChange={(e) => handleChange('documentUrl', e.target.value)}
+                />
+                <div className="border-2 border-dashed border-neutral-200 rounded-lg p-4 text-center">
+                  <Input 
+                    id="document-upload" 
+                    type="file" 
+                    className="hidden" 
+                    accept=".pdf,.doc,.docx"
+                  />
+                  <Label 
+                    htmlFor="document-upload" 
+                    className="cursor-pointer flex flex-col items-center justify-center gap-2 text-neutral-500"
+                  >
+                    <Upload className="h-6 w-6" />
+                    <span className="text-sm">آپلود سند</span>
+                  </Label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex justify-end mt-6 space-x-2 space-x-reverse">
+            <Button type="button" variant="outline" onClick={onCancel}>انصراف</Button>
+            <Button type="submit">{mode === 'create' ? 'ایجاد بخش' : 'بروزرسانی'}</Button>
           </div>
         </form>
       </CardContent>

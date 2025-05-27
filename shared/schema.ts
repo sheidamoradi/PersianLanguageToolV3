@@ -128,7 +128,25 @@ export const workshops = pgTable("workshops", {
   instructor: text("instructor"),
   duration: text("duration"),
   capacity: integer("capacity"),
+  level: text("level"), // مبتدی، متوسط، پیشرفته
+  category: text("category"),
+  isActive: boolean("is_active").default(true),
   registrationOpen: boolean("registration_open").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const workshopSections = pgTable("workshop_sections", {
+  id: serial("id").primaryKey(),
+  workshopId: integer("workshop_id").notNull(),
+  title: text("title").notNull(),
+  description: text("description"),
+  content: text("content"),
+  videoUrl: text("video_url"),
+  presentationUrl: text("presentation_url"),
+  documentUrl: text("document_url"),
+  order: integer("order").notNull(),
+  isLocked: boolean("is_locked").default(false),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
@@ -171,6 +189,7 @@ export const insertMagazineSchema = createInsertSchema(magazines).omit({ id: tru
 export const insertArticleSchema = createInsertSchema(articles).omit({ id: true, createdAt: true, updatedAt: true });
 export const insertArticleContentSchema = createInsertSchema(articleContents).omit({ id: true, createdAt: true });
 export const insertWorkshopSchema = createInsertSchema(workshops).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertWorkshopSectionSchema = createInsertSchema(workshopSections).omit({ id: true, createdAt: true, updatedAt: true });
 export const insertWorkshopContentSchema = createInsertSchema(workshopContents).omit({ id: true, createdAt: true });
 
 // Types
@@ -203,6 +222,9 @@ export type ArticleContent = typeof articleContents.$inferSelect;
 
 export type InsertWorkshop = z.infer<typeof insertWorkshopSchema>;
 export type Workshop = typeof workshops.$inferSelect;
+
+export type InsertWorkshopSection = z.infer<typeof insertWorkshopSectionSchema>;
+export type WorkshopSection = typeof workshopSections.$inferSelect;
 
 export type InsertWorkshopContent = z.infer<typeof insertWorkshopContentSchema>;
 export type WorkshopContent = typeof workshopContents.$inferSelect;
