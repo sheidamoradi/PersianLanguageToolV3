@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
-import { type Course, type Project, type Document, type MediaContent, type Magazine, type Article, type ArticleContent } from "@shared/schema";
+import { type Course, type Project, type Document, type MediaContent, type Magazine, type Article, type ArticleContent, type Slide } from "@shared/schema";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
@@ -37,12 +37,13 @@ export default function AdminPage() {
       </div>
 
       <Tabs defaultValue="courses" onValueChange={setActiveTab} value={activeTab}>
-        <TabsList className="grid grid-cols-5 mb-8">
+        <TabsList className="grid grid-cols-6 mb-8">
           <TabsTrigger value="courses">دوره‌ها</TabsTrigger>
           <TabsTrigger value="projects">پروژه‌ها</TabsTrigger>
           <TabsTrigger value="magazines">مجلات</TabsTrigger>
           <TabsTrigger value="documents">اسناد</TabsTrigger>
           <TabsTrigger value="media">رسانه</TabsTrigger>
+          <TabsTrigger value="slides">اسلایدر</TabsTrigger>
         </TabsList>
 
         <TabsContent value="courses">
@@ -63,6 +64,10 @@ export default function AdminPage() {
 
         <TabsContent value="media">
           <MediaTab />
+        </TabsContent>
+
+        <TabsContent value="slides">
+          <SlidesTab />
         </TabsContent>
       </Tabs>
     </div>
@@ -1843,7 +1848,7 @@ function MediaForm({
                   id="instructorName" 
                   placeholder="دکتر سارا جانسون"
                   value={formData.instructorName}
-                  onChange={(e.target.value)}
+                  onChange={(e) => handleChange('instructorName', e.target.value)}
                 />
               </div>
 
@@ -1872,6 +1877,370 @@ function MediaForm({
           <div className="flex justify-end mt-6 space-x-2 space-x-reverse">
             <Button type="button" variant="outline" onClick={onCancel}>انصراف</Button>
             <Button type="submit">{mode === 'create' ? 'ایجاد رسانه' : 'بروزرسانی'}</Button>
+          </div>
+        </form>
+      </CardContent>
+    </Card>
+  );
+}
+
+function SlidesTab() {
+  const [showForm, setShowForm] = useState(false);
+  const [formMode, setFormMode] = useState<'create' | 'edit'>('create');
+  const [selectedSlide, setSelectedSlide] = useState<Slide | null>(null);
+  const { toast } = useToast();
+
+  const { data: slides = [], isLoading } = useQuery<Slide[]>({
+    queryKey: ['/api/slides']
+  });
+
+  const createSlideMutation = useMutation({
+    mutationFn: (slideData: Omit<Slide, 'id' | 'createdAt' | 'updatedAt'>) => 
+      apiRequest('/api/slides', { method: 'POST', body: JSON.stringify(slideData) }),
+    onSuccess: () => {
+      toast({ title: "اسلاید با موفقیت ایجاد شد", description: "اسلاید جدید شما به سیستم اضافه شد" });
+      queryClient.invalidateQueries({ queryKey: ['/api/slides'] });
+      setShowForm(false);
+    },
+    onError: (error) => {
+      toast({ 
+        title: "خطا در ایجاد اسلاید", 
+        description: "لطفا دوباره تلاش کنید",
+        variant: "destructive"
+      });
+    }
+  });
+
+  const updateSlideMutation = useMutation({
+    mutationFn: ({ id, data }: { id: number; data: Partial<Slide> }) => 
+      apiRequest(`/api/slides/${id}`, { method: 'PATCH', body: JSON.stringify(data) }),
+    onSuccess: () => {
+      toast({ title: "اسلاید با موفقیت بروزرسانی شد" });
+      queryClient.invalidateQueries({ queryKey: ['/api/slides'] });
+      setShowForm(false);
+    },
+    onError: (error) => {
+      toast({ 
+        title: "خطا در بروزرسانی اسلاید", 
+        description: "لطفا دوباره تلاش کنید",
+        variant: "destructive"
+      });
+    }
+  });
+
+  const deleteSlideMutation = useMutation({
+    mutationFn: (id: number) => 
+      apiRequest(`/api/slides/${id}`, { method: 'DELETE' }),
+    onSuccess: () => {
+      toast({ title: "اسلاید با موفقیت حذف شد" });
+      queryClient.invalidateQueries({ queryKey: ['/api/slides'] });
+    },
+    onError: (error) => {
+      toast({ 
+        title: "خطا در حذف اسلاید", 
+        description: "لطفا دوباره تلاش کنید",
+        variant: "destructive"
+      });
+    }
+  });
+
+  const handleAddSlide = () => {
+    setFormMode('create');
+    setSelectedSlide(null);
+    setShowForm(true);
+  };
+
+  const handleEditSlide = (slide: Slide) => {
+    setFormMode('edit');
+    setSelectedSlide(slide);
+    setShowForm(true);
+  };
+
+  const handleDeleteSlide = (id: number) => {
+    if (window.confirm('آیا از حذف این اسلاید اطمینان دارید؟')) {
+      deleteSlideMutation.mutate(id);
+    }
+  };
+
+  return (
+    <div>
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-semibold text-neutral-700">مدیریت اسلایدر</h2>
+        <Button onClick={handleAddSlide} className="flex items-center gap-2">
+          <Plus className="h-4 w-4" />
+          افزودن اسلاید جدید
+        </Button>
+      </div>
+
+      {isLoading ? (
+        <div className="space-y-4">
+          {Array(3).fill(0).map((_, i) => (
+            <Card key={i}>
+              <CardHeader>
+                <Skeleton className="h-6 w-48" />
+                <Skeleton className="h-4 w-72" />
+              </CardHeader>
+              <CardContent>
+                <Skeleton className="h-24 w-full" />
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      ) : showForm ? (
+        <SlideForm 
+          mode={formMode}
+          slide={selectedSlide}
+          onCancel={() => setShowForm(false)}
+          onSubmit={(data) => {
+            if (formMode === 'create') {
+              createSlideMutation.mutate(data as Omit<Slide, 'id' | 'createdAt' | 'updatedAt'>);
+            } else if (selectedSlide) {
+              updateSlideMutation.mutate({ 
+                id: selectedSlide.id, 
+                data 
+              });
+            }
+          }}
+        />
+      ) : (
+        <div className="bg-white rounded-lg shadow">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>عنوان</TableHead>
+                <TableHead>توضیحات</TableHead>
+                <TableHead>متن دکمه</TableHead>
+                <TableHead>ترتیب</TableHead>
+                <TableHead>وضعیت</TableHead>
+                <TableHead>عملیات</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {slides.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={6} className="text-center py-8 text-neutral-400">
+                    هیچ اسلایدی یافت نشد. اولین اسلاید خود را اضافه کنید!
+                  </TableCell>
+                </TableRow>
+              ) : (
+                slides.map((slide) => (
+                  <TableRow key={slide.id}>
+                    <TableCell className="font-medium">{slide.title}</TableCell>
+                    <TableCell className="max-w-xs truncate">{slide.description}</TableCell>
+                    <TableCell>{slide.buttonText}</TableCell>
+                    <TableCell>{slide.order}</TableCell>
+                    <TableCell>
+                      {slide.isActive ? (
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                          فعال
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                          غیرفعال
+                        </span>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-1">
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          onClick={() => handleEditSlide(slide)}
+                          title="ویرایش اسلاید"
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button 
+                          variant="ghost" 
+                          size="icon"
+                          className="text-red-500"
+                          onClick={() => handleDeleteSlide(slide.id)}
+                          title="حذف اسلاید"
+                        >
+                          <Trash className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function SlideForm({ 
+  mode = 'create', 
+  slide = null, 
+  onCancel, 
+  onSubmit 
+}: { 
+  mode?: 'create' | 'edit';
+  slide?: Slide | null;
+  onCancel: () => void;
+  onSubmit: (data: Partial<Slide>) => void;
+}) {
+  const [formData, setFormData] = useState({
+    title: slide?.title || '',
+    description: slide?.description || '',
+    imageUrl: slide?.imageUrl || '',
+    buttonText: slide?.buttonText || '',
+    buttonUrl: slide?.buttonUrl || '',
+    isActive: slide?.isActive ?? true,
+    order: slide?.order || 0,
+    gradientFrom: slide?.gradientFrom || 'primary/20',
+    gradientTo: slide?.gradientTo || 'secondary/20',
+    iconName: slide?.iconName || 'GraduationCap'
+  });
+
+  const handleChange = (field: string, value: string | number | boolean) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSubmit(formData);
+  };
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>{mode === 'create' ? 'افزودن اسلاید جدید' : 'ویرایش اسلاید'}</CardTitle>
+        <CardDescription>
+          {mode === 'create' 
+            ? 'اطلاعات اسلاید جدید خود را وارد کنید.' 
+            : 'اطلاعات اسلاید را ویرایش کنید.'}
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={handleSubmit}>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="title">عنوان اسلاید *</Label>
+                <Input 
+                  id="title" 
+                  placeholder="به مرکز پیستاط خوش آمدید"
+                  value={formData.title}
+                  onChange={(e) => handleChange('title', e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="description">توضیحات *</Label>
+                <Textarea 
+                  id="description" 
+                  placeholder="بهترین دوره‌های آموزشی در حوزه کشاورزی"
+                  value={formData.description}
+                  onChange={(e) => handleChange('description', e.target.value)}
+                  required
+                  rows={3}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="buttonText">متن دکمه *</Label>
+                <Input 
+                  id="buttonText" 
+                  placeholder="مشاهده دوره‌ها"
+                  value={formData.buttonText}
+                  onChange={(e) => handleChange('buttonText', e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="buttonUrl">لینک دکمه *</Label>
+                <Input 
+                  id="buttonUrl" 
+                  placeholder="/courses"
+                  value={formData.buttonUrl}
+                  onChange={(e) => handleChange('buttonUrl', e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="imageUrl">آدرس تصویر</Label>
+                <Input 
+                  id="imageUrl" 
+                  placeholder="https://example.com/image.jpg"
+                  value={formData.imageUrl}
+                  onChange={(e) => handleChange('imageUrl', e.target.value)}
+                />
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="gradientFrom">رنگ گرادیان شروع</Label>
+                <Input 
+                  id="gradientFrom" 
+                  placeholder="primary/20"
+                  value={formData.gradientFrom}
+                  onChange={(e) => handleChange('gradientFrom', e.target.value)}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="gradientTo">رنگ گرادیان پایان</Label>
+                <Input 
+                  id="gradientTo" 
+                  placeholder="secondary/20"
+                  value={formData.gradientTo}
+                  onChange={(e) => handleChange('gradientTo', e.target.value)}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="iconName">نام آیکون</Label>
+                <Select 
+                  value={formData.iconName} 
+                  onValueChange={(value) => handleChange('iconName', value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="آیکون را انتخاب کنید" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="GraduationCap">کلاه فارغ‌التحصیلی</SelectItem>
+                    <SelectItem value="BookOpen">کتاب باز</SelectItem>
+                    <SelectItem value="Layers">لایه‌ها</SelectItem>
+                    <SelectItem value="Book">کتاب</SelectItem>
+                    <SelectItem value="TrendingUp">رشد</SelectItem>
+                    <SelectItem value="Users">کاربران</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="order">ترتیب نمایش</Label>
+                <Input 
+                  id="order" 
+                  type="number"
+                  min={0}
+                  value={formData.order}
+                  onChange={(e) => handleChange('order', parseInt(e.target.value) || 0)}
+                />
+              </div>
+
+              <div className="flex items-center space-x-2 space-x-reverse pt-4">
+                <Switch 
+                  id="isActive"
+                  checked={formData.isActive}
+                  onCheckedChange={(checked) => handleChange('isActive', checked)}
+                />
+                <Label htmlFor="isActive">فعال</Label>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex justify-end mt-6 space-x-2 space-x-reverse">
+            <Button type="button" variant="outline" onClick={onCancel}>انصراف</Button>
+            <Button type="submit">{mode === 'create' ? 'ایجاد اسلاید' : 'بروزرسانی'}</Button>
           </div>
         </form>
       </CardContent>

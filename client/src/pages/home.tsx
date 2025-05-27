@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Link } from "wouter";
 import CourseCard from "@/components/course/CourseCard";
 import ProjectCard from "@/components/project/ProjectCard";
-import { type Course, type Project } from "@shared/schema";
+import { type Course, type Project, type Slide } from "@shared/schema";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { 
@@ -12,7 +12,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { Book, BookOpen, Bookmark, ChevronLeft, ChevronRight, GraduationCap, Layers, TrendingUp } from "lucide-react";
+import { Book, BookOpen, Bookmark, ChevronLeft, ChevronRight, GraduationCap, Layers, TrendingUp, Users } from "lucide-react";
 
 export default function Home() {
   const { 
@@ -29,8 +29,28 @@ export default function Home() {
     queryKey: ['/api/projects'] 
   });
 
+  const { 
+    data: slides = [], 
+    isLoading: isLoadingSlides 
+  } = useQuery<Slide[]>({ 
+    queryKey: ['/api/slides/active'] 
+  });
+
   // Filter courses with progress > 0 for "Continue Learning" section
   const continueLearningCourses = courses.filter(course => course.progress && course.progress > 0);
+
+  // Icon mapping for dynamic icons
+  const getIcon = (iconName: string) => {
+    const icons: { [key: string]: any } = {
+      'GraduationCap': GraduationCap,
+      'BookOpen': BookOpen,
+      'Layers': Layers,
+      'Book': Book,
+      'TrendingUp': TrendingUp,
+      'Users': Users
+    };
+    return icons[iconName] || GraduationCap;
+  };
 
   return (
     <div id="dashboard" className="mb-10" dir="rtl">
@@ -38,125 +58,102 @@ export default function Home() {
       <div className="mb-10 -mt-2">
         <Carousel className="w-full" opts={{ align: "start", loop: true }}>
           <CarouselContent>
-            {/* Slide 1 - Welcome */}
-            <CarouselItem>
-              <Link href="/courses" className="block">
-                <div className="bg-gradient-to-l from-primary/20 to-secondary/20 rounded-xl overflow-hidden cursor-pointer hover:shadow-lg transition-shadow">
-                  <div className="flex flex-col md:flex-row items-center justify-between p-6 md:p-10">
-                    <div className="text-right mb-6 md:mb-0">
-                      <h2 className="text-2xl md:text-3xl font-bold text-neutral-700 mb-3">به مرکز پیستاط خوش آمدید</h2>
-                      <p className="text-neutral-500 mb-6 max-w-md">بهترین دوره‌های آموزشی در حوزه کشاورزی</p>
-                      <div className="flex gap-3 flex-wrap">
-                        <Button className="rounded-full">
-                          <BookOpen className="ml-2 h-4 w-4" />
-                          مشاهده دوره‌ها
-                        </Button>
-                        <Button variant="outline" className="rounded-full">
-                          درباره ما
-                        </Button>
+            {isLoadingSlides ? (
+              // Loading skeleton for slides
+              Array(3).fill(0).map((_, i) => (
+                <CarouselItem key={i}>
+                  <div className="bg-gradient-to-l from-neutral-100 to-neutral-200 rounded-xl overflow-hidden">
+                    <div className="flex flex-col md:flex-row items-center justify-between p-6 md:p-10">
+                      <div className="text-right mb-6 md:mb-0 w-full">
+                        <Skeleton className="h-8 w-64 mb-3" />
+                        <Skeleton className="h-4 w-96 mb-6" />
+                        <div className="flex gap-3">
+                          <Skeleton className="h-10 w-32 rounded-full" />
+                          <Skeleton className="h-10 w-24 rounded-full" />
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-center">
+                        <Skeleton className="rounded-full h-48 w-48" />
                       </div>
                     </div>
-                    <div className="flex items-center justify-center">
-                      <div className="bg-white rounded-full h-48 w-48 p-3 shadow-lg">
-                        <div className="bg-gradient-to-br from-primary/10 to-primary/30 h-full w-full rounded-full flex items-center justify-center">
-                          <GraduationCap className="h-24 w-24 text-primary" />
+                  </div>
+                </CarouselItem>
+              ))
+            ) : slides.length > 0 ? (
+              slides.map((slide) => {
+                const IconComponent = getIcon(slide.iconName || 'GraduationCap');
+                return (
+                  <CarouselItem key={slide.id}>
+                    <Link href={slide.buttonUrl} className="block">
+                      <div 
+                        className={`bg-gradient-to-l from-${slide.gradientFrom || 'primary/20'} to-${slide.gradientTo || 'secondary/20'} rounded-xl overflow-hidden cursor-pointer hover:shadow-lg transition-shadow`}
+                      >
+                        <div className="flex flex-col md:flex-row items-center justify-between p-6 md:p-10">
+                          <div className="text-right mb-6 md:mb-0">
+                            <h2 className="text-2xl md:text-3xl font-bold text-neutral-700 mb-3">{slide.title}</h2>
+                            <p className="text-neutral-500 mb-6 max-w-md">{slide.description}</p>
+                            <div className="flex gap-3 flex-wrap">
+                              <Button className="rounded-full">
+                                <IconComponent className="ml-2 h-4 w-4" />
+                                {slide.buttonText}
+                              </Button>
+                              <Button variant="outline" className="rounded-full">
+                                درباره ما
+                              </Button>
+                            </div>
+                          </div>
+                          <div className="flex items-center justify-center">
+                            {slide.imageUrl ? (
+                              <img 
+                                src={slide.imageUrl} 
+                                alt={slide.title}
+                                className="rounded-full h-48 w-48 object-cover shadow-lg"
+                              />
+                            ) : (
+                              <div className="bg-white rounded-full h-48 w-48 p-3 shadow-lg">
+                                <div className={`bg-gradient-to-br from-${slide.gradientFrom?.replace('/20', '/10') || 'primary/10'} to-${slide.gradientTo?.replace('/20', '/30') || 'primary/30'} h-full w-full rounded-full flex items-center justify-center`}>
+                                  <IconComponent className="h-24 w-24 text-primary" />
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </Link>
+                  </CarouselItem>
+                );
+              })
+            ) : (
+              // Fallback slides if no slides in database
+              <CarouselItem>
+                <Link href="/courses" className="block">
+                  <div className="bg-gradient-to-l from-primary/20 to-secondary/20 rounded-xl overflow-hidden cursor-pointer hover:shadow-lg transition-shadow">
+                    <div className="flex flex-col md:flex-row items-center justify-between p-6 md:p-10">
+                      <div className="text-right mb-6 md:mb-0">
+                        <h2 className="text-2xl md:text-3xl font-bold text-neutral-700 mb-3">به مرکز پیستاط خوش آمدید</h2>
+                        <p className="text-neutral-500 mb-6 max-w-md">بهترین دوره‌های آموزشی در حوزه کشاورزی</p>
+                        <div className="flex gap-3 flex-wrap">
+                          <Button className="rounded-full">
+                            <BookOpen className="ml-2 h-4 w-4" />
+                            مشاهده دوره‌ها
+                          </Button>
+                          <Button variant="outline" className="rounded-full">
+                            درباره ما
+                          </Button>
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-center">
+                        <div className="bg-white rounded-full h-48 w-48 p-3 shadow-lg">
+                          <div className="bg-gradient-to-br from-primary/10 to-primary/30 h-full w-full rounded-full flex items-center justify-center">
+                            <GraduationCap className="h-24 w-24 text-primary" />
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              </Link>
-            </CarouselItem>
-
-            {/* Slide 2 - Webinars */}
-            <CarouselItem>
-              <Link href="/projects" className="block">
-                <div className="bg-gradient-to-l from-secondary/20 to-purple-500/20 rounded-xl overflow-hidden cursor-pointer hover:shadow-lg transition-shadow">
-                  <div className="flex flex-col md:flex-row items-center justify-between p-6 md:p-10">
-                    <div className="text-right mb-6 md:mb-0">
-                      <h2 className="text-2xl md:text-3xl font-bold text-neutral-700 mb-3">وبینارهای تخصصی</h2>
-                      <p className="text-neutral-500 mb-6 max-w-md">آموزش‌های زنده و تعاملی با متخصصان</p>
-                      <div className="flex gap-3 flex-wrap">
-                        <Button className="rounded-full">
-                          <Layers className="ml-2 h-4 w-4" />
-                          مشاهده وبینارها
-                        </Button>
-                        <Button variant="outline" className="rounded-full">
-                          ثبت نام
-                        </Button>
-                      </div>
-                    </div>
-                    <div className="flex items-center justify-center">
-                      <div className="bg-white rounded-full h-48 w-48 p-3 shadow-lg">
-                        <div className="bg-gradient-to-br from-secondary/10 to-secondary/30 h-full w-full rounded-full flex items-center justify-center">
-                          <Layers className="h-24 w-24 text-secondary" />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </Link>
-            </CarouselItem>
-
-            {/* Slide 3 - Library */}
-            <CarouselItem>
-              <Link href="/library" className="block">
-                <div className="bg-gradient-to-l from-purple-500/20 to-amber-500/20 rounded-xl overflow-hidden cursor-pointer hover:shadow-lg transition-shadow">
-                  <div className="flex flex-col md:flex-row items-center justify-between p-6 md:p-10">
-                    <div className="text-right mb-6 md:mb-0">
-                      <h2 className="text-2xl md:text-3xl font-bold text-neutral-700 mb-3">کتابخانه دیجیتال</h2>
-                      <p className="text-neutral-500 mb-6 max-w-md">مجموعه غنی از منابع و کتب تخصصی</p>
-                      <div className="flex gap-3 flex-wrap">
-                        <Button className="rounded-full">
-                          <Book className="ml-2 h-4 w-4" />
-                          مطالعه کتب
-                        </Button>
-                        <Button variant="outline" className="rounded-full">
-                          جستجو
-                        </Button>
-                      </div>
-                    </div>
-                    <div className="flex items-center justify-center">
-                      <div className="bg-white rounded-full h-48 w-48 p-3 shadow-lg">
-                        <div className="bg-gradient-to-br from-purple-500/10 to-purple-500/30 h-full w-full rounded-full flex items-center justify-center">
-                          <Book className="h-24 w-24 text-purple-500" />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </Link>
-            </CarouselItem>
-
-            {/* Slide 4 - Magazine */}
-            <CarouselItem>
-              <Link href="/magazine" className="block">
-                <div className="bg-gradient-to-l from-amber-500/20 to-primary/20 rounded-xl overflow-hidden cursor-pointer hover:shadow-lg transition-shadow">
-                  <div className="flex flex-col md:flex-row items-center justify-between p-6 md:p-10">
-                    <div className="text-right mb-6 md:mb-0">
-                      <h2 className="text-2xl md:text-3xl font-bold text-neutral-700 mb-3">فصلنامه رویش سبز</h2>
-                      <p className="text-neutral-500 mb-6 max-w-md">آخرین اخبار و مقالات تخصصی کشاورزی</p>
-                      <div className="flex gap-3 flex-wrap">
-                        <Button className="rounded-full">
-                          <Bookmark className="ml-2 h-4 w-4" />
-                          مطالعه مجله
-                        </Button>
-                        <Button variant="outline" className="rounded-full">
-                          اشتراک
-                        </Button>
-                      </div>
-                    </div>
-                    <div className="flex items-center justify-center">
-                      <div className="bg-white rounded-full h-48 w-48 p-3 shadow-lg">
-                        <div className="bg-gradient-to-br from-amber-500/10 to-amber-500/30 h-full w-full rounded-full flex items-center justify-center">
-                          <TrendingUp className="h-24 w-24 text-amber-500" />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </Link>
-            </CarouselItem>
+                </Link>
+              </CarouselItem>
+            )}
           </CarouselContent>
           <CarouselPrevious className="right-4" />
           <CarouselNext className="left-4" />

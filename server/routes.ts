@@ -5,9 +5,8 @@ import { ZodError } from "zod";
 import { fromZodError } from "zod-validation-error";
 import { 
   insertCourseSchema, 
+  insertProjectSchema, 
   insertDocumentSchema, 
-  insertModuleSchema, 
-  insertProjectSchema,
   insertMagazineSchema,
   insertArticleSchema,
   insertArticleContentSchema
@@ -15,67 +14,67 @@ import {
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // API routes with /api prefix
-  
+
   // Users API
   app.get("/api/user/:id", async (req, res) => {
     const id = parseInt(req.params.id);
-    
+
     if (isNaN(id)) {
       return res.status(400).json({ message: "Invalid user ID" });
     }
-    
+
     const user = await storage.getUser(id);
-    
+
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-    
+
     return res.json(user);
   });
-  
+
   // Courses API
   app.get("/api/courses", async (req, res) => {
     const courses = await storage.getCourses();
     res.json(courses);
   });
-  
+
   app.get("/api/courses/:id", async (req, res) => {
     const id = parseInt(req.params.id);
-    
+
     if (isNaN(id)) {
       return res.status(400).json({ message: "Invalid course ID" });
     }
-    
+
     const course = await storage.getCourse(id);
-    
+
     if (!course) {
       return res.status(404).json({ message: "Course not found" });
     }
-    
+
     return res.json(course);
   });
 
   app.patch("/api/courses/:id/progress", async (req, res) => {
     const id = parseInt(req.params.id);
     const { progress } = req.body;
-    
+
     if (isNaN(id)) {
       return res.status(400).json({ message: "Invalid course ID" });
     }
-    
+
     if (typeof progress !== 'number' || progress < 0 || progress > 100) {
       return res.status(400).json({ message: "Invalid progress value" });
     }
-    
+
     const updatedCourse = await storage.updateCourseProgress(id, progress);
-    
+
     if (!updatedCourse) {
       return res.status(404).json({ message: "Course not found" });
     }
-    
+
     return res.json(updatedCourse);
   });
-  
+
   app.post("/api/courses", async (req, res) => {
     try {
       const courseData = insertCourseSchema.parse(req.body);
@@ -90,35 +89,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
     }
   });
-  
+
   // Modules API
   app.get("/api/courses/:courseId/modules", async (req, res) => {
     const courseId = parseInt(req.params.courseId);
-    
+
     if (isNaN(courseId)) {
       return res.status(400).json({ message: "Invalid course ID" });
     }
-    
+
     const modules = await storage.getModulesByCourseId(courseId);
     res.json(modules);
   });
-  
+
   app.get("/api/modules/:id", async (req, res) => {
     const id = parseInt(req.params.id);
-    
+
     if (isNaN(id)) {
       return res.status(400).json({ message: "Invalid module ID" });
     }
-    
+
     const module = await storage.getModule(id);
-    
+
     if (!module) {
       return res.status(404).json({ message: "Module not found" });
     }
-    
+
     return res.json(module);
   });
-  
+
   app.post("/api/modules", async (req, res) => {
     try {
       const moduleData = insertModuleSchema.parse(req.body);
@@ -133,29 +132,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
     }
   });
-  
+
   // Projects API
   app.get("/api/projects", async (req, res) => {
     const projects = await storage.getProjects();
     res.json(projects);
   });
-  
+
   app.get("/api/projects/:id", async (req, res) => {
     const id = parseInt(req.params.id);
-    
+
     if (isNaN(id)) {
       return res.status(400).json({ message: "Invalid project ID" });
     }
-    
+
     const project = await storage.getProject(id);
-    
+
     if (!project) {
       return res.status(404).json({ message: "Project not found" });
     }
-    
+
     return res.json(project);
   });
-  
+
   app.post("/api/projects", async (req, res) => {
     try {
       const projectData = insertProjectSchema.parse(req.body);
@@ -170,29 +169,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
     }
   });
-  
+
   // Documents API
   app.get("/api/documents", async (req, res) => {
     const documents = await storage.getDocuments();
     res.json(documents);
   });
-  
+
   app.get("/api/documents/:id", async (req, res) => {
     const id = parseInt(req.params.id);
-    
+
     if (isNaN(id)) {
       return res.status(400).json({ message: "Invalid document ID" });
     }
-    
+
     const document = await storage.getDocument(id);
-    
+
     if (!document) {
       return res.status(404).json({ message: "Document not found" });
     }
-    
+
     return res.json(document);
   });
-  
+
   app.post("/api/documents", async (req, res) => {
     try {
       const documentData = insertDocumentSchema.parse(req.body);
@@ -207,21 +206,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
     }
   });
-  
+
   // Media content API
   app.get("/api/media/:id", async (req, res) => {
     const id = parseInt(req.params.id);
-    
+
     if (isNaN(id)) {
       return res.status(400).json({ message: "Invalid media ID" });
     }
-    
+
     const mediaContent = await storage.getMediaContent(id);
-    
+
     if (!mediaContent) {
       return res.status(404).json({ message: "Media content not found" });
     }
-    
+
     return res.json(mediaContent);
   });
 
@@ -233,17 +232,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/api/magazines/:id", async (req, res) => {
     const id = parseInt(req.params.id);
-    
+
     if (isNaN(id)) {
       return res.status(400).json({ message: "کد مجله نامعتبر است" });
     }
-    
+
     const magazine = await storage.getMagazine(id);
-    
+
     if (!magazine) {
       return res.status(404).json({ message: "مجله پیدا نشد" });
     }
-    
+
     return res.json(magazine);
   });
 
@@ -264,18 +263,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.patch("/api/magazines/:id", async (req, res) => {
     const id = parseInt(req.params.id);
-    
+
     if (isNaN(id)) {
       return res.status(400).json({ message: "کد مجله نامعتبر است" });
     }
-    
+
     try {
       const updatedMagazine = await storage.updateMagazine(id, req.body);
-      
+
       if (!updatedMagazine) {
         return res.status(404).json({ message: "مجله پیدا نشد" });
       }
-      
+
       return res.json(updatedMagazine);
     } catch (error) {
       res.status(500).json({ message: "خطای داخلی سرور" });
@@ -284,17 +283,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.delete("/api/magazines/:id", async (req, res) => {
     const id = parseInt(req.params.id);
-    
+
     if (isNaN(id)) {
       return res.status(400).json({ message: "کد مجله نامعتبر است" });
     }
-    
+
     const result = await storage.deleteMagazine(id);
-    
+
     if (!result) {
       return res.status(404).json({ message: "مجله پیدا نشد" });
     }
-    
+
     return res.status(204).end();
   });
 
@@ -306,28 +305,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/api/magazines/:magazineId/articles", async (req, res) => {
     const magazineId = parseInt(req.params.magazineId);
-    
+
     if (isNaN(magazineId)) {
       return res.status(400).json({ message: "کد مجله نامعتبر است" });
     }
-    
+
     const articles = await storage.getArticlesByMagazineId(magazineId);
     res.json(articles);
   });
 
   app.get("/api/articles/:id", async (req, res) => {
     const id = parseInt(req.params.id);
-    
+
     if (isNaN(id)) {
       return res.status(400).json({ message: "کد مقاله نامعتبر است" });
     }
-    
+
     const article = await storage.getArticle(id);
-    
+
     if (!article) {
       return res.status(404).json({ message: "مقاله پیدا نشد" });
     }
-    
+
     return res.json(article);
   });
 
@@ -348,18 +347,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.patch("/api/articles/:id", async (req, res) => {
     const id = parseInt(req.params.id);
-    
+
     if (isNaN(id)) {
       return res.status(400).json({ message: "کد مقاله نامعتبر است" });
     }
-    
+
     try {
       const updatedArticle = await storage.updateArticle(id, req.body);
-      
+
       if (!updatedArticle) {
         return res.status(404).json({ message: "مقاله پیدا نشد" });
       }
-      
+
       return res.json(updatedArticle);
     } catch (error) {
       res.status(500).json({ message: "خطای داخلی سرور" });
@@ -368,28 +367,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.delete("/api/articles/:id", async (req, res) => {
     const id = parseInt(req.params.id);
-    
+
     if (isNaN(id)) {
       return res.status(400).json({ message: "کد مقاله نامعتبر است" });
     }
-    
+
     const result = await storage.deleteArticle(id);
-    
+
     if (!result) {
       return res.status(404).json({ message: "مقاله پیدا نشد" });
     }
-    
+
     return res.status(204).end();
   });
 
   // محتوای مقالات API
   app.get("/api/articles/:articleId/contents", async (req, res) => {
     const articleId = parseInt(req.params.articleId);
-    
+
     if (isNaN(articleId)) {
       return res.status(400).json({ message: "کد مقاله نامعتبر است" });
     }
-    
+
     const contents = await storage.getArticleContents(articleId);
     res.json(contents);
   });
@@ -411,18 +410,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.patch("/api/article-contents/:id", async (req, res) => {
     const id = parseInt(req.params.id);
-    
+
     if (isNaN(id)) {
       return res.status(400).json({ message: "کد محتوا نامعتبر است" });
     }
-    
+
     try {
       const updatedContent = await storage.updateArticleContent(id, req.body);
-      
+
       if (!updatedContent) {
         return res.status(404).json({ message: "محتوا پیدا نشد" });
       }
-      
+
       return res.json(updatedContent);
     } catch (error) {
       res.status(500).json({ message: "خطای داخلی سرور" });
@@ -431,17 +430,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.delete("/api/article-contents/:id", async (req, res) => {
     const id = parseInt(req.params.id);
-    
+
     if (isNaN(id)) {
       return res.status(400).json({ message: "کد محتوا نامعتبر است" });
     }
-    
+
     const result = await storage.deleteArticleContent(id);
-    
+
     if (!result) {
       return res.status(404).json({ message: "محتوا پیدا نشد" });
     }
-    
+
     return res.status(204).end();
   });
 

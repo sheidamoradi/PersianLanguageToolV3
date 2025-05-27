@@ -17,28 +17,28 @@ export interface IStorage {
   getUser(id: number): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
-  
+
   // Course methods
   getCourses(): Promise<Course[]>;
   getCourse(id: number): Promise<Course | undefined>;
   createCourse(course: InsertCourse): Promise<Course>;
   updateCourseProgress(id: number, progress: number): Promise<Course | undefined>;
-  
+
   // Module methods
   getModulesByCourseId(courseId: number): Promise<Module[]>;
   getModule(id: number): Promise<Module | undefined>;
   createModule(module: InsertModule): Promise<Module>;
-  
+
   // Project methods
   getProjects(): Promise<Project[]>;
   getProject(id: number): Promise<Project | undefined>;
   createProject(project: InsertProject): Promise<Project>;
-  
+
   // Document methods
   getDocuments(): Promise<Document[]>;
   getDocument(id: number): Promise<Document | undefined>;
   createDocument(document: InsertDocument): Promise<Document>;
-  
+
   // Media content methods
   getMediaContent(id: number): Promise<MediaContent | undefined>;
   createMediaContent(content: InsertMediaContent): Promise<MediaContent>;
@@ -49,7 +49,7 @@ export interface IStorage {
   createMagazine(magazine: InsertMagazine): Promise<Magazine>;
   updateMagazine(id: number, magazine: Partial<InsertMagazine>): Promise<Magazine | undefined>;
   deleteMagazine(id: number): Promise<boolean>;
-  
+
   // Article methods
   getArticles(): Promise<Article[]>;
   getArticlesByMagazineId(magazineId: number): Promise<Article[]>;
@@ -57,20 +57,20 @@ export interface IStorage {
   createArticle(article: InsertArticle): Promise<Article>;
   updateArticle(id: number, article: Partial<InsertArticle>): Promise<Article | undefined>;
   deleteArticle(id: number): Promise<boolean>;
-  
+
   // Article content methods
   getArticleContents(articleId: number): Promise<ArticleContent[]>;
   createArticleContent(content: InsertArticleContent): Promise<ArticleContent>;
   updateArticleContent(id: number, content: Partial<InsertArticleContent>): Promise<ArticleContent | undefined>;
   deleteArticleContent(id: number): Promise<boolean>;
-  
+
   // Workshop methods
   getWorkshops(): Promise<Workshop[]>;
   getWorkshop(id: number): Promise<Workshop | undefined>;
   createWorkshop(workshop: InsertWorkshop): Promise<Workshop>;
   updateWorkshop(id: number, workshop: Partial<InsertWorkshop>): Promise<Workshop | undefined>;
   deleteWorkshop(id: number): Promise<boolean>;
-  
+
   // Workshop content methods
   getWorkshopContents(workshopId: number): Promise<WorkshopContent[]>;
   createWorkshopContent(content: InsertWorkshopContent): Promise<WorkshopContent>;
@@ -90,7 +90,7 @@ export class MemStorage implements IStorage {
   private articleContents: Map<number, ArticleContent>;
   private workshops: Map<number, Workshop>;
   private workshopContents: Map<number, WorkshopContent>;
-  
+
   private userId: number;
   private courseId: number;
   private moduleId: number;
@@ -115,7 +115,7 @@ export class MemStorage implements IStorage {
     this.articleContents = new Map();
     this.workshops = new Map();
     this.workshopContents = new Map();
-    
+
     this.userId = 1;
     this.courseId = 1;
     this.moduleId = 1;
@@ -127,7 +127,7 @@ export class MemStorage implements IStorage {
     this.articleContentId = 1;
     this.workshopId = 1;
     this.workshopContentId = 1;
-    
+
     // Initialize with sample data
     this.initSampleData();
   }
@@ -141,7 +141,7 @@ export class MemStorage implements IStorage {
       progress: 42,
       membershipType: "Premium"
     });
-    
+
     // Create sample courses
     const course1 = this.createCourse({
       title: "Web Development Fundamentals",
@@ -155,7 +155,7 @@ export class MemStorage implements IStorage {
       isNew: false,
       isPopular: true
     });
-    
+
     const course2 = this.createCourse({
       title: "UI/UX Design Principles",
       description: "Master the fundamentals of user interface and experience design.",
@@ -168,7 +168,7 @@ export class MemStorage implements IStorage {
       isNew: false,
       isPopular: false
     });
-    
+
     const course3 = this.createCourse({
       title: "Data Science Basics",
       description: "Introduction to data analysis, visualization, and machine learning.",
@@ -181,7 +181,7 @@ export class MemStorage implements IStorage {
       isNew: true,
       isPopular: false
     });
-    
+
     // Create sample projects/magazines
     this.createProject({
       title: "Web Portfolio Project",
@@ -192,7 +192,7 @@ export class MemStorage implements IStorage {
       contentUrl: "/projects/web-portfolio",
       isLocked: false
     });
-    
+
     this.createProject({
       title: "Modern Education Trends",
       description: "Explore the latest innovations and methodologies in education.",
@@ -202,7 +202,7 @@ export class MemStorage implements IStorage {
       contentUrl: "/documents/modern-education-trends",
       isLocked: true
     });
-    
+
     this.createProject({
       title: "Digital Learning",
       description: "A comprehensive guide to effective online learning strategies.",
@@ -212,7 +212,7 @@ export class MemStorage implements IStorage {
       contentUrl: "/documents/digital-learning",
       isLocked: false
     });
-    
+
     // Create sample documents
     this.createDocument({
       title: "Web Development Handbook",
@@ -223,7 +223,7 @@ export class MemStorage implements IStorage {
       lastUpdated: "15 May 2023",
       allowDownload: true
     });
-    
+
     // Create sample media content
     this.createMediaContent({
       title: "Introduction to JavaScript Frameworks",
@@ -235,7 +235,7 @@ export class MemStorage implements IStorage {
       instructorTitle: "Web Development Instructor",
       instructorAvatar: "https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&h=100"
     });
-    
+
     // Create modules for courses
     this.createModule({
       courseId: 1,
@@ -246,7 +246,7 @@ export class MemStorage implements IStorage {
       isLocked: false,
       order: 1
     });
-    
+
     this.createModule({
       courseId: 1,
       title: "React Fundamentals",
@@ -256,7 +256,7 @@ export class MemStorage implements IStorage {
       isLocked: true,
       order: 2
     });
-    
+
     this.createModule({
       courseId: 1,
       title: "Vue.js Basics",
@@ -266,7 +266,7 @@ export class MemStorage implements IStorage {
       isLocked: true,
       order: 3
     });
-    
+
     this.createModule({
       courseId: 1,
       title: "Angular Overview",
@@ -295,87 +295,87 @@ export class MemStorage implements IStorage {
     this.users.set(id, user);
     return user;
   }
-  
+
   // Course methods
   async getCourses(): Promise<Course[]> {
     return Array.from(this.courses.values());
   }
-  
+
   async getCourse(id: number): Promise<Course | undefined> {
     return this.courses.get(id);
   }
-  
+
   async createCourse(insertCourse: InsertCourse): Promise<Course> {
     const id = this.courseId++;
     const course: Course = { ...insertCourse, id };
     this.courses.set(id, course);
     return course;
   }
-  
+
   async updateCourseProgress(id: number, progress: number): Promise<Course | undefined> {
     const course = this.courses.get(id);
     if (!course) return undefined;
-    
+
     const updatedCourse = { ...course, progress };
     this.courses.set(id, updatedCourse);
     return updatedCourse;
   }
-  
+
   // Module methods
   async getModulesByCourseId(courseId: number): Promise<Module[]> {
     return Array.from(this.modules.values())
       .filter(module => module.courseId === courseId)
       .sort((a, b) => a.order - b.order);
   }
-  
+
   async getModule(id: number): Promise<Module | undefined> {
     return this.modules.get(id);
   }
-  
+
   async createModule(insertModule: InsertModule): Promise<Module> {
     const id = this.moduleId++;
     const module: Module = { ...insertModule, id };
     this.modules.set(id, module);
     return module;
   }
-  
+
   // Project methods
   async getProjects(): Promise<Project[]> {
     return Array.from(this.projects.values());
   }
-  
+
   async getProject(id: number): Promise<Project | undefined> {
     return this.projects.get(id);
   }
-  
+
   async createProject(insertProject: InsertProject): Promise<Project> {
     const id = this.projectId++;
     const project: Project = { ...insertProject, id };
     this.projects.set(id, project);
     return project;
   }
-  
+
   // Document methods
   async getDocuments(): Promise<Document[]> {
     return Array.from(this.documents.values());
   }
-  
+
   async getDocument(id: number): Promise<Document | undefined> {
     return this.documents.get(id);
   }
-  
+
   async createDocument(insertDocument: InsertDocument): Promise<Document> {
     const id = this.documentId++;
     const document: Document = { ...insertDocument, id };
     this.documents.set(id, document);
     return document;
   }
-  
+
   // Media content methods
   async getMediaContent(id: number): Promise<MediaContent | undefined> {
     return this.mediaContents.get(id);
   }
-  
+
   async createMediaContent(insertMediaContent: InsertMediaContent): Promise<MediaContent> {
     const id = this.mediaContentId++;
     const mediaContent: MediaContent = { ...insertMediaContent, id };
@@ -387,11 +387,11 @@ export class MemStorage implements IStorage {
   async getMagazines(): Promise<Magazine[]> {
     return Array.from(this.magazines.values());
   }
-  
+
   async getMagazine(id: number): Promise<Magazine | undefined> {
     return this.magazines.get(id);
   }
-  
+
   async createMagazine(magazine: InsertMagazine): Promise<Magazine> {
     const id = this.magazineId++;
     const newMagazine: Magazine = { 
@@ -403,11 +403,11 @@ export class MemStorage implements IStorage {
     this.magazines.set(id, newMagazine);
     return newMagazine;
   }
-  
+
   async updateMagazine(id: number, magazine: Partial<InsertMagazine>): Promise<Magazine | undefined> {
     const existingMagazine = this.magazines.get(id);
     if (!existingMagazine) return undefined;
-    
+
     const updatedMagazine: Magazine = { 
       ...existingMagazine, 
       ...magazine,
@@ -416,26 +416,26 @@ export class MemStorage implements IStorage {
     this.magazines.set(id, updatedMagazine);
     return updatedMagazine;
   }
-  
+
   async deleteMagazine(id: number): Promise<boolean> {
     return this.magazines.delete(id);
   }
-  
+
   // Article methods
   async getArticles(): Promise<Article[]> {
     return Array.from(this.articles.values());
   }
-  
+
   async getArticlesByMagazineId(magazineId: number): Promise<Article[]> {
     return Array.from(this.articles.values())
       .filter(article => article.magazineId === magazineId)
       .sort((a, b) => a.order - b.order);
   }
-  
+
   async getArticle(id: number): Promise<Article | undefined> {
     return this.articles.get(id);
   }
-  
+
   async createArticle(article: InsertArticle): Promise<Article> {
     const id = this.articleId++;
     const newArticle: Article = { 
@@ -447,11 +447,11 @@ export class MemStorage implements IStorage {
     this.articles.set(id, newArticle);
     return newArticle;
   }
-  
+
   async updateArticle(id: number, article: Partial<InsertArticle>): Promise<Article | undefined> {
     const existingArticle = this.articles.get(id);
     if (!existingArticle) return undefined;
-    
+
     const updatedArticle: Article = { 
       ...existingArticle, 
       ...article,
@@ -460,18 +460,18 @@ export class MemStorage implements IStorage {
     this.articles.set(id, updatedArticle);
     return updatedArticle;
   }
-  
+
   async deleteArticle(id: number): Promise<boolean> {
     return this.articles.delete(id);
   }
-  
+
   // Article content methods
   async getArticleContents(articleId: number): Promise<ArticleContent[]> {
     return Array.from(this.articleContents.values())
       .filter(content => content.articleId === articleId)
       .sort((a, b) => a.order - b.order);
   }
-  
+
   async createArticleContent(content: InsertArticleContent): Promise<ArticleContent> {
     const id = this.articleContentId++;
     const newContent: ArticleContent = { 
@@ -482,11 +482,11 @@ export class MemStorage implements IStorage {
     this.articleContents.set(id, newContent);
     return newContent;
   }
-  
+
   async updateArticleContent(id: number, content: Partial<InsertArticleContent>): Promise<ArticleContent | undefined> {
     const existingContent = this.articleContents.get(id);
     if (!existingContent) return undefined;
-    
+
     const updatedContent: ArticleContent = { 
       ...existingContent, 
       ...content,
@@ -495,20 +495,20 @@ export class MemStorage implements IStorage {
     this.articleContents.set(id, updatedContent);
     return updatedContent;
   }
-  
+
   async deleteArticleContent(id: number): Promise<boolean> {
     return this.articleContents.delete(id);
   }
-  
+
   // Workshop methods
   async getWorkshops(): Promise<Workshop[]> {
     return Array.from(this.workshops.values());
   }
-  
+
   async getWorkshop(id: number): Promise<Workshop | undefined> {
     return this.workshops.get(id);
   }
-  
+
   async createWorkshop(workshop: InsertWorkshop): Promise<Workshop> {
     const id = this.workshopId++;
     const newWorkshop: Workshop = { 
@@ -520,11 +520,11 @@ export class MemStorage implements IStorage {
     this.workshops.set(id, newWorkshop);
     return newWorkshop;
   }
-  
+
   async updateWorkshop(id: number, workshop: Partial<InsertWorkshop>): Promise<Workshop | undefined> {
     const existingWorkshop = this.workshops.get(id);
     if (!existingWorkshop) return undefined;
-    
+
     const updatedWorkshop: Workshop = { 
       ...existingWorkshop, 
       ...workshop,
@@ -533,18 +533,18 @@ export class MemStorage implements IStorage {
     this.workshops.set(id, updatedWorkshop);
     return updatedWorkshop;
   }
-  
+
   async deleteWorkshop(id: number): Promise<boolean> {
     return this.workshops.delete(id);
   }
-  
+
   // Workshop content methods
   async getWorkshopContents(workshopId: number): Promise<WorkshopContent[]> {
     return Array.from(this.workshopContents.values())
       .filter(content => content.workshopId === workshopId)
       .sort((a, b) => a.order - b.order);
   }
-  
+
   async createWorkshopContent(content: InsertWorkshopContent): Promise<WorkshopContent> {
     const id = this.workshopContentId++;
     const newContent: WorkshopContent = { 
@@ -555,11 +555,11 @@ export class MemStorage implements IStorage {
     this.workshopContents.set(id, newContent);
     return newContent;
   }
-  
+
   async updateWorkshopContent(id: number, content: Partial<InsertWorkshopContent>): Promise<WorkshopContent | undefined> {
     const existingContent = this.workshopContents.get(id);
     if (!existingContent) return undefined;
-    
+
     const updatedContent: WorkshopContent = { 
       ...existingContent, 
       ...content 
@@ -567,7 +567,7 @@ export class MemStorage implements IStorage {
     this.workshopContents.set(id, updatedContent);
     return updatedContent;
   }
-  
+
   async deleteWorkshopContent(id: number): Promise<boolean> {
     return this.workshopContents.delete(id);
   }
