@@ -7,8 +7,17 @@ export default function Header() {
   return (
     <header className="bg-white shadow-sm sticky top-0 z-20" dir="rtl">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-        {/* Logo */}
+        {/* Logo and Hamburger Menu */}
         <div className="flex items-center">
+          {/* Hamburger Menu Button */}
+          <button className="ml-3 p-2 text-neutral-400 hover:text-primary transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6">
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <line x1="3" y1="12" x2="21" y2="12"></line>
+              <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+          </button>
+          
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary text-3xl w-7 h-7 ml-2">
             <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
             <path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"></path>
