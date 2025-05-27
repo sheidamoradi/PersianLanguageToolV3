@@ -82,8 +82,8 @@ export default function Home() {
           <div className="bg-white rounded-full h-12 w-12 flex items-center justify-center mb-3 shadow-sm">
             <Book className="h-6 w-6 text-purple-500" />
           </div>
-          <h3 className="font-semibold text-neutral-700">مجلات</h3>
-          <p className="text-xs text-neutral-500">12 مجله</p>
+          <h3 className="font-semibold text-neutral-700">کتابخانه</h3>
+          <p className="text-xs text-neutral-500">45 مطلب</p>
         </div>
         <div className="bg-gradient-to-br from-amber-500/10 to-amber-500/30 rounded-xl p-4 flex flex-col items-center hover:shadow-md transition-all cursor-pointer">
           <div className="bg-white rounded-full h-12 w-12 flex items-center justify-center mb-3 shadow-sm">
@@ -145,7 +145,7 @@ export default function Home() {
       {/* Recent Projects */}
       <h2 className="text-2xl font-semibold text-neutral-700 mb-4 flex items-center">
         <Layers className="ml-2 h-6 w-6 text-secondary" />
-        پروژه‌ها و مجلات
+        وبینارها
       </h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {isLoadingProjects ? (

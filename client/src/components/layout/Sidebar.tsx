@@ -111,7 +111,7 @@ export default function Sidebar({ user }: SidebarProps) {
             <li>
               <Link href="/library" className="flex items-center p-2 rounded-lg text-neutral-400 hover:bg-neutral-100">
                 <span className="material-icons ml-3">library_books</span>
-                <span>فصلنامه رویش سبز</span>
+                <span>کتابخانه</span>
               </Link>
             </li>
           </ul>
