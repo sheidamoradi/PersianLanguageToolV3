@@ -160,36 +160,24 @@ export default function Home() {
         </Carousel>
       </div>
 
-      {/* Category Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
-        <div className="bg-gradient-to-br from-primary/10 to-primary/30 rounded-xl p-4 flex flex-col items-center hover:shadow-md transition-all cursor-pointer">
-          <div className="bg-white rounded-full h-12 w-12 flex items-center justify-center mb-3 shadow-sm">
-            <GraduationCap className="h-6 w-6 text-primary" />
-          </div>
-          <h3 className="font-semibold text-neutral-700">برنامه‌نویسی</h3>
-          <p className="text-xs text-neutral-500">25 دوره</p>
-        </div>
-        <div className="bg-gradient-to-br from-secondary/10 to-secondary/30 rounded-xl p-4 flex flex-col items-center hover:shadow-md transition-all cursor-pointer">
-          <div className="bg-white rounded-full h-12 w-12 flex items-center justify-center mb-3 shadow-sm">
-            <Layers className="h-6 w-6 text-secondary" />
-          </div>
-          <h3 className="font-semibold text-neutral-700">طراحی</h3>
-          <p className="text-xs text-neutral-500">18 دوره</p>
-        </div>
-        <div className="bg-gradient-to-br from-purple-500/10 to-purple-500/30 rounded-xl p-4 flex flex-col items-center hover:shadow-md transition-all cursor-pointer">
-          <div className="bg-white rounded-full h-12 w-12 flex items-center justify-center mb-3 shadow-sm">
-            <Book className="h-6 w-6 text-purple-500" />
-          </div>
-          <h3 className="font-semibold text-neutral-700">کتابخانه</h3>
-          <p className="text-xs text-neutral-500">45 مطلب</p>
-        </div>
-        <div className="bg-gradient-to-br from-amber-500/10 to-amber-500/30 rounded-xl p-4 flex flex-col items-center hover:shadow-md transition-all cursor-pointer">
-          <div className="bg-white rounded-full h-12 w-12 flex items-center justify-center mb-3 shadow-sm">
-            <TrendingUp className="h-6 w-6 text-amber-500" />
-          </div>
-          <h3 className="font-semibold text-neutral-700">پروژه‌ها</h3>
-          <p className="text-xs text-neutral-500">8 پروژه</p>
-        </div>
+      {/* Quick Access Menu */}
+      <div className="flex justify-center gap-8 mb-10">
+        <Link href="/magazine" className="flex flex-col items-center hover:text-primary transition-colors cursor-pointer">
+          <BookOpen className="h-8 w-8 text-neutral-600 hover:text-primary mb-2" />
+          <span className="text-sm font-medium text-neutral-700">فصلنامه رویش سبز</span>
+        </Link>
+        <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center hover:text-primary transition-colors cursor-pointer">
+          <GraduationCap className="h-8 w-8 text-neutral-600 hover:text-primary mb-2" />
+          <span className="text-sm font-medium text-neutral-700">ویدیوهای آموزشی</span>
+        </a>
+        <Link href="/library" className="flex flex-col items-center hover:text-primary transition-colors cursor-pointer">
+          <Book className="h-8 w-8 text-neutral-600 hover:text-primary mb-2" />
+          <span className="text-sm font-medium text-neutral-700">کتابخانه</span>
+        </Link>
+        <Link href="/contact" className="flex flex-col items-center hover:text-primary transition-colors cursor-pointer">
+          <Users className="h-8 w-8 text-neutral-600 hover:text-primary mb-2" />
+          <span className="text-sm font-medium text-neutral-700">تماس با ما</span>
+        </Link>
       </div>
 
       {/* Workshop Section */}
