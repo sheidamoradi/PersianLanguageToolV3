@@ -8,6 +8,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import logoPath from "@assets/logo.png";
 
 export default function Header() {
   const [location] = useLocation();
@@ -134,7 +135,7 @@ export default function Header() {
             </SheetContent>
           </Sheet>
           
-          <img src="/attached_assets/logo.png" alt="پیستاط" className="w-8 h-8 ml-2" />
+          <img src={logoPath} alt="پیستاط" className="w-8 h-8 ml-2" />
           <h1 className="text-xl font-semibold text-neutral-500">پیستاط</h1>
         </div>
         

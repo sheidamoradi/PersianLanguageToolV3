@@ -161,23 +161,47 @@ export default function Home() {
       </div>
 
       {/* Quick Access Menu */}
-      <div className="flex justify-center gap-8 mb-10">
-        <Link href="/magazine" className="flex flex-col items-center hover:text-primary transition-colors cursor-pointer">
-          <BookOpen className="h-8 w-8 text-neutral-600 hover:text-primary mb-2" />
-          <span className="text-sm font-medium text-neutral-700">فصلنامه رویش سبز</span>
-        </Link>
-        <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center hover:text-primary transition-colors cursor-pointer">
-          <GraduationCap className="h-8 w-8 text-neutral-600 hover:text-primary mb-2" />
-          <span className="text-sm font-medium text-neutral-700">ویدیوهای آموزشی</span>
-        </a>
-        <Link href="/library" className="flex flex-col items-center hover:text-primary transition-colors cursor-pointer">
-          <Book className="h-8 w-8 text-neutral-600 hover:text-primary mb-2" />
-          <span className="text-sm font-medium text-neutral-700">کتابخانه</span>
-        </Link>
-        <Link href="/contact" className="flex flex-col items-center hover:text-primary transition-colors cursor-pointer">
-          <Users className="h-8 w-8 text-neutral-600 hover:text-primary mb-2" />
-          <span className="text-sm font-medium text-neutral-700">تماس با ما</span>
-        </Link>
+      <div className="mb-10">
+        <h2 className="text-2xl font-semibold text-neutral-700 flex items-center mb-6">
+          <Bookmark className="ml-2 h-6 w-6 text-blue-500" />
+          دسترسی سریع
+        </h2>
+
+        <div className="overflow-x-auto scrollbar-hide">
+          <div className="flex gap-4" style={{ width: 'max-content' }}>
+            <Link href="/magazine" className="bg-white rounded-xl shadow-sm p-6 text-center flex-shrink-0 hover:shadow-md transition-shadow cursor-pointer" style={{ width: '200px' }}>
+              <div className="bg-green-100 rounded-full h-16 w-16 flex items-center justify-center mx-auto mb-4">
+                <BookOpen className="h-8 w-8 text-green-500" />
+              </div>
+              <h3 className="text-lg font-semibold text-neutral-700 mb-2">فصلنامه رویش سبز</h3>
+              <p className="text-neutral-500 text-sm">مطالعه آخرین شماره فصلنامه</p>
+            </Link>
+            
+            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="bg-white rounded-xl shadow-sm p-6 text-center flex-shrink-0 hover:shadow-md transition-shadow cursor-pointer" style={{ width: '200px' }}>
+              <div className="bg-orange-100 rounded-full h-16 w-16 flex items-center justify-center mx-auto mb-4">
+                <GraduationCap className="h-8 w-8 text-orange-500" />
+              </div>
+              <h3 className="text-lg font-semibold text-neutral-700 mb-2">ویدیوهای آموزشی</h3>
+              <p className="text-neutral-500 text-sm">مشاهده کانال اینستاگرام پیستاط</p>
+            </a>
+            
+            <Link href="/library" className="bg-white rounded-xl shadow-sm p-6 text-center flex-shrink-0 hover:shadow-md transition-shadow cursor-pointer" style={{ width: '200px' }}>
+              <div className="bg-purple-100 rounded-full h-16 w-16 flex items-center justify-center mx-auto mb-4">
+                <Book className="h-8 w-8 text-purple-500" />
+              </div>
+              <h3 className="text-lg font-semibold text-neutral-700 mb-2">کتابخانه</h3>
+              <p className="text-neutral-500 text-sm">مطالعه مقالات و راهنماها</p>
+            </Link>
+            
+            <Link href="/contact" className="bg-white rounded-xl shadow-sm p-6 text-center flex-shrink-0 hover:shadow-md transition-shadow cursor-pointer" style={{ width: '200px' }}>
+              <div className="bg-blue-100 rounded-full h-16 w-16 flex items-center justify-center mx-auto mb-4">
+                <Users className="h-8 w-8 text-blue-500" />
+              </div>
+              <h3 className="text-lg font-semibold text-neutral-700 mb-2">تماس با ما</h3>
+              <p className="text-neutral-500 text-sm">ارتباط با تیم پشتیبانی</p>
+            </Link>
+          </div>
+        </div>
       </div>
 
       {/* Workshop Section */}
@@ -278,7 +302,7 @@ export default function Home() {
                     type={project.type as "project" | "magazine"}
                     dueDate={project.dueDate || undefined}
                     pages={project.pages || undefined}
-                    isLocked={project.isLocked}
+                    isLocked={Boolean(project.isLocked)}
                   />
                 </div>
               ))
