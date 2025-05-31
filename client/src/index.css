@@ -80,4 +80,16 @@
     margin-left: auto;
     margin-right: 0;
   }
+
+  /* مخفی کردن اسکرول بار */
+  .scrollbar-hide {
+    /* Firefox */
+    scrollbar-width: none;
+    /* Safari and Chrome */
+    -ms-overflow-style: none;
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
 }
