@@ -31,7 +31,7 @@ export default function Header() {
             </SheetTrigger>
             <SheetContent side="right" className="w-80" dir="rtl">
               <SheetHeader>
-                <SheetTitle className="text-right">منو</SheetTitle>
+                <SheetTitle className="text-right sr-only">Navigation</SheetTitle>
               </SheetHeader>
               
               <div className="mt-6">
@@ -134,10 +134,7 @@ export default function Header() {
             </SheetContent>
           </Sheet>
           
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary text-3xl w-7 h-7 ml-2">
-            <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
-            <path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"></path>
-          </svg>
+          <img src="/attached_assets/logo.png" alt="پیستاط" className="w-8 h-8 ml-2" />
           <h1 className="text-xl font-semibold text-neutral-500">پیستاط</h1>
         </div>
         
