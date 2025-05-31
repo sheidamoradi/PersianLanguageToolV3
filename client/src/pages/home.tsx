@@ -182,21 +182,13 @@ export default function Home() {
 
       {/* Workshop Section */}
       <div className="mb-10">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-semibold text-neutral-700 flex items-center">
-            <GraduationCap className="ml-2 h-6 w-6 text-primary" />
-            کارگاه‌های آموزشی
-          </h2>
-          <Link href="/courses">
-            <Button variant="outline" size="sm">
-              مشاهده همه
-              <ChevronLeft className="mr-2 h-4 w-4" />
-            </Button>
-          </Link>
-        </div>
+        <h2 className="text-2xl font-semibold text-neutral-700 flex items-center mb-6">
+          <GraduationCap className="ml-2 h-6 w-6 text-primary" />
+          کارگاه‌های آموزشی
+        </h2>
 
-        <div className="overflow-x-auto">
-          <div className="flex gap-4 pb-4" style={{ width: 'max-content' }}>
+        <div className="overflow-x-auto scrollbar-hide">
+          <div className="flex gap-4" style={{ width: 'max-content' }}>
             {isLoadingCourses ? (
               Array(4).fill(0).map((_, i) => (
                 <div key={i} className="bg-white rounded-xl shadow-sm overflow-hidden flex-shrink-0" style={{ width: '280px' }}>
@@ -239,25 +231,28 @@ export default function Home() {
             )}
           </div>
         </div>
+        
+        {courses.length > 0 && (
+          <div className="text-center mt-6">
+            <Link href="/courses">
+              <Button variant="outline" size="sm">
+                مشاهده همه
+                <ChevronLeft className="mr-2 h-4 w-4" />
+              </Button>
+            </Link>
+          </div>
+        )}
       </div>
 
       {/* Webinars Section */}
       <div className="mb-10">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-semibold text-neutral-700 flex items-center">
-            <Layers className="ml-2 h-6 w-6 text-secondary" />
-            وبینارها
-          </h2>
-          <Link href="/projects">
-            <Button variant="outline" size="sm">
-              مشاهده همه
-              <ChevronLeft className="mr-2 h-4 w-4" />
-            </Button>
-          </Link>
-        </div>
+        <h2 className="text-2xl font-semibold text-neutral-700 flex items-center mb-6">
+          <Layers className="ml-2 h-6 w-6 text-secondary" />
+          وبینارها
+        </h2>
 
-        <div className="overflow-x-auto">
-          <div className="flex gap-4 pb-4" style={{ width: 'max-content' }}>
+        <div className="overflow-x-auto scrollbar-hide">
+          <div className="flex gap-4" style={{ width: 'max-content' }}>
             {isLoadingProjects ? (
               Array(4).fill(0).map((_, i) => (
                 <div key={i} className="bg-white rounded-xl shadow-sm overflow-hidden flex-shrink-0" style={{ width: '280px' }}>
@@ -297,25 +292,28 @@ export default function Home() {
             )}
           </div>
         </div>
+        
+        {projects.length > 0 && (
+          <div className="text-center mt-6">
+            <Link href="/projects">
+              <Button variant="outline" size="sm">
+                مشاهده همه
+                <ChevronLeft className="mr-2 h-4 w-4" />
+              </Button>
+            </Link>
+          </div>
+        )}
       </div>
 
       {/* Library Section */}
       <div className="mb-10">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-semibold text-neutral-700 flex items-center">
-            <Book className="ml-2 h-6 w-6 text-purple-500" />
-            کتابخانه
-          </h2>
-          <Link href="/library">
-            <Button variant="outline" size="sm">
-              مشاهده همه
-              <ChevronLeft className="mr-2 h-4 w-4" />
-            </Button>
-          </Link>
-        </div>
+        <h2 className="text-2xl font-semibold text-neutral-700 flex items-center mb-6">
+          <Book className="ml-2 h-6 w-6 text-purple-500" />
+          کتابخانه
+        </h2>
 
-        <div className="overflow-x-auto">
-          <div className="flex gap-4 pb-4" style={{ width: 'max-content' }}>
+        <div className="overflow-x-auto scrollbar-hide">
+          <div className="flex gap-4" style={{ width: 'max-content' }}>
             <div className="bg-white rounded-xl shadow-sm p-6 text-center flex-shrink-0" style={{ width: '280px' }}>
               <div className="bg-purple-100 rounded-full h-16 w-16 flex items-center justify-center mx-auto mb-4">
                 <Book className="h-8 w-8 text-purple-500" />
@@ -374,6 +372,15 @@ export default function Home() {
               </Link>
             </div>
           </div>
+        </div>
+        
+        <div className="text-center mt-6">
+          <Link href="/library">
+            <Button variant="outline" size="sm">
+              مشاهده همه
+              <ChevronLeft className="mr-2 h-4 w-4" />
+            </Button>
+          </Link>
         </div>
       </div>
 
