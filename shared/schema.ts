@@ -9,6 +9,7 @@ export const users = pgTable("users", {
   name: text("name"),
   progress: integer("progress").default(0),
   membershipType: text("membership_type").default("Basic"),
+  role: text("role").default("user"), // admin, user
 });
 
 export const courses = pgTable("courses", {
