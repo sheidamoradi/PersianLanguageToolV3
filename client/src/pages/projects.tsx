@@ -17,7 +17,6 @@ export default function Projects() {
   const webinars = projects.filter(project => {
     const matchesSearch = project.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
                         project.description.toLowerCase().includes(searchTerm.toLowerCase());
-    const isWebinar = project.type === "project";
     return matchesSearch && isWebinar;
   });
   
