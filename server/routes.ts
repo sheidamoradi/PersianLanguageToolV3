@@ -32,6 +32,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
     return res.json(user);
   });
 
+  // Admin login API
+  app.post("/api/admin/login", async (req, res) => {
+    const { username, password } = req.body;
+
+    if (!username || !password) {
+      return res.status(400).json({ message: "نام کاربری و رمز عبور الزامی است" });
+    }
+
+    const user = await storage.getUserByUsername(username);
+
+    if (!user || user.password !== password || user.role !== "admin") {
+      return res.status(401).json({ message: "نام کاربری یا رمز عبور اشتباه است" });
+    }
+
+    return res.json({ 
+      message: "ورود موفقیت‌آمیز", 
+      user: { 
+        id: user.id, 
+        username: user.username, 
+        name: user.name, 
+        role: user.role 
+      } 
+    });
+  });
+
   // Courses API
   app.get("/api/courses", async (req, res) => {
     const courses = await storage.getCourses();
@@ -436,6 +461,136 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
 
     const result = await storage.deleteArticleContent(id);
+
+    if (!result) {
+      return res.status(404).json({ message: "محتوا پیدا نشد" });
+    }
+
+    return res.status(204).end();
+  });
+
+  // کارگاه‌ها API
+  app.get("/api/workshops", async (req, res) => {
+    const workshops = await storage.getWorkshops();
+    res.json(workshops);
+  });
+
+  app.get("/api/workshops/:id", async (req, res) => {
+    const id = parseInt(req.params.id);
+
+    if (isNaN(id)) {
+      return res.status(400).json({ message: "کد کارگاه نامعتبر است" });
+    }
+
+    const workshop = await storage.getWorkshop(id);
+
+    if (!workshop) {
+      return res.status(404).json({ message: "کارگاه پیدا نشد" });
+    }
+
+    return res.json(workshop);
+  });
+
+  app.post("/api/workshops", async (req, res) => {
+    try {
+      const workshopData = req.body; // Schema validation در DatabaseStorage انجام می‌شود
+      const workshop = await storage.createWorkshop(workshopData);
+      res.status(201).json(workshop);
+    } catch (error) {
+      console.error("خطا در ایجاد کارگاه:", error);
+      res.status(500).json({ message: "خطای داخلی سرور" });
+    }
+  });
+
+  app.patch("/api/workshops/:id", async (req, res) => {
+    const id = parseInt(req.params.id);
+
+    if (isNaN(id)) {
+      return res.status(400).json({ message: "کد کارگاه نامعتبر است" });
+    }
+
+    try {
+      const updatedWorkshop = await storage.updateWorkshop(id, req.body);
+
+      if (!updatedWorkshop) {
+        return res.status(404).json({ message: "کارگاه پیدا نشد" });
+      }
+
+      return res.json(updatedWorkshop);
+    } catch (error) {
+      console.error("خطا در به‌روزرسانی کارگاه:", error);
+      res.status(500).json({ message: "خطای داخلی سرور" });
+    }
+  });
+
+  app.delete("/api/workshops/:id", async (req, res) => {
+    const id = parseInt(req.params.id);
+
+    if (isNaN(id)) {
+      return res.status(400).json({ message: "کد کارگاه نامعتبر است" });
+    }
+
+    const result = await storage.deleteWorkshop(id);
+
+    if (!result) {
+      return res.status(404).json({ message: "کارگاه پیدا نشد" });
+    }
+
+    return res.status(204).end();
+  });
+
+  // محتوای کارگاه‌ها API
+  app.get("/api/workshops/:workshopId/contents", async (req, res) => {
+    const workshopId = parseInt(req.params.workshopId);
+
+    if (isNaN(workshopId)) {
+      return res.status(400).json({ message: "کد کارگاه نامعتبر است" });
+    }
+
+    const contents = await storage.getWorkshopContents(workshopId);
+    res.json(contents);
+  });
+
+  app.post("/api/workshop-contents", async (req, res) => {
+    try {
+      const contentData = req.body;
+      const content = await storage.createWorkshopContent(contentData);
+      res.status(201).json(content);
+    } catch (error) {
+      console.error("خطا در ایجاد محتوای کارگاه:", error);
+      res.status(500).json({ message: "خطای داخلی سرور" });
+    }
+  });
+
+  app.patch("/api/workshop-contents/:id", async (req, res) => {
+    const id = parseInt(req.params.id);
+
+    if (isNaN(id)) {
+      return res.status(400).json({ message: "کد محتوا نامعتبر است" });
+    }
+
+    try {
+      const updatedContent = await storage.updateWorkshopContent(id, req.body);
+
+      if (!updatedContent) {
+        return res.status(404).json({ message: "محتوا پیدا نشد" });
+      }
+
+      return res.json(updatedContent);
+    } catch (error) {
+      console.error("خطا در به‌روزرسانی محتوای کارگاه:", error);
+      res.status(500).json({ message: "خطای داخلی سرور" });
+    }
+  });
+
+  app.delete("/api/workshop-contents/:id", async (req, res) => {
+    const id = parseInt(req.params.id);
+
+    if (isNaN(id)) {
+      return res.status(400).json({ message: "کد محتوا نامعتبر است" });
+    }
+
+    const result = await storage.deleteWorkshopContent(id);
 
     if (!result) {
       return res.status(404).json({ message: "محتوا پیدا نشد" });
