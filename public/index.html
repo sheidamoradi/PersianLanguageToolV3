@@ -4,136 +4,378 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>پیستاط - مرکز آموزشی کشاورزی</title>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body {
+        body { 
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            direction: rtl;
+            margin: 0;
+            padding: 0;
+        }
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
     </style>
 </head>
-<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
-    <div class="container mx-auto px-4 py-8">
-        <!-- Header -->
-        <div class="text-center mb-12">
-            <h1 class="text-4xl font-bold text-blue-800 mb-4">🌱 پیستاط</h1>
-            <p class="text-xl text-gray-600">مرکز آموزشی تخصصی کشاورزی</p>
-            <div class="inline-block bg-green-500 text-white px-6 py-2 rounded-full mt-4">
-                ✅ وب‌سایت با موفقیت بارگذاری شد
-            </div>
-        </div>
-
-        <!-- Main Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-            <!-- Courses Card -->
-            <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl p-6 text-white shadow-lg hover:shadow-xl transform hover:-translate-y-2 transition-all duration-300 cursor-pointer">
-                <div class="text-center">
-                    <div class="text-4xl mb-4">📚</div>
-                    <h2 class="text-xl font-bold mb-2">دوره‌ها</h2>
-                    <p class="opacity-90">آموزش‌های جامع و تخصصی کشاورزی</p>
-                </div>
-            </div>
-
-            <!-- Projects Card -->
-            <div class="bg-gradient-to-br from-green-500 to-green-600 rounded-2xl p-6 text-white shadow-lg hover:shadow-xl transform hover:-translate-y-2 transition-all duration-300 cursor-pointer">
-                <div class="text-center">
-                    <div class="text-4xl mb-4">🚀</div>
-                    <h2 class="text-xl font-bold mb-2">پروژه‌ها</h2>
-                    <p class="opacity-90">پروژه‌های عملی و کاربردی</p>
-                </div>
-            </div>
-
-            <!-- Library Card -->
-            <div class="bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl p-6 text-white shadow-lg hover:shadow-xl transform hover:-translate-y-2 transition-all duration-300 cursor-pointer">
-                <div class="text-center">
-                    <div class="text-4xl mb-4">📖</div>
-                    <h2 class="text-xl font-bold mb-2">کتابخانه</h2>
-                    <p class="opacity-90">منابع و مقالات آموزشی</p>
-                </div>
-            </div>
-
-            <!-- Profile Card -->
-            <div class="bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl p-6 text-white shadow-lg hover:shadow-xl transform hover:-translate-y-2 transition-all duration-300 cursor-pointer">
-                <div class="text-center">
-                    <div class="text-4xl mb-4">👤</div>
-                    <h2 class="text-xl font-bold mb-2">پروفایل</h2>
-                    <p class="opacity-90">مدیریت حساب کاربری</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Features Section -->
-        <div class="bg-white rounded-2xl p-8 shadow-lg">
-            <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">ویژگی‌های پلتفرم</h3>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="text-center">
-                    <div class="text-3xl mb-3">🎓</div>
-                    <h4 class="font-semibold text-gray-800">آموزش تخصصی</h4>
-                    <p class="text-gray-600 text-sm">دوره‌های کاربردی کشاورزی</p>
-                </div>
-                <div class="text-center">
-                    <div class="text-3xl mb-3">📱</div>
-                    <h4 class="font-semibold text-gray-800">دسترسی آسان</h4>
-                    <p class="text-gray-600 text-sm">قابل استفاده روی تمام دستگاه‌ها</p>
-                </div>
-                <div class="text-center">
-                    <div class="text-3xl mb-3">🔒</div>
-                    <h4 class="font-semibold text-gray-800">امن و قابل اعتماد</h4>
-                    <p class="text-gray-600 text-sm">سیستم امنیت پیشرفته</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Bottom Navigation -->
-        <div class="fixed bottom-0 left-0 right-0 bg-white shadow-lg border-t">
-            <div class="flex justify-around py-3">
-                <button class="flex flex-col items-center text-blue-600">
-                    <div class="text-xl mb-1">🏠</div>
-                    <span class="text-xs">خانه</span>
-                </button>
-                <button class="flex flex-col items-center text-gray-400">
-                    <div class="text-xl mb-1">📚</div>
-                    <span class="text-xs">دوره‌ها</span>
-                </button>
-                <button class="flex flex-col items-center text-gray-400">
-                    <div class="text-xl mb-1">📖</div>
-                    <span class="text-xs">کتابخانه</span>
-                </button>
-                <button class="flex flex-col items-center text-gray-400">
-                    <div class="text-xl mb-1">👤</div>
-                    <span class="text-xs">پروفایل</span>
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        console.log('✅ پیستاط - وب‌سایت بارگذاری شد');
+<body class="bg-gray-50">
+    <div id="root"></div>
+    
+    <script type="text/babel">
+        const { useState, useEffect } = React;
         
-        // Add click handlers for cards
-        document.querySelectorAll('.cursor-pointer').forEach(card => {
-            card.addEventListener('click', function() {
-                const title = this.querySelector('h2').textContent;
-                alert(`انتخاب شد: ${title}`);
-            });
-        });
+        function App() {
+            const [activeTab, setActiveTab] = useState('home');
+            const [courses, setCourses] = useState([]);
+            const [projects, setProjects] = useState([]);
+            const [documents, setDocuments] = useState([]);
+            const [loading, setLoading] = useState(true);
 
-        // Bottom navigation
-        document.querySelectorAll('button').forEach(btn => {
-            btn.addEventListener('click', function() {
-                // Remove active class from all buttons
-                document.querySelectorAll('button').forEach(b => {
-                    b.classList.remove('text-blue-600');
-                    b.classList.add('text-gray-400');
-                });
-                
-                // Add active class to clicked button
-                this.classList.remove('text-gray-400');
-                this.classList.add('text-blue-600');
-                
-                const text = this.querySelector('span').textContent;
-                console.log(`Navigate to: ${text}`);
-            });
-        });
+            useEffect(() => {
+                async function fetchData() {
+                    try {
+                        const [coursesRes, projectsRes, documentsRes] = await Promise.all([
+                            fetch('/api/courses').catch(() => ({ json: () => [] })),
+                            fetch('/api/projects').catch(() => ({ json: () => [] })),
+                            fetch('/api/documents').catch(() => ({ json: () => [] }))
+                        ]);
+
+                        const coursesData = coursesRes.ok ? await coursesRes.json() : [];
+                        const projectsData = projectsRes.ok ? await projectsRes.json() : [];
+                        const documentsData = documentsRes.ok ? await documentsRes.json() : [];
+
+                        setCourses(coursesData);
+                        setProjects(projectsData);
+                        setDocuments(documentsData);
+                    } catch (error) {
+                        console.warn('Failed to fetch data:', error);
+                    } finally {
+                        setLoading(false);
+                    }
+                }
+                fetchData();
+            }, []);
+
+            const NavButton = ({ id, icon, label, isActive, onClick }) => (
+                React.createElement('button', {
+                    onClick: () => onClick(id),
+                    className: `flex flex-col items-center py-2 px-4 transition-colors ${
+                        isActive ? 'text-green-600' : 'text-gray-400 hover:text-gray-600'
+                    }`
+                }, [
+                    React.createElement('span', { className: "text-xl mb-1", key: 'icon' }, icon),
+                    React.createElement('span', { className: "text-xs font-medium", key: 'label' }, label)
+                ])
+            );
+
+            const CourseCard = ({ course }) => (
+                React.createElement('div', { 
+                    className: "bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300",
+                    key: course.id 
+                }, [
+                    React.createElement('div', { 
+                        className: "h-32 bg-gradient-to-br from-green-500 via-emerald-500 to-teal-600 relative",
+                        key: 'header'
+                    }, [
+                        course.isLocked && React.createElement('div', { 
+                            className: "absolute inset-0 bg-black bg-opacity-60 flex items-center justify-center",
+                            key: 'lock'
+                        }, React.createElement('span', { className: "text-white text-2xl" }, '🔒'))
+                    ]),
+                    React.createElement('div', { className: "p-4", key: 'content' }, [
+                        React.createElement('h3', { className: "font-bold text-gray-800 mb-2", key: 'title' }, course.title),
+                        React.createElement('p', { className: "text-gray-600 text-sm mb-3 line-clamp-2", key: 'desc' }, course.description),
+                        !course.isLocked && React.createElement('div', { className: "mb-3", key: 'progress' }, 
+                            React.createElement('div', { className: "bg-gray-200 rounded-full h-2" },
+                                React.createElement('div', { 
+                                    className: "bg-green-500 h-2 rounded-full transition-all",
+                                    style: { width: `${course.progress || 0}%` }
+                                })
+                            )
+                        ),
+                        React.createElement('button', { 
+                            className: `w-full py-2 rounded-lg text-sm font-medium ${
+                                course.isLocked 
+                                    ? 'bg-gray-200 text-gray-500' 
+                                    : 'bg-green-500 text-white hover:bg-green-600'
+                            }`,
+                            disabled: course.isLocked,
+                            key: 'btn'
+                        }, course.isLocked ? 'قفل شده' : 'ادامه یادگیری')
+                    ])
+                ])
+            );
+
+            const ProjectCard = ({ project }) => (
+                React.createElement('div', { 
+                    className: "bg-white rounded-xl shadow-lg p-4 hover:shadow-xl transition-all",
+                    key: project.id 
+                }, [
+                    React.createElement('h3', { className: "font-bold text-gray-800 mb-2", key: 'title' }, project.title),
+                    React.createElement('p', { className: "text-gray-600 text-sm mb-3 line-clamp-2", key: 'desc' }, project.description),
+                    React.createElement('div', { className: "flex justify-between items-center", key: 'footer' }, [
+                        React.createElement('span', { 
+                            className: "text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded",
+                            key: 'category'
+                        }, project.category || 'عمومی'),
+                        React.createElement('button', { 
+                            className: "bg-blue-500 text-white px-3 py-1 rounded text-sm hover:bg-blue-600",
+                            key: 'btn'
+                        }, 'مشاهده')
+                    ])
+                ])
+            );
+
+            const DocumentCard = ({ document }) => (
+                React.createElement('div', { 
+                    className: "bg-white rounded-xl shadow-lg p-4 hover:shadow-xl transition-all",
+                    key: document.id 
+                }, [
+                    React.createElement('h3', { className: "font-bold text-gray-800 mb-2", key: 'title' }, document.title),
+                    React.createElement('p', { className: "text-gray-600 text-sm mb-3 line-clamp-2", key: 'desc' }, 
+                        document.content || document.description || 'محتوای مفیدی برای یادگیری'
+                    ),
+                    React.createElement('div', { className: "flex justify-between items-center", key: 'footer' }, [
+                        React.createElement('span', { className: "text-xs text-gray-500", key: 'author' }, 
+                            document.author || 'نویسنده ناشناخته'
+                        ),
+                        React.createElement('button', { 
+                            className: "bg-purple-500 text-white px-3 py-1 rounded text-sm hover:bg-purple-600",
+                            key: 'btn'
+                        }, 'دانلود')
+                    ])
+                ])
+            );
+
+            const HomePage = () => {
+                if (loading) {
+                    return React.createElement('div', { className: "space-y-6" }, [
+                        React.createElement('div', { className: "text-center py-8", key: 'loading' }, [
+                            React.createElement('div', { 
+                                className: "animate-spin w-8 h-8 border-4 border-green-500 border-t-transparent rounded-full mx-auto mb-4",
+                                key: 'spinner'
+                            }),
+                            React.createElement('p', { className: "text-gray-600", key: 'text' }, 'در حال بارگیری پلتفرم پیستاط...')
+                        ])
+                    ]);
+                }
+
+                return React.createElement('div', { className: "space-y-8" }, [
+                    React.createElement('div', { 
+                        className: "text-center py-8 bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl",
+                        key: 'header'
+                    }, [
+                        React.createElement('h1', { 
+                            className: "text-4xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent mb-3",
+                            key: 'title'
+                        }, '🌱 خوش آمدید به پیستاط'),
+                        React.createElement('p', { className: "text-xl text-gray-600 mb-2", key: 'subtitle' }, 'مرکز آموزشی تخصصی کشاورزی مدرن'),
+                        React.createElement('p', { className: "text-gray-500", key: 'motto' }, 'یادگیری، پیشرفت، موفقیت')
+                    ]),
+
+                    React.createElement('div', { className: "grid grid-cols-2 md:grid-cols-4 gap-4", key: 'stats' }, [
+                        React.createElement('div', { 
+                            className: "bg-gradient-to-br from-blue-500 to-blue-600 p-6 rounded-2xl text-white text-center",
+                            key: 'stat1'
+                        }, [
+                            React.createElement('div', { className: "text-3xl font-bold mb-1", key: 'num' }, courses.length),
+                            React.createElement('div', { className: "text-sm opacity-90", key: 'label' }, 'دوره فعال')
+                        ]),
+                        React.createElement('div', { 
+                            className: "bg-gradient-to-br from-green-500 to-green-600 p-6 rounded-2xl text-white text-center",
+                            key: 'stat2'
+                        }, [
+                            React.createElement('div', { className: "text-3xl font-bold mb-1", key: 'num' }, projects.length),
+                            React.createElement('div', { className: "text-sm opacity-90", key: 'label' }, 'پروژه')
+                        ]),
+                        React.createElement('div', { 
+                            className: "bg-gradient-to-br from-purple-500 to-purple-600 p-6 rounded-2xl text-white text-center",
+                            key: 'stat3'
+                        }, [
+                            React.createElement('div', { className: "text-3xl font-bold mb-1", key: 'num' }, documents.length),
+                            React.createElement('div', { className: "text-sm opacity-90", key: 'label' }, 'مقاله')
+                        ]),
+                        React.createElement('div', { 
+                            className: "bg-gradient-to-br from-orange-500 to-orange-600 p-6 rounded-2xl text-white text-center",
+                            key: 'stat4'
+                        }, [
+                            React.createElement('div', { className: "text-3xl font-bold mb-1", key: 'num' }, '87%'),
+                            React.createElement('div', { className: "text-sm opacity-90", key: 'label' }, 'پیشرفت')
+                        ])
+                    ]),
+
+                    React.createElement('div', { 
+                        className: "bg-gradient-to-br from-green-500 via-emerald-500 to-teal-600 rounded-2xl p-8 text-white",
+                        key: 'featured'
+                    }, [
+                        React.createElement('h2', { className: "text-2xl font-bold mb-3", key: 'title' }, '🎯 دوره پیشنهادی این هفته'),
+                        React.createElement('h3', { className: "text-xl font-semibold mb-2", key: 'name' }, 'کشاورزی هوشمند با IoT'),
+                        React.createElement('p', { className: "mb-6 opacity-90", key: 'desc' }, 'یادگیری فناوری‌های نوین اینترنت اشیا در کشاورزی مدرن'),
+                        React.createElement('button', { 
+                            className: "bg-white text-green-600 px-6 py-3 rounded-xl font-semibold hover:shadow-lg transition-all",
+                            key: 'btn'
+                        }, 'شروع یادگیری رایگان')
+                    ]),
+
+                    courses.length > 0 && React.createElement('div', { key: 'courses-section' }, [
+                        React.createElement('h2', { 
+                            className: "text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2",
+                            key: 'title'
+                        }, [
+                            React.createElement('span', { className: "text-2xl", key: 'icon' }, '📚'),
+                            'دوره‌های آموزشی'
+                        ]),
+                        React.createElement('div', { 
+                            className: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6",
+                            key: 'grid'
+                        }, courses.slice(0, 6).map(course => React.createElement(CourseCard, { course, key: course.id })))
+                    ]),
+
+                    projects.length > 0 && React.createElement('div', { key: 'projects-section' }, [
+                        React.createElement('h2', { 
+                            className: "text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2",
+                            key: 'title'
+                        }, [
+                            React.createElement('span', { className: "text-2xl", key: 'icon' }, '🚀'),
+                            'پروژه‌های عملی'
+                        ]),
+                        React.createElement('div', { 
+                            className: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6",
+                            key: 'grid'
+                        }, projects.slice(0, 6).map(project => React.createElement(ProjectCard, { project, key: project.id })))
+                    ]),
+
+                    documents.length > 0 && React.createElement('div', { key: 'documents-section' }, [
+                        React.createElement('h2', { 
+                            className: "text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2",
+                            key: 'title'
+                        }, [
+                            React.createElement('span', { className: "text-2xl", key: 'icon' }, '📖'),
+                            'کتابخانه دیجیتال'
+                        ]),
+                        React.createElement('div', { 
+                            className: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6",
+                            key: 'grid'
+                        }, documents.slice(0, 6).map(document => React.createElement(DocumentCard, { document, key: document.id })))
+                    ]),
+
+                    React.createElement('div', { 
+                        className: "bg-white rounded-2xl shadow-lg p-6",
+                        key: 'activity'
+                    }, [
+                        React.createElement('h2', { 
+                            className: "text-xl font-bold text-gray-800 mb-6 flex items-center gap-2",
+                            key: 'title'
+                        }, [
+                            React.createElement('span', { className: "text-2xl", key: 'icon' }, '📊'),
+                            'فعالیت‌های اخیر'
+                        ]),
+                        React.createElement('div', { className: "space-y-4", key: 'content' }, [
+                            React.createElement('div', { 
+                                className: "flex items-center gap-4 p-4 bg-blue-50 rounded-xl",
+                                key: 'activity1'
+                            }, [
+                                React.createElement('div', { 
+                                    className: "w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center",
+                                    key: 'icon'
+                                }, React.createElement('span', { className: "text-white text-lg" }, '📚')),
+                                React.createElement('div', { className: "flex-1", key: 'text' }, [
+                                    React.createElement('p', { className: "font-medium text-gray-800", key: 'title' }, 'مطالعه جدیدترین مقالات کشاورزی'),
+                                    React.createElement('p', { className: "text-sm text-gray-500", key: 'time' }, 'همین الان • آماده برای یادگیری')
+                                ])
+                            ]),
+                            React.createElement('div', { 
+                                className: "flex items-center gap-4 p-4 bg-green-50 rounded-xl",
+                                key: 'activity2'
+                            }, [
+                                React.createElement('div', { 
+                                    className: "w-12 h-12 bg-green-500 rounded-full flex items-center justify-center",
+                                    key: 'icon'
+                                }, React.createElement('span', { className: "text-white text-lg" }, '🚀')),
+                                React.createElement('div', { className: "flex-1", key: 'text' }, [
+                                    React.createElement('p', { className: "font-medium text-gray-800", key: 'title' }, 'شروع پروژه‌های عملی جدید'),
+                                    React.createElement('p', { className: "text-sm text-gray-500", key: 'time' }, 'آماده برای شروع • پروژه‌های متنوع')
+                                ])
+                            ])
+                        ])
+                    ])
+                ]);
+            };
+
+            const renderCurrentPage = () => {
+                switch (activeTab) {
+                    case 'home': return React.createElement(HomePage);
+                    case 'courses': return React.createElement('div', { className: "text-center py-20 text-gray-600" }, 'صفحه دوره‌ها - به زودی');
+                    case 'projects': return React.createElement('div', { className: "text-center py-20 text-gray-600" }, 'صفحه پروژه‌ها - به زودی');
+                    case 'library': return React.createElement('div', { className: "text-center py-20 text-gray-600" }, 'صفحه کتابخانه - به زودی');
+                    case 'profile': return React.createElement('div', { className: "text-center py-20 text-gray-600" }, 'صفحه پروفایل - به زودی');
+                    default: return React.createElement(HomePage);
+                }
+            };
+
+            return React.createElement('div', { className: "min-h-screen bg-gradient-to-br from-gray-50 to-green-50", dir: "rtl" }, [
+                React.createElement('div', { className: "container mx-auto px-4 py-6 pb-24 max-w-7xl", key: 'content' }, 
+                    renderCurrentPage()
+                ),
+                React.createElement('div', { 
+                    className: "fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-lg border-t border-gray-200 shadow-2xl",
+                    key: 'nav'
+                },
+                    React.createElement('div', { className: "flex justify-around py-2" }, [
+                        React.createElement(NavButton, { 
+                            id: "home", 
+                            icon: "🏠", 
+                            label: "خانه", 
+                            isActive: activeTab === 'home', 
+                            onClick: setActiveTab,
+                            key: 'nav1'
+                        }),
+                        React.createElement(NavButton, { 
+                            id: "courses", 
+                            icon: "📚", 
+                            label: "دوره‌ها", 
+                            isActive: activeTab === 'courses', 
+                            onClick: setActiveTab,
+                            key: 'nav2'
+                        }),
+                        React.createElement(NavButton, { 
+                            id: "projects", 
+                            icon: "🚀", 
+                            label: "پروژه‌ها", 
+                            isActive: activeTab === 'projects', 
+                            onClick: setActiveTab,
+                            key: 'nav3'
+                        }),
+                        React.createElement(NavButton, { 
+                            id: "library", 
+                            icon: "📖", 
+                            label: "کتابخانه", 
+                            isActive: activeTab === 'library', 
+                            onClick: setActiveTab,
+                            key: 'nav4'
+                        }),
+                        React.createElement(NavButton, { 
+                            id: "profile", 
+                            icon: "👤", 
+                            label: "پروفایل", 
+                            isActive: activeTab === 'profile', 
+                            onClick: setActiveTab,
+                            key: 'nav5'
+                        })
+                    ])
+                )
+            ]);
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(React.createElement(App));
+        
+        console.log('✅ پیستاط - پلتفرم آموزشی کامل بارگذاری شد');
     </script>
 </body>
 </html>

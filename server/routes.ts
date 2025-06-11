@@ -3,6 +3,8 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { ZodError } from "zod";
 import { fromZodError } from "zod-validation-error";
+import path from "path";
+import fs from "fs";
 import { 
   insertCourseSchema,
   insertModuleSchema, 
@@ -17,6 +19,19 @@ import {
 } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Serve the main HTML file directly from public directory
+  app.get("/", async (req, res) => {
+    try {
+      const htmlPath = path.resolve(process.cwd(), "public", "index.html");
+      const htmlContent = await fs.promises.readFile(htmlPath, "utf-8");
+      res.setHeader("Content-Type", "text/html");
+      res.send(htmlContent);
+    } catch (error) {
+      console.error("Error serving HTML:", error);
+      res.status(500).send("Error loading page");
+    }
+  });
+
   // API routes with /api prefix
 
   // Users API
