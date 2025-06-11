@@ -33,6 +33,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
     return res.json(user);
   });
 
+  app.post("/api/users", async (req, res) => {
+    try {
+      const user = await storage.createUser(req.body);
+      return res.status(201).json(user);
+    } catch (error) {
+      return res.status(500).json({ message: "خطا در ایجاد کاربر" });
+    }
+  });
+
   // Admin login API
   app.post("/api/admin/login", async (req, res) => {
     const { username, password } = req.body;
