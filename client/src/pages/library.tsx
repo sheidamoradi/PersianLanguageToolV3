@@ -1,9 +1,5 @@
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { 
   Search, 
   Download, 
@@ -114,12 +110,13 @@ export default function Library() {
       {/* Search and Filters */}
       <div className="flex flex-col sm:flex-row gap-4 mb-6">
         <div className="relative flex-1">
-          <Search className="absolute right-3 top-3 h-4 w-4 text-muted-foreground" />
-          <Input
+          <Search className="absolute right-3 top-3 h-4 w-4 text-gray-400" />
+          <input
+            type="text"
             placeholder="جستجو در کتابخانه..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pr-9"
+            className="w-full pr-9 pl-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
         
@@ -127,7 +124,7 @@ export default function Library() {
           <select 
             value={selectedCategory} 
             onChange={(e) => setSelectedCategory(e.target.value)}
-            className="px-3 py-2 border border-input bg-background rounded-md"
+            className="px-3 py-2 border border-gray-300 bg-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="all">همه دسته‌ها</option>
             {categories?.map((category: string) => (
@@ -140,7 +137,7 @@ export default function Library() {
           <select 
             value={selectedTag} 
             onChange={(e) => setSelectedTag(e.target.value)}
-            className="px-3 py-2 border border-input bg-background rounded-md"
+            className="px-3 py-2 border border-gray-300 bg-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="all">همه برچسب‌ها</option>
             {tags?.map((tag: string) => (
@@ -206,24 +203,22 @@ export default function Library() {
       {/* Documents Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {getTabDocuments().map((doc: Document) => (
-          <Card key={doc.id} className="hover:shadow-lg transition-shadow duration-200">
-            <CardHeader className="pb-3">
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <CardTitle className="text-lg mb-2 line-clamp-2">
-                    {doc.title}
-                  </CardTitle>
-                  <CardDescription className="line-clamp-2">
-                    {doc.excerpt}
-                  </CardDescription>
-                </div>
-                {doc.featured && (
-                  <Star className="h-5 w-5 text-yellow-500 fill-current flex-shrink-0 mr-2" />
-                )}
+          <div key={doc.id} className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 p-6">
+            <div className="flex items-start justify-between mb-4">
+              <div className="flex-1">
+                <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2">
+                  {doc.title}
+                </h3>
+                <p className="text-gray-600 text-sm line-clamp-2">
+                  {doc.excerpt}
+                </p>
               </div>
-            </CardHeader>
+              {doc.featured && (
+                <Star className="h-5 w-5 text-yellow-500 fill-current flex-shrink-0 mr-2" />
+              )}
+            </div>
             
-            <CardContent className="space-y-4">
+            <div className="space-y-4">
               {/* Meta Information */}
               <div className="flex items-center justify-between text-sm text-gray-600">
                 <div className="flex items-center gap-1">
@@ -245,14 +240,14 @@ export default function Library() {
               {doc.tags && doc.tags.length > 0 && (
                 <div className="flex flex-wrap gap-1">
                   {doc.tags.slice(0, 3).map((tag: string) => (
-                    <Badge key={tag} variant="secondary" className="text-xs">
+                    <span key={tag} className="px-2 py-1 bg-gray-100 text-gray-700 rounded-full text-xs">
                       {tag}
-                    </Badge>
+                    </span>
                   ))}
                   {doc.tags.length > 3 && (
-                    <Badge variant="outline" className="text-xs">
+                    <span className="px-2 py-1 bg-gray-200 text-gray-600 rounded-full text-xs">
                       +{doc.tags.length - 3}
-                    </Badge>
+                    </span>
                   )}
                 </div>
               )}
@@ -285,17 +280,17 @@ export default function Library() {
 
               {/* Actions */}
               <div className="flex gap-2 pt-2">
-                <Button variant="outline" size="sm" className="flex-1">
-                  <Eye className="h-4 w-4 ml-1" />
+                <button className="flex-1 px-3 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors flex items-center justify-center gap-1">
+                  <Eye className="h-4 w-4" />
                   مشاهده
-                </Button>
-                <Button variant="default" size="sm" className="flex-1">
-                  <Download className="h-4 w-4 ml-1" />
+                </button>
+                <button className="flex-1 px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors flex items-center justify-center gap-1">
+                  <Download className="h-4 w-4" />
                   دانلود
-                </Button>
+                </button>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         ))}
       </div>
 
