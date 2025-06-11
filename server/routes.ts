@@ -6,7 +6,9 @@ import { fromZodError } from "zod-validation-error";
 import { 
   insertCourseSchema, 
   insertProjectSchema, 
-  insertDocumentSchema, 
+  insertDocumentSchema,
+  insertDocumentCategorySchema,
+  insertDocumentTagSchema,
   insertMagazineSchema,
   insertArticleSchema,
   insertArticleContentSchema,

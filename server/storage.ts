@@ -16,7 +16,7 @@ import {
   slides, type Slide, type InsertSlide
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, asc } from "drizzle-orm";
+import { eq, asc, like, and, sql } from "drizzle-orm";
 
 export interface IStorage {
   // User methods
@@ -226,23 +226,7 @@ export class DatabaseStorage implements IStorage {
     return project;
   }
 
-  // Document methods
-  async getDocuments(): Promise<Document[]> {
-    return await db.select().from(documents);
-  }
 
-  async getDocument(id: number): Promise<Document | undefined> {
-    const [document] = await db.select().from(documents).where(eq(documents.id, id));
-    return document;
-  }
-
-  async createDocument(insertDocument: InsertDocument): Promise<Document> {
-    const [document] = await db
-      .insert(documents)
-      .values(insertDocument)
-      .returning();
-    return document;
-  }
 
   // Media content methods
   async getMediaContent(id: number): Promise<MediaContent | undefined> {
@@ -480,6 +464,198 @@ export class DatabaseStorage implements IStorage {
   async deleteSlide(id: number): Promise<boolean> {
     const result = await db.delete(slides).where(eq(slides.id, id));
     return result.rowCount > 0;
+  }
+
+  // Document Category methods
+  async getDocumentCategories(): Promise<DocumentCategory[]> {
+    return await db.select().from(documentCategories).where(eq(documentCategories.isActive, true)).orderBy(asc(documentCategories.order));
+  }
+
+  async getDocumentCategory(id: number): Promise<DocumentCategory | undefined> {
+    const [category] = await db.select().from(documentCategories).where(eq(documentCategories.id, id));
+    return category;
+  }
+
+  async createDocumentCategory(category: InsertDocumentCategory): Promise<DocumentCategory> {
+    const [newCategory] = await db
+      .insert(documentCategories)
+      .values({
+        ...category,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      })
+      .returning();
+    return newCategory;
+  }
+
+  async updateDocumentCategory(id: number, category: Partial<InsertDocumentCategory>): Promise<DocumentCategory | undefined> {
+    const [updatedCategory] = await db
+      .update(documentCategories)
+      .set({
+        ...category,
+        updatedAt: new Date()
+      })
+      .where(eq(documentCategories.id, id))
+      .returning();
+    return updatedCategory;
+  }
+
+  async deleteDocumentCategory(id: number): Promise<boolean> {
+    const result = await db.delete(documentCategories).where(eq(documentCategories.id, id));
+    return result.rowCount > 0;
+  }
+
+  // Document Tag methods
+  async getDocumentTags(): Promise<DocumentTag[]> {
+    return await db.select().from(documentTags);
+  }
+
+  async getDocumentTag(id: number): Promise<DocumentTag | undefined> {
+    const [tag] = await db.select().from(documentTags).where(eq(documentTags.id, id));
+    return tag;
+  }
+
+  async createDocumentTag(tag: InsertDocumentTag): Promise<DocumentTag> {
+    const [newTag] = await db
+      .insert(documentTags)
+      .values({
+        ...tag,
+        createdAt: new Date()
+      })
+      .returning();
+    return newTag;
+  }
+
+  async updateDocumentTag(id: number, tag: Partial<InsertDocumentTag>): Promise<DocumentTag | undefined> {
+    const [updatedTag] = await db
+      .update(documentTags)
+      .set(tag)
+      .where(eq(documentTags.id, id))
+      .returning();
+    return updatedTag;
+  }
+
+  async deleteDocumentTag(id: number): Promise<boolean> {
+    const result = await db.delete(documentTags).where(eq(documentTags.id, id));
+    return result.rowCount > 0;
+  }
+
+  // Document methods
+  async getDocuments(): Promise<Document[]> {
+    return await db.select().from(documents).orderBy(asc(documents.createdAt));
+  }
+
+  async getDocumentsByCategory(categoryId: number): Promise<Document[]> {
+    return await db.select().from(documents).where(eq(documents.categoryId, categoryId));
+  }
+
+  async getDocumentsByTag(tagId: number): Promise<Document[]> {
+    const results = await db
+      .select({ document: documents })
+      .from(documents)
+      .innerJoin(documentTagRelations, eq(documents.id, documentTagRelations.documentId))
+      .where(eq(documentTagRelations.tagId, tagId));
+    return results.map(r => r.document);
+  }
+
+  async getFeaturedDocuments(): Promise<Document[]> {
+    return await db.select().from(documents).where(eq(documents.isFeatured, true));
+  }
+
+  async searchDocuments(query: string): Promise<Document[]> {
+    return await db.select().from(documents).where(
+      // Simple text search - در production از full-text search استفاده کنید
+      eq(documents.title, query)
+    );
+  }
+
+  async getDocument(id: number): Promise<Document | undefined> {
+    const [document] = await db.select().from(documents).where(eq(documents.id, id));
+    return document;
+  }
+
+  async getDocumentBySlug(slug: string): Promise<Document | undefined> {
+    const [document] = await db.select().from(documents).where(eq(documents.slug, slug));
+    return document;
+  }
+
+  async createDocument(document: InsertDocument): Promise<Document> {
+    const [newDocument] = await db
+      .insert(documents)
+      .values({
+        ...document,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        publishedAt: new Date()
+      })
+      .returning();
+    return newDocument;
+  }
+
+  async updateDocument(id: number, document: Partial<InsertDocument>): Promise<Document | undefined> {
+    const [updatedDocument] = await db
+      .update(documents)
+      .set({
+        ...document,
+        updatedAt: new Date()
+      })
+      .where(eq(documents.id, id))
+      .returning();
+    return updatedDocument;
+  }
+
+  async deleteDocument(id: number): Promise<boolean> {
+    const result = await db.delete(documents).where(eq(documents.id, id));
+    return result.rowCount > 0;
+  }
+
+  async incrementDownloadCount(id: number): Promise<void> {
+    await db
+      .update(documents)
+      .set({
+        downloadCount: sql`${documents.downloadCount} + 1`
+      })
+      .where(eq(documents.id, id));
+  }
+
+  async incrementViewCount(id: number): Promise<void> {
+    await db
+      .update(documents)
+      .set({
+        viewCount: sql`${documents.viewCount} + 1`
+      })
+      .where(eq(documents.id, id));
+  }
+
+  // Document Tag Relations
+  async addTagToDocument(documentId: number, tagId: number): Promise<DocumentTagRelation> {
+    const [relation] = await db
+      .insert(documentTagRelations)
+      .values({
+        documentId,
+        tagId,
+        createdAt: new Date()
+      })
+      .returning();
+    return relation;
+  }
+
+  async removeTagFromDocument(documentId: number, tagId: number): Promise<boolean> {
+    const result = await db
+      .delete(documentTagRelations)
+      .where(
+        eq(documentTagRelations.documentId, documentId) && eq(documentTagRelations.tagId, tagId)
+      );
+    return result.rowCount > 0;
+  }
+
+  async getDocumentTags(documentId: number): Promise<DocumentTag[]> {
+    const results = await db
+      .select({ tag: documentTags })
+      .from(documentTags)
+      .innerJoin(documentTagRelations, eq(documentTags.id, documentTagRelations.tagId))
+      .where(eq(documentTagRelations.documentId, documentId));
+    return results.map(r => r.tag);
   }
 }
 
