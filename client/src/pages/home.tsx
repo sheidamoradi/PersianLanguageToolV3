@@ -3,15 +3,7 @@ import { Link } from "wouter";
 import CourseCard from "@/components/course/CourseCard";
 import ProjectCard from "@/components/project/ProjectCard";
 import { type Course, type Project, type Slide } from "@shared/schema";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Button } from "@/components/ui/button";
-import { 
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
+// Removed shadcn UI imports to fix React runtime error
 import { Book, BookOpen, Bookmark, ChevronLeft, ChevronRight, GraduationCap, Layers, TrendingUp, Users } from "lucide-react";
 
 export default function Home() {

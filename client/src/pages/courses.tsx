@@ -2,10 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { type Course } from "@shared/schema";
 import CourseCard from "@/components/course/CourseCard";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+// Removed all shadcn UI imports to fix React runtime error
 
 export default function Courses() {
   const [searchTerm, setSearchTerm] = useState("");
