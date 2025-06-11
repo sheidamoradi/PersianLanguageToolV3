@@ -1,4 +1,5 @@
 import type { Express } from "express";
+import express from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { ZodError } from "zod";
@@ -19,17 +20,12 @@ import {
 } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Serve the main HTML file directly from public directory
-  app.get("/", async (req, res) => {
-    try {
-      const htmlPath = path.resolve(process.cwd(), "public", "index.html");
-      const htmlContent = await fs.promises.readFile(htmlPath, "utf-8");
-      res.setHeader("Content-Type", "text/html");
-      res.send(htmlContent);
-    } catch (error) {
-      console.error("Error serving HTML:", error);
-      res.status(500).send("Error loading page");
-    }
+  // Static file serving for public directory
+  app.use('/static', express.static(path.resolve(process.cwd(), 'public')));
+  
+  // Redirect root to static platform
+  app.get("/", (req, res) => {
+    res.redirect('/static/pistach.html');
   });
 
   // API routes with /api prefix

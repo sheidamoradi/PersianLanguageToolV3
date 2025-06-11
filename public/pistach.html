@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>پیستاط - مرکز آموزشی کشاورزی</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            direction: rtl;
+            margin: 0;
+            padding: 0;
+        }
+        .card-hover:hover { transform: translateY(-4px); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
+        .spinner { animation: spin 1s linear infinite; }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div id="app">
+        <!-- Header -->
+        <div class="bg-gradient-to-br from-green-50 to-emerald-50 p-8 text-center">
+            <h1 class="text-4xl font-bold text-green-600 mb-3">🌱 پیستاط</h1>
+            <p class="text-xl text-gray-600 mb-2">مرکز آموزشی تخصصی کشاورزی مدرن</p>
+            <p class="text-gray-500">یادگیری، پیشرفت، موفقیت</p>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="container mx-auto px-4 py-8">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                <div class="bg-gradient-to-br from-blue-500 to-blue-600 p-6 rounded-2xl text-white text-center">
+                    <div class="text-3xl font-bold mb-1" id="courses-count">-</div>
+                    <div class="text-sm opacity-90">دوره فعال</div>
+                </div>
+                <div class="bg-gradient-to-br from-green-500 to-green-600 p-6 rounded-2xl text-white text-center">
+                    <div class="text-3xl font-bold mb-1" id="projects-count">-</div>
+                    <div class="text-sm opacity-90">پروژه</div>
+                </div>
+                <div class="bg-gradient-to-br from-purple-500 to-purple-600 p-6 rounded-2xl text-white text-center">
+                    <div class="text-3xl font-bold mb-1" id="documents-count">-</div>
+                    <div class="text-sm opacity-90">مقاله</div>
+                </div>
+                <div class="bg-gradient-to-br from-orange-500 to-orange-600 p-6 rounded-2xl text-white text-center">
+                    <div class="text-3xl font-bold mb-1">87%</div>
+                    <div class="text-sm opacity-90">پیشرفت</div>
+                </div>
+            </div>
+
+            <!-- Featured Course -->
+            <div class="bg-gradient-to-br from-green-500 via-emerald-500 to-teal-600 rounded-2xl p-8 text-white mb-8">
+                <h2 class="text-2xl font-bold mb-3">🎯 دوره پیشنهادی این هفته</h2>
+                <h3 class="text-xl font-semibold mb-2">کشاورزی هوشمند با IoT</h3>
+                <p class="mb-6 opacity-90">یادگیری فناوری‌های نوین اینترنت اشیا در کشاورزی مدرن</p>
+                <button class="bg-white text-green-600 px-6 py-3 rounded-xl font-semibold hover:shadow-lg transition-all">
+                    شروع یادگیری رایگان
+                </button>
+            </div>
+
+            <!-- Loading State -->
+            <div id="loading-state" class="text-center py-8">
+                <div class="spinner w-8 h-8 border-4 border-green-500 border-t-transparent rounded-full mx-auto mb-4"></div>
+                <p class="text-gray-600">در حال بارگیری محتوا...</p>
+            </div>
+
+            <!-- Content Sections -->
+            <div id="content-sections" class="space-y-8" style="display: none;">
+                <!-- Documents Section -->
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+                        <span class="text-2xl">📖</span>
+                        کتابخانه دیجیتال
+                    </h2>
+                    <div id="documents-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Documents will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- Activity Section -->
+                <div class="bg-white rounded-2xl shadow-lg p-6">
+                    <h2 class="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+                        <span class="text-2xl">📊</span>
+                        فعالیت‌های اخیر
+                    </h2>
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-4 p-4 bg-blue-50 rounded-xl">
+                            <div class="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center">
+                                <span class="text-white text-lg">📚</span>
+                            </div>
+                            <div class="flex-1">
+                                <p class="font-medium text-gray-800">مطالعه جدیدترین مقالات کشاورزی</p>
+                                <p class="text-sm text-gray-500">همین الان • آماده برای یادگیری</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4 p-4 bg-green-50 rounded-xl">
+                            <div class="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center">
+                                <span class="text-white text-lg">🚀</span>
+                            </div>
+                            <div class="flex-1">
+                                <p class="font-medium text-gray-800">شروع پروژه‌های عملی جدید</p>
+                                <p class="text-sm text-gray-500">آماده برای شروع • پروژه‌های متنوع</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Navigation -->
+        <div class="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-lg border-t border-gray-200 shadow-2xl">
+            <div class="flex justify-around py-2">
+                <button onclick="setActiveTab('home')" class="nav-btn flex flex-col items-center py-2 px-4 text-green-600">
+                    <span class="text-xl mb-1">🏠</span>
+                    <span class="text-xs font-medium">خانه</span>
+                </button>
+                <button onclick="setActiveTab('courses')" class="nav-btn flex flex-col items-center py-2 px-4 text-gray-400">
+                    <span class="text-xl mb-1">📚</span>
+                    <span class="text-xs font-medium">دوره‌ها</span>
+                </button>
+                <button onclick="setActiveTab('projects')" class="nav-btn flex flex-col items-center py-2 px-4 text-gray-400">
+                    <span class="text-xl mb-1">🚀</span>
+                    <span class="text-xs font-medium">پروژه‌ها</span>
+                </button>
+                <button onclick="setActiveTab('library')" class="nav-btn flex flex-col items-center py-2 px-4 text-gray-400">
+                    <span class="text-xl mb-1">📖</span>
+                    <span class="text-xs font-medium">کتابخانه</span>
+                </button>
+                <button onclick="setActiveTab('profile')" class="nav-btn flex flex-col items-center py-2 px-4 text-gray-400">
+                    <span class="text-xl mb-1">👤</span>
+                    <span class="text-xs font-medium">پروفایل</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentTab = 'home';
+        
+        function setActiveTab(tab) {
+            currentTab = tab;
+            // Update navigation styles
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.className = 'nav-btn flex flex-col items-center py-2 px-4 text-gray-400';
+            });
+            event.target.closest('.nav-btn').className = 'nav-btn flex flex-col items-center py-2 px-4 text-green-600';
+            
+            // Show different content based on tab
+            if (tab !== 'home') {
+                document.getElementById('content-sections').innerHTML = 
+                    `<div class="text-center py-20 text-gray-600">صفحه ${getTabName(tab)} - به زودی</div>`;
+            } else {
+                loadHomeContent();
+            }
+        }
+        
+        function getTabName(tab) {
+            const names = {
+                'courses': 'دوره‌ها',
+                'projects': 'پروژه‌ها', 
+                'library': 'کتابخانه',
+                'profile': 'پروفایل'
+            };
+            return names[tab] || tab;
+        }
+
+        async function loadData() {
+            try {
+                // Load courses
+                const coursesResponse = await fetch('/api/courses');
+                const courses = coursesResponse.ok ? await coursesResponse.json() : [];
+                document.getElementById('courses-count').textContent = courses.length;
+
+                // Load projects
+                const projectsResponse = await fetch('/api/projects');
+                const projects = projectsResponse.ok ? await projectsResponse.json() : [];
+                document.getElementById('projects-count').textContent = projects.length;
+
+                // Load documents
+                const documentsResponse = await fetch('/api/documents');
+                const documents = documentsResponse.ok ? await documentsResponse.json() : [];
+                document.getElementById('documents-count').textContent = documents.length;
+
+                // Display documents
+                const documentsGrid = document.getElementById('documents-grid');
+                documentsGrid.innerHTML = documents.slice(0, 6).map(doc => `
+                    <div class="bg-white rounded-xl shadow-lg p-4 card-hover transition-all duration-300">
+                        <h3 class="font-bold text-gray-800 mb-2">${doc.title}</h3>
+                        <p class="text-gray-600 text-sm mb-3 line-clamp-2">${doc.excerpt || doc.content || 'محتوای مفیدی برای یادگیری'}</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs text-gray-500">${doc.author || 'نویسنده ناشناخته'}</span>
+                            <button class="bg-purple-500 text-white px-3 py-1 rounded text-sm hover:bg-purple-600 transition-colors">
+                                دانلود
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+
+                // Hide loading, show content
+                document.getElementById('loading-state').style.display = 'none';
+                document.getElementById('content-sections').style.display = 'block';
+
+            } catch (error) {
+                console.warn('Error loading data:', error);
+                document.getElementById('loading-state').innerHTML = 
+                    '<p class="text-red-500">خطا در بارگیری داده‌ها</p>';
+                
+                // Still show content with placeholder data
+                setTimeout(() => {
+                    document.getElementById('courses-count').textContent = '0';
+                    document.getElementById('projects-count').textContent = '0';
+                    document.getElementById('documents-count').textContent = '0';
+                    document.getElementById('loading-state').style.display = 'none';
+                    document.getElementById('content-sections').style.display = 'block';
+                }, 2000);
+            }
+        }
+
+        function loadHomeContent() {
+            document.getElementById('content-sections').style.display = 'block';
+        }
+
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('✅ پیستاط - پلتفرم آموزشی بارگذاری شد');
+            loadData();
+        });
+    </script>
+
+    <!-- Add some padding to bottom for navigation -->
+    <div style="height: 80px;"></div>
+</body>
+</html>
