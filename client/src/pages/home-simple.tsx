@@ -191,7 +191,19 @@ export default function Home() {
         ) : popularCourses.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {popularCourses.map((course) => (
-              <CourseCard key={course.id} course={course} />
+              <CourseCard 
+                key={course.id}
+                id={course.id}
+                title={course.title}
+                description={course.description}
+                thumbnailUrl={course.thumbnailUrl || ''}
+                progress={course.progress || 0}
+                totalModules={course.totalModules || 0}
+                completedModules={course.completedModules || 0}
+                isNew={course.isNew || false}
+                isPopular={course.isPopular || false}
+                level={course.level || undefined}
+              />
             ))}
           </div>
         ) : (
@@ -232,7 +244,19 @@ export default function Home() {
         ) : newCourses.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {newCourses.map((course) => (
-              <CourseCard key={course.id} course={course} />
+              <CourseCard 
+                key={course.id}
+                id={course.id}
+                title={course.title}
+                description={course.description}
+                thumbnailUrl={course.thumbnailUrl || ''}
+                progress={course.progress || 0}
+                totalModules={course.totalModules || 0}
+                completedModules={course.completedModules || 0}
+                isNew={course.isNew || false}
+                isPopular={course.isPopular || false}
+                level={course.level || undefined}
+              />
             ))}
           </div>
         ) : (
@@ -273,7 +297,17 @@ export default function Home() {
         ) : featuredProjects.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {featuredProjects.map((project) => (
-              <ProjectCard key={project.id} project={project} />
+              <ProjectCard 
+                key={project.id}
+                id={project.id}
+                title={project.title}
+                description={project.description}
+                thumbnailUrl={project.thumbnailUrl || ''}
+                type={project.type as "project" | "magazine"}
+                dueDate={project.dueDate || undefined}
+                pages={project.pages || undefined}
+                isLocked={project.isLocked || false}
+              />
             ))}
           </div>
         ) : (
