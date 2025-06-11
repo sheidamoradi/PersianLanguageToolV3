@@ -14,6 +14,8 @@ import Projects from "@/pages/projects";
 import Library from "@/pages/library";
 import Categories from "@/pages/categories";
 import Profile from "@/pages/profile";
+import Cart from "@/pages/cart";
+import Favorites from "@/pages/favorites";
 import DocumentViewer from "@/pages/document-viewer";
 import MediaPlayer from "@/pages/media-player";
 import Admin from "@/pages/admin";
@@ -88,6 +90,16 @@ function Router() {
       <Route path="/profile">
         <Layout>
           <Profile />
+        </Layout>
+      </Route>
+      <Route path="/cart">
+        <Layout>
+          <Cart />
+        </Layout>
+      </Route>
+      <Route path="/favorites">
+        <Layout>
+          <Favorites />
         </Layout>
       </Route>
       <Route path="/documents/:id">
