@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>پیستاط - مرکز آموزشی کشاورزی</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-blue-800 mb-4">🌱 پیستاط</h1>
+            <p class="text-xl text-gray-600">مرکز آموزشی تخصصی کشاورزی</p>
+            <div class="inline-block bg-green-500 text-white px-6 py-2 rounded-full mt-4">
+                ✅ وب‌سایت با موفقیت بارگذاری شد
+            </div>
+        </div>
+
+        <!-- Main Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+            <!-- Courses Card -->
+            <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl p-6 text-white shadow-lg hover:shadow-xl transform hover:-translate-y-2 transition-all duration-300 cursor-pointer">
+                <div class="text-center">
+                    <div class="text-4xl mb-4">📚</div>
+                    <h2 class="text-xl font-bold mb-2">دوره‌ها</h2>
+                    <p class="opacity-90">آموزش‌های جامع و تخصصی کشاورزی</p>
+                </div>
+            </div>
+
+            <!-- Projects Card -->
+            <div class="bg-gradient-to-br from-green-500 to-green-600 rounded-2xl p-6 text-white shadow-lg hover:shadow-xl transform hover:-translate-y-2 transition-all duration-300 cursor-pointer">
+                <div class="text-center">
+                    <div class="text-4xl mb-4">🚀</div>
+                    <h2 class="text-xl font-bold mb-2">پروژه‌ها</h2>
+                    <p class="opacity-90">پروژه‌های عملی و کاربردی</p>
+                </div>
+            </div>
+
+            <!-- Library Card -->
+            <div class="bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl p-6 text-white shadow-lg hover:shadow-xl transform hover:-translate-y-2 transition-all duration-300 cursor-pointer">
+                <div class="text-center">
+                    <div class="text-4xl mb-4">📖</div>
+                    <h2 class="text-xl font-bold mb-2">کتابخانه</h2>
+                    <p class="opacity-90">منابع و مقالات آموزشی</p>
+                </div>
+            </div>
+
+            <!-- Profile Card -->
+            <div class="bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl p-6 text-white shadow-lg hover:shadow-xl transform hover:-translate-y-2 transition-all duration-300 cursor-pointer">
+                <div class="text-center">
+                    <div class="text-4xl mb-4">👤</div>
+                    <h2 class="text-xl font-bold mb-2">پروفایل</h2>
+                    <p class="opacity-90">مدیریت حساب کاربری</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Features Section -->
+        <div class="bg-white rounded-2xl p-8 shadow-lg">
+            <h3 class="text-2xl font-bold text-gray-800 mb-6 text-center">ویژگی‌های پلتفرم</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="text-center">
+                    <div class="text-3xl mb-3">🎓</div>
+                    <h4 class="font-semibold text-gray-800">آموزش تخصصی</h4>
+                    <p class="text-gray-600 text-sm">دوره‌های کاربردی کشاورزی</p>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl mb-3">📱</div>
+                    <h4 class="font-semibold text-gray-800">دسترسی آسان</h4>
+                    <p class="text-gray-600 text-sm">قابل استفاده روی تمام دستگاه‌ها</p>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl mb-3">🔒</div>
+                    <h4 class="font-semibold text-gray-800">امن و قابل اعتماد</h4>
+                    <p class="text-gray-600 text-sm">سیستم امنیت پیشرفته</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Navigation -->
+        <div class="fixed bottom-0 left-0 right-0 bg-white shadow-lg border-t">
+            <div class="flex justify-around py-3">
+                <button class="flex flex-col items-center text-blue-600">
+                    <div class="text-xl mb-1">🏠</div>
+                    <span class="text-xs">خانه</span>
+                </button>
+                <button class="flex flex-col items-center text-gray-400">
+                    <div class="text-xl mb-1">📚</div>
+                    <span class="text-xs">دوره‌ها</span>
+                </button>
+                <button class="flex flex-col items-center text-gray-400">
+                    <div class="text-xl mb-1">📖</div>
+                    <span class="text-xs">کتابخانه</span>
+                </button>
+                <button class="flex flex-col items-center text-gray-400">
+                    <div class="text-xl mb-1">👤</div>
+                    <span class="text-xs">پروفایل</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        console.log('✅ پیستاط - وب‌سایت بارگذاری شد');
+        
+        // Add click handlers for cards
+        document.querySelectorAll('.cursor-pointer').forEach(card => {
+            card.addEventListener('click', function() {
+                const title = this.querySelector('h2').textContent;
+                alert(`انتخاب شد: ${title}`);
+            });
+        });
+
+        // Bottom navigation
+        document.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Remove active class from all buttons
+                document.querySelectorAll('button').forEach(b => {
+                    b.classList.remove('text-blue-600');
+                    b.classList.add('text-gray-400');
+                });
+                
+                // Add active class to clicked button
+                this.classList.remove('text-gray-400');
+                this.classList.add('text-blue-600');
+                
+                const text = this.querySelector('span').textContent;
+                console.log(`Navigate to: ${text}`);
+            });
+        });
+    </script>
+</body>
+</html>
