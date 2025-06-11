@@ -1,7 +1,5 @@
 import { Link } from "wouter";
 import { type CourseCardProps } from "@/lib/types";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 
 export default function CourseCard({
   id,
@@ -25,20 +23,18 @@ export default function CourseCard({
           <h3 className="font-medium text-neutral-600">{title}</h3>
           
           {progress > 0 && (
-            <Badge className="bg-accent hover:bg-accent/90 text-white">{progress}%</Badge>
+            <span className="px-2 py-1 bg-blue-500 text-white text-xs rounded-full">{progress}%</span>
           )}
           {isNew && (
-            <Badge className="bg-green-500 hover:bg-green-600 text-white">جدید</Badge>
+            <span className="px-2 py-1 bg-green-500 text-white text-xs rounded-full">جدید</span>
           )}
           {isPopular && (
-            <Badge className="bg-amber-500 hover:bg-amber-600 text-white">محبوب</Badge>
+            <span className="px-2 py-1 bg-amber-500 text-white text-xs rounded-full">محبوب</span>
           )}
           {level && progress === 0 && !isNew && !isPopular && (
-            <Badge 
-              className={(level === 'Beginner' ? 'bg-primary' : 'bg-secondary') + ' hover:bg-opacity-90 text-white'}
-            >
+            <span className={`px-2 py-1 text-white text-xs rounded-full ${level === 'Beginner' ? 'bg-blue-500' : 'bg-gray-500'}`}>
               {level === 'Beginner' ? 'مبتدی' : level === 'Intermediate' ? 'متوسط' : 'پیشرفته'}
-            </Badge>
+            </span>
           )}
         </div>
         <p className="text-sm text-neutral-400 mb-3">{description}</p>

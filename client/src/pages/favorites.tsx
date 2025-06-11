@@ -1,8 +1,4 @@
 import { useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   Heart, 
   BookOpen, 
@@ -16,262 +12,186 @@ import {
   Trash2
 } from "lucide-react";
 
-interface FavoriteItem {
-  id: number;
-  title: string;
-  description: string;
-  type: 'course' | 'document' | 'magazine' | 'webinar';
-  addedDate: string;
-  image?: string;
-  price?: number;
-  author?: string;
-  duration?: string;
-  downloadCount?: number;
-  viewCount?: number;
-}
-
 export default function Favorites() {
-  const [favorites, setFavorites] = useState<FavoriteItem[]>([
-    {
-      id: 1,
-      title: "کارگاه آموزش کشت گلخانه‌ای",
-      description: "آموزش کامل کشت گلخانه‌ای از مقدماتی تا پیشرفته",
-      type: 'course',
-      addedDate: '1403/09/15',
-      price: 150000,
-      author: 'دکتر احمد کشاورزی',
-      duration: '8 ساعت'
-    },
-    {
-      id: 2,
-      title: "راهنمای کامل کود آلی",
-      description: "کتاب جامع تولید و استفاده از کودهای آلی",
-      type: 'document',
-      addedDate: '1403/09/12',
-      price: 45000,
-      author: 'استاد علی کمپوست',
-      downloadCount: 320,
-      viewCount: 1456
-    },
-    {
-      id: 3,
-      title: "فصلنامه رویش سبز - شماره ۴",
-      description: "آخرین یافته‌های تحقیقاتی در زمینه کشاورزی پایدار",
-      type: 'magazine',
-      addedDate: '1403/09/10',
-      price: 25000,
-      viewCount: 892
-    },
-    {
-      id: 4,
-      title: "وبینار آبیاری هوشمند",
-      description: "سیستم‌های نوین آبیاری و کنترل از راه دور",
-      type: 'webinar',
-      addedDate: '1403/09/08',
-      price: 80000,
-      author: 'مهندس مریم آبیاری',
-      duration: '2 ساعت'
-    }
-  ]);
+  const [activeTab, setActiveTab] = useState("courses");
 
-  const removeFromFavorites = (id: number) => {
-    setFavorites(items => items.filter(item => item.id !== id));
+  const favoriteItems = {
+    courses: [
+      {
+        id: 1,
+        title: "دوره کامل React و TypeScript",
+        description: "یادگیری مدرن React با TypeScript",
+        instructor: "محمد احمدی",
+        duration: "۱۲ ساعت",
+        price: "۲۹۹,۰۰۰ تومان",
+        image: "/api/placeholder/300/200"
+      }
+    ],
+    projects: [
+      {
+        id: 1,
+        title: "پروژه سایت فروشگاهی",
+        description: "ساخت فروشگاه آنلاین با React",
+        difficulty: "پیشرفته",
+        duration: "۸ ساعت",
+        price: "۱۹۹,۰۰۰ تومان"
+      }
+    ],
+    documents: [
+      {
+        id: 1,
+        title: "راهنمای کامل JavaScript",
+        description: "مرجع جامع زبان جاوااسکریپت",
+        author: "علی رضایی",
+        pages: "۲۵۰ صفحه",
+        format: "PDF"
+      }
+    ],
+    media: [
+      {
+        id: 1,
+        title: "ویدیو آموزش Node.js",
+        description: "آموزش کامل Node.js از مبتدی تا پیشرفته",
+        duration: "۳ ساعت",
+        quality: "۱۰۸۰p",
+        size: "۲.۵ گیگابایت"
+      }
+    ]
   };
 
-  const addToCart = (item: FavoriteItem) => {
-    // اضافه کردن به سبد خرید
-    console.log('Adding to cart:', item);
-  };
-
-  const formatPrice = (price?: number) => {
-    if (!price) return 'رایگان';
-    return new Intl.NumberFormat('fa-IR').format(price) + ' تومان';
-  };
-
-  const getItemTypeLabel = (type: string) => {
-    switch (type) {
-      case 'course': return 'کارگاه';
-      case 'document': return 'سند';
-      case 'magazine': return 'فصلنامه';
-      case 'webinar': return 'وبینار';
-      default: return 'محصول';
-    }
-  };
-
-  const getItemTypeColor = (type: string) => {
-    switch (type) {
-      case 'course': return 'bg-blue-100 text-blue-800';
-      case 'document': return 'bg-green-100 text-green-800';
-      case 'magazine': return 'bg-purple-100 text-purple-800';
-      case 'webinar': return 'bg-orange-100 text-orange-800';
-      default: return 'bg-gray-100 text-gray-800';
-    }
-  };
-
-  const getItemIcon = (type: string) => {
-    switch (type) {
-      case 'course': return <Users className="h-5 w-5" />;
-      case 'document': return <FileText className="h-5 w-5" />;
-      case 'magazine': return <BookOpen className="h-5 w-5" />;
-      case 'webinar': return <Video className="h-5 w-5" />;
-      default: return <Heart className="h-5 w-5" />;
-    }
-  };
-
-  const filterByType = (type: string) => {
-    if (type === 'all') return favorites;
-    return favorites.filter(item => item.type === type);
-  };
-
-  if (favorites.length === 0) {
-    return (
-      <div className="container mx-auto px-6 py-8">
-        <div className="text-center py-12">
-          <Heart className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-          <h2 className="text-2xl font-bold mb-2">لیست علاقه‌مندی‌ها خالی است</h2>
-          <p className="text-muted-foreground mb-6">
-            محصولات مورد علاقه خود را به این لیست اضافه کنید
-          </p>
-          <Button>
-            شروع کاوش محصولات
-          </Button>
-        </div>
-      </div>
-    );
-  }
+  const tabs = [
+    { id: "courses", label: "دوره‌ها", icon: BookOpen },
+    { id: "projects", label: "پروژه‌ها", icon: Users },
+    { id: "documents", label: "کتابخانه", icon: FileText },
+    { id: "media", label: "رسانه", icon: Video }
+  ];
 
   return (
-    <div className="container mx-auto px-6 py-8">
+    <div className="container mx-auto px-4 py-8 pb-20" dir="rtl">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-right mb-2">علاقه‌مندی‌ها</h1>
-        <p className="text-muted-foreground text-right">
-          محصولات و محتوای مورد علاقه شما ({favorites.length} مورد)
-        </p>
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">علاقه‌مندی‌ها</h1>
+        <p className="text-gray-600">محتواهای مورد علاقه شما</p>
       </div>
 
-      {/* Tabs */}
-      <Tabs defaultValue="all" className="w-full">
-        <TabsList className="grid w-full grid-cols-5">
-          <TabsTrigger value="all">
-            همه ({favorites.length})
-          </TabsTrigger>
-          <TabsTrigger value="course">
-            کارگاه‌ها ({filterByType('course').length})
-          </TabsTrigger>
-          <TabsTrigger value="document">
-            اسناد ({filterByType('document').length})
-          </TabsTrigger>
-          <TabsTrigger value="magazine">
-            فصلنامه ({filterByType('magazine').length})
-          </TabsTrigger>
-          <TabsTrigger value="webinar">
-            وبینارها ({filterByType('webinar').length})
-          </TabsTrigger>
-        </TabsList>
+      {/* Tab Navigation */}
+      <div className="flex gap-2 mb-6 border-b">
+        {tabs.map(tab => {
+          const IconComponent = tab.icon;
+          return (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`flex items-center gap-2 px-4 py-2 border-b-2 transition-colors ${
+                activeTab === tab.id 
+                  ? 'border-blue-500 text-blue-600 font-medium' 
+                  : 'border-transparent text-gray-600 hover:text-gray-800'
+              }`}
+            >
+              <IconComponent className="h-4 w-4" />
+              {tab.label}
+            </button>
+          );
+        })}
+      </div>
 
-        {['all', 'course', 'document', 'magazine', 'webinar'].map((tabValue) => (
-          <TabsContent key={tabValue} value={tabValue} className="mt-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {filterByType(tabValue === 'all' ? 'all' : tabValue).map((item) => (
-                <Card key={item.id} className="hover:shadow-lg transition-shadow">
-                  <CardHeader>
-                    <div className="flex items-start justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className={`p-2 rounded-lg ${getItemTypeColor(item.type)}`}>
-                          {getItemIcon(item.type)}
-                        </div>
-                        <div>
-                          <CardTitle className="text-lg mb-1">{item.title}</CardTitle>
-                          <Badge className={getItemTypeColor(item.type)}>
-                            {getItemTypeLabel(item.type)}
-                          </Badge>
-                        </div>
-                      </div>
-                      <Button 
-                        variant="ghost" 
-                        size="sm"
-                        onClick={() => removeFromFavorites(item.id)}
-                        className="text-red-500 hover:text-red-700"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                    <CardDescription className="text-right">
-                      {item.description}
-                    </CardDescription>
-                  </CardHeader>
-                  
-                  <CardContent>
-                    <div className="space-y-4">
-                      {/* Metadata */}
-                      <div className="grid grid-cols-2 gap-4 text-sm text-muted-foreground">
-                        {item.author && (
-                          <div className="flex items-center gap-1">
-                            <Users className="h-4 w-4" />
-                            <span>{item.author}</span>
-                          </div>
-                        )}
-                        {item.duration && (
-                          <div className="flex items-center gap-1">
-                            <Calendar className="h-4 w-4" />
-                            <span>{item.duration}</span>
-                          </div>
-                        )}
-                        {item.viewCount && (
-                          <div className="flex items-center gap-1">
-                            <Eye className="h-4 w-4" />
-                            <span>{item.viewCount}</span>
-                          </div>
-                        )}
-                        {item.downloadCount && (
-                          <div className="flex items-center gap-1">
-                            <Download className="h-4 w-4" />
-                            <span>{item.downloadCount}</span>
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Price and Date */}
-                      <div className="flex items-center justify-between">
-                        <div className="text-sm text-muted-foreground">
-                          اضافه شده: {item.addedDate}
-                        </div>
-                        <div className="font-semibold text-lg">
-                          {formatPrice(item.price)}
-                        </div>
-                      </div>
-
-                      {/* Actions */}
-                      <div className="flex gap-2">
-                        <Button variant="outline" className="flex-1">
-                          مشاهده
-                        </Button>
-                        <Button 
-                          className="flex-1"
-                          onClick={() => addToCart(item)}
-                        >
-                          <ShoppingCart className="h-4 w-4 ml-1" />
-                          افزودن به سبد
-                        </Button>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-
-            {filterByType(tabValue === 'all' ? 'all' : tabValue).length === 0 && (
-              <div className="text-center py-12">
-                <Heart className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <p className="text-muted-foreground">
-                  هیچ موردی در این دسته‌بندی موجود نیست
+      {/* Content */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {favoriteItems[activeTab as keyof typeof favoriteItems].map((item: any) => (
+          <div key={item.id} className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow p-6">
+            <div className="flex items-start justify-between mb-4">
+              <div className="flex-1">
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                  {item.title}
+                </h3>
+                <p className="text-gray-600 text-sm mb-3">
+                  {item.description}
                 </p>
               </div>
-            )}
-          </TabsContent>
+              <button className="text-red-500 hover:text-red-700 p-1">
+                <Heart className="h-5 w-5 fill-current" />
+              </button>
+            </div>
+
+            {/* Item specific info */}
+            <div className="space-y-2 mb-4">
+              {activeTab === "courses" && (
+                <>
+                  <div className="flex items-center text-sm text-gray-600">
+                    <Users className="h-4 w-4 ml-1" />
+                    <span>{item.instructor}</span>
+                  </div>
+                  <div className="flex items-center text-sm text-gray-600">
+                    <Calendar className="h-4 w-4 ml-1" />
+                    <span>{item.duration}</span>
+                  </div>
+                </>
+              )}
+              
+              {activeTab === "projects" && (
+                <div className="flex items-center text-sm text-gray-600">
+                  <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs">
+                    {item.difficulty}
+                  </span>
+                  <span className="mr-2">{item.duration}</span>
+                </div>
+              )}
+              
+              {activeTab === "documents" && (
+                <>
+                  <div className="flex items-center text-sm text-gray-600">
+                    <Users className="h-4 w-4 ml-1" />
+                    <span>{item.author}</span>
+                  </div>
+                  <div className="flex items-center text-sm text-gray-600">
+                    <FileText className="h-4 w-4 ml-1" />
+                    <span>{item.pages} • {item.format}</span>
+                  </div>
+                </>
+              )}
+              
+              {activeTab === "media" && (
+                <div className="flex items-center text-sm text-gray-600">
+                  <Video className="h-4 w-4 ml-1" />
+                  <span>{item.duration} • {item.quality} • {item.size}</span>
+                </div>
+              )}
+            </div>
+
+            {/* Actions */}
+            <div className="flex gap-2">
+              <button className="flex-1 px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors flex items-center justify-center gap-1">
+                <Eye className="h-4 w-4" />
+                مشاهده
+              </button>
+              {(activeTab === "courses" || activeTab === "projects") && (
+                <button className="flex-1 px-3 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors flex items-center justify-center gap-1">
+                  <ShoppingCart className="h-4 w-4" />
+                  خرید
+                </button>
+              )}
+              {(activeTab === "documents" || activeTab === "media") && (
+                <button className="flex-1 px-3 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors flex items-center justify-center gap-1">
+                  <Download className="h-4 w-4" />
+                  دانلود
+                </button>
+              )}
+              <button className="px-3 py-2 bg-red-50 text-red-600 rounded-md hover:bg-red-100 transition-colors">
+                <Trash2 className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
         ))}
-      </Tabs>
+      </div>
+
+      {/* Empty State */}
+      {favoriteItems[activeTab as keyof typeof favoriteItems].length === 0 && (
+        <div className="text-center py-12">
+          <Heart className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+          <h3 className="text-lg font-medium text-gray-900 mb-2">هیچ موردی یافت نشد</h3>
+          <p className="text-gray-600">شما هنوز هیچ {tabs.find(t => t.id === activeTab)?.label} را به علاقه‌مندی‌ها اضافه نکرده‌اید</p>
+        </div>
+      )}
     </div>
   );
 }

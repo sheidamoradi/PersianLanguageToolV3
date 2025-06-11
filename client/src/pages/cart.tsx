@@ -1,9 +1,4 @@
 import { useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import { Input } from "@/components/ui/input";
 import { 
   ShoppingCart, 
   Plus, 
@@ -18,50 +13,49 @@ import {
 interface CartItem {
   id: number;
   title: string;
+  type: 'course' | 'project' | 'document';
   price: number;
+  originalPrice?: number;
   quantity: number;
   image?: string;
-  type: 'course' | 'document' | 'magazine';
-  description?: string;
+  instructor?: string;
+  duration?: string;
 }
 
 export default function Cart() {
   const [cartItems, setCartItems] = useState<CartItem[]>([
     {
       id: 1,
-      title: "کارگاه آموزش کشت گلخانه‌ای",
-      price: 150000,
+      title: "دوره کامل React و TypeScript",
+      type: "course",
+      price: 299000,
+      originalPrice: 399000,
       quantity: 1,
-      type: 'course',
-      description: "کارگاه جامع آموزش کشت گلخانه‌ای برای مبتدیان"
+      instructor: "محمد احمدی",
+      duration: "۱۲ ساعت"
     },
     {
       id: 2,
-      title: "راهنمای کامل کود آلی",
-      price: 45000,
-      quantity: 2,
-      type: 'document',
-      description: "کتاب الکترونیکی آموزش تولید و استفاده از کود آلی"
-    },
-    {
-      id: 3,
-      title: "فصلنامه رویش سبز - شماره ۴",
-      price: 25000,
+      title: "پروژه سایت فروشگاهی",
+      type: "project",
+      price: 199000,
       quantity: 1,
-      type: 'magazine',
-      description: "آخرین شماره فصلنامه تخصصی کشاورزی"
+      instructor: "علی رضایی",
+      duration: "۸ ساعت"
     }
   ]);
 
-  const [discountCode, setDiscountCode] = useState("");
+  const [couponCode, setCouponCode] = useState("");
+  const [appliedCoupon, setAppliedCoupon] = useState<string | null>(null);
 
   const updateQuantity = (id: number, newQuantity: number) => {
-    if (newQuantity <= 0) {
+    if (newQuantity === 0) {
       removeItem(id);
       return;
     }
-    setCartItems(items => 
-      items.map(item => 
+    
+    setCartItems(items =>
+      items.map(item =>
         item.id === id ? { ...item, quantity: newQuantity } : item
       )
     );
@@ -71,192 +65,222 @@ export default function Cart() {
     setCartItems(items => items.filter(item => item.id !== id));
   };
 
+  const applyCoupon = () => {
+    if (couponCode.trim()) {
+      setAppliedCoupon(couponCode.trim());
+      setCouponCode("");
+    }
+  };
+
   const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-  const discount = 0; // محاسبه تخفیف
-  const shipping = subtotal > 100000 ? 0 : 15000; // ارسال رایگان بالای ۱۰۰ هزار تومان
+  const discount = appliedCoupon ? subtotal * 0.1 : 0; // 10% discount
+  const shipping = subtotal > 500000 ? 0 : 25000; // Free shipping over 500k
   const total = subtotal - discount + shipping;
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('fa-IR').format(price) + ' تومان';
   };
 
-  const getItemTypeLabel = (type: string) => {
+  const getTypeLabel = (type: string) => {
     switch (type) {
-      case 'course': return 'کارگاه';
-      case 'document': return 'سند';
-      case 'magazine': return 'فصلنامه';
-      default: return 'محصول';
+      case 'course': return 'دوره';
+      case 'project': return 'پروژه';
+      case 'document': return 'کتاب';
+      default: return type;
     }
   };
-
-  const getItemTypeColor = (type: string) => {
-    switch (type) {
-      case 'course': return 'bg-blue-100 text-blue-800';
-      case 'document': return 'bg-green-100 text-green-800';
-      case 'magazine': return 'bg-purple-100 text-purple-800';
-      default: return 'bg-gray-100 text-gray-800';
-    }
-  };
-
-  if (cartItems.length === 0) {
-    return (
-      <div className="container mx-auto px-6 py-8">
-        <div className="text-center py-12">
-          <ShoppingCart className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-          <h2 className="text-2xl font-bold mb-2">سبد خرید شما خالی است</h2>
-          <p className="text-muted-foreground mb-6">
-            محصولات مورد علاقه خود را به سبد خرید اضافه کنید
-          </p>
-          <Button>
-            <ArrowRight className="h-4 w-4 ml-2" />
-            ادامه خرید
-          </Button>
-        </div>
-      </div>
-    );
-  }
 
   return (
-    <div className="container mx-auto px-6 py-8">
-      {/* Header */}
+    <div className="container mx-auto px-4 py-8 pb-20" dir="rtl">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-right mb-2">سبد خرید</h1>
-        <p className="text-muted-foreground text-right">
-          بررسی و نهایی کردن سفارش شما
-        </p>
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">سبد خرید</h1>
+        <p className="text-gray-600">{cartItems.length} مورد در سبد خرید شما</p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Cart Items */}
-        <div className="lg:col-span-2 space-y-4">
-          {cartItems.map((item) => (
-            <Card key={item.id}>
-              <CardContent className="p-6">
+      {cartItems.length === 0 ? (
+        <div className="text-center py-12">
+          <ShoppingCart className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+          <h3 className="text-lg font-medium text-gray-900 mb-2">سبد خرید خالی است</h3>
+          <p className="text-gray-600 mb-4">هنوز هیچ محصولی به سبد خرید اضافه نکرده‌اید</p>
+          <button className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
+            مشاهده محصولات
+          </button>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Cart Items */}
+          <div className="lg:col-span-2 space-y-4">
+            {cartItems.map((item) => (
+              <div key={item.id} className="bg-white rounded-lg shadow-md p-6">
                 <div className="flex items-start gap-4">
-                  <div className="w-20 h-20 bg-muted rounded-lg flex items-center justify-center">
-                    <ShoppingCart className="h-8 w-8 text-muted-foreground" />
+                  <div className="w-20 h-20 bg-gray-200 rounded-lg flex items-center justify-center">
+                    <ShoppingCart className="h-8 w-8 text-gray-400" />
                   </div>
                   
                   <div className="flex-1">
-                    <div className="flex items-start justify-between mb-2">
+                    <div className="flex items-start justify-between">
                       <div>
-                        <h3 className="font-semibold text-lg">{item.title}</h3>
-                        <p className="text-sm text-muted-foreground mb-2">{item.description}</p>
-                        <Badge className={getItemTypeColor(item.type)}>
-                          {getItemTypeLabel(item.type)}
-                        </Badge>
+                        <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                          {item.title}
+                        </h3>
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs">
+                            {getTypeLabel(item.type)}
+                          </span>
+                          {item.instructor && (
+                            <span className="text-sm text-gray-600">
+                              مدرس: {item.instructor}
+                            </span>
+                          )}
+                        </div>
+                        {item.duration && (
+                          <p className="text-sm text-gray-600">
+                            مدت زمان: {item.duration}
+                          </p>
+                        )}
                       </div>
-                      <Button 
-                        variant="ghost" 
-                        size="sm"
+                      
+                      <button
                         onClick={() => removeItem(item.id)}
-                        className="text-red-500 hover:text-red-700"
+                        className="text-red-500 hover:text-red-700 p-1"
                       >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
+                        <Trash2 className="h-5 w-5" />
+                      </button>
                     </div>
                     
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <Button 
-                          variant="outline" 
-                          size="sm"
+                    <div className="flex items-center justify-between mt-4">
+                      <div className="flex items-center gap-3">
+                        <button
                           onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                          className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50"
                         >
-                          <Minus className="h-3 w-3" />
-                        </Button>
-                        <span className="w-8 text-center">{item.quantity}</span>
-                        <Button 
-                          variant="outline" 
-                          size="sm"
+                          <Minus className="h-4 w-4" />
+                        </button>
+                        <span className="w-8 text-center font-medium">
+                          {item.quantity}
+                        </span>
+                        <button
                           onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                          className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50"
                         >
-                          <Plus className="h-3 w-3" />
-                        </Button>
+                          <Plus className="h-4 w-4" />
+                        </button>
                       </div>
                       
                       <div className="text-left">
-                        <div className="font-semibold">{formatPrice(item.price * item.quantity)}</div>
-                        {item.quantity > 1 && (
-                          <div className="text-sm text-muted-foreground">
-                            {formatPrice(item.price)} × {item.quantity}
+                        {item.originalPrice && (
+                          <div className="text-sm text-gray-500 line-through">
+                            {formatPrice(item.originalPrice)}
                           </div>
                         )}
+                        <div className="text-lg font-semibold text-gray-900">
+                          {formatPrice(item.price)}
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+              </div>
+            ))}
+          </div>
 
-        {/* Order Summary */}
-        <div className="lg:col-span-1">
-          <Card className="sticky top-4">
-            <CardHeader>
-              <CardTitle>خلاصه سفارش</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex justify-between">
-                <span>جمع کل:</span>
-                <span>{formatPrice(subtotal)}</span>
-              </div>
+          {/* Order Summary */}
+          <div className="space-y-6">
+            {/* Coupon */}
+            <div className="bg-white rounded-lg shadow-md p-6">
+              <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                <Tag className="h-5 w-5" />
+                کد تخفیف
+              </h3>
               
-              {discount > 0 && (
-                <div className="flex justify-between text-green-600">
-                  <span>تخفیف:</span>
-                  <span>-{formatPrice(discount)}</span>
+              {appliedCoupon ? (
+                <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-green-700 font-medium">
+                      کد "{appliedCoupon}" اعمال شد
+                    </span>
+                    <button
+                      onClick={() => setAppliedCoupon(null)}
+                      className="text-green-600 hover:text-green-800"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </div>
                 </div>
-              )}
-              
-              <div className="flex justify-between">
-                <span>هزینه ارسال:</span>
-                <span>{shipping === 0 ? 'رایگان' : formatPrice(shipping)}</span>
-              </div>
-              
-              {shipping === 0 && (
-                <div className="text-sm text-green-600 flex items-center gap-1">
-                  <Truck className="h-4 w-4" />
-                  ارسال رایگان
-                </div>
-              )}
-              
-              <Separator />
-              
-              <div className="flex justify-between font-bold text-lg">
-                <span>مبلغ نهایی:</span>
-                <span>{formatPrice(total)}</span>
-              </div>
-              
-              {/* Discount Code */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium">کد تخفیف</label>
+              ) : (
                 <div className="flex gap-2">
-                  <Input
-                    placeholder="کد تخفیف"
-                    value={discountCode}
-                    onChange={(e) => setDiscountCode(e.target.value)}
-                    className="text-right"
+                  <input
+                    type="text"
+                    placeholder="کد تخفیف را وارد کنید"
+                    value={couponCode}
+                    onChange={(e) => setCouponCode(e.target.value)}
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
-                  <Button variant="outline">
-                    <Tag className="h-4 w-4" />
-                  </Button>
+                  <button
+                    onClick={applyCoupon}
+                    className="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors"
+                  >
+                    اعمال
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Order Summary */}
+            <div className="bg-white rounded-lg shadow-md p-6">
+              <h3 className="text-lg font-semibold mb-4">خلاصه سفارش</h3>
+              
+              <div className="space-y-3">
+                <div className="flex justify-between">
+                  <span className="text-gray-600">جمع کل:</span>
+                  <span className="font-medium">{formatPrice(subtotal)}</span>
+                </div>
+                
+                {discount > 0 && (
+                  <div className="flex justify-between text-green-600">
+                    <span>تخفیف:</span>
+                    <span>-{formatPrice(discount)}</span>
+                  </div>
+                )}
+                
+                <div className="flex justify-between">
+                  <span className="text-gray-600 flex items-center gap-1">
+                    <Truck className="h-4 w-4" />
+                    هزینه ارسال:
+                  </span>
+                  <span className="font-medium">
+                    {shipping === 0 ? 'رایگان' : formatPrice(shipping)}
+                  </span>
+                </div>
+                
+                <div className="border-t pt-3">
+                  <div className="flex justify-between text-lg font-semibold">
+                    <span>مبلغ نهایی:</span>
+                    <span className="text-blue-600">{formatPrice(total)}</span>
+                  </div>
                 </div>
               </div>
-              
-              <Button className="w-full" size="lg">
-                <CreditCard className="h-4 w-4 ml-2" />
-                ادامه فرایند پرداخت
-              </Button>
-              
-              <Button variant="outline" className="w-full">
-                ادامه خرید
-              </Button>
-            </CardContent>
-          </Card>
+
+              <button className="w-full mt-6 px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors flex items-center justify-center gap-2">
+                <CreditCard className="h-5 w-5" />
+                ادامه فرآیند خرید
+                <ArrowRight className="h-4 w-4" />
+              </button>
+            </div>
+
+            {/* Shipping Info */}
+            <div className="bg-blue-50 rounded-lg p-4">
+              <div className="flex items-center gap-2 mb-2">
+                <Truck className="h-5 w-5 text-blue-600" />
+                <span className="font-medium text-blue-900">اطلاعات ارسال</span>
+              </div>
+              <p className="text-sm text-blue-700">
+                برای خریدهای بالای ۵۰۰,۰۰۰ تومان، ارسال رایگان است.
+              </p>
+            </div>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
