@@ -20,8 +20,8 @@ import {
 } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Serve working platform as raw HTML response
-  app.get("/pistach-app", (req, res) => {
+  // Override root route to serve Pistach platform directly
+  app.get("/", (req, res) => {
     const htmlContent = `<!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>

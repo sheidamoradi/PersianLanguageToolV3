@@ -47,12 +47,9 @@ app.use((req, res, next) => {
     throw err;
   });
 
-  // importantly only setup vite in development and after
-  // setting up all the other routes so the catch-all route
-  // doesn't interfere with the other routes
-  if (app.get("env") === "development") {
-    await setupVite(app, server);
-  } else {
+  // Skip Vite setup to prevent interference with custom routes
+  // Vite is disabled to allow direct HTML serving
+  if (app.get("env") !== "development") {
     serveStatic(app);
   }
 
