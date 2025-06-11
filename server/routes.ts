@@ -9,7 +9,8 @@ import {
   insertDocumentSchema, 
   insertMagazineSchema,
   insertArticleSchema,
-  insertArticleContentSchema
+  insertArticleContentSchema,
+  insertSlideSchema
 } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -594,6 +595,84 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     if (!result) {
       return res.status(404).json({ message: "محتوا پیدا نشد" });
+    }
+
+    return res.status(204).end();
+  });
+
+  // Slides API
+  app.get("/api/slides", async (req, res) => {
+    const slides = await storage.getSlides();
+    res.json(slides);
+  });
+
+  app.get("/api/slides/active", async (req, res) => {
+    const slides = await storage.getActiveSlides();
+    res.json(slides);
+  });
+
+  app.get("/api/slides/:id", async (req, res) => {
+    const id = parseInt(req.params.id);
+
+    if (isNaN(id)) {
+      return res.status(400).json({ message: "کد اسلاید نامعتبر است" });
+    }
+
+    const slide = await storage.getSlide(id);
+
+    if (!slide) {
+      return res.status(404).json({ message: "اسلاید پیدا نشد" });
+    }
+
+    return res.json(slide);
+  });
+
+  app.post("/api/slides", async (req, res) => {
+    try {
+      const slideData = insertSlideSchema.parse(req.body);
+      const slide = await storage.createSlide(slideData);
+      return res.status(201).json(slide);
+    } catch (error) {
+      if (error instanceof ZodError) {
+        const validationError = fromZodError(error);
+        return res.status(400).json({ message: validationError.message });
+      }
+      return res.status(500).json({ message: "خطا در ایجاد اسلاید" });
+    }
+  });
+
+  app.patch("/api/slides/:id", async (req, res) => {
+    const id = parseInt(req.params.id);
+
+    if (isNaN(id)) {
+      return res.status(400).json({ message: "کد اسلاید نامعتبر است" });
+    }
+
+    try {
+      const slideData = req.body;
+      const slide = await storage.updateSlide(id, slideData);
+
+      if (!slide) {
+        return res.status(404).json({ message: "اسلاید پیدا نشد" });
+      }
+
+      return res.json(slide);
+    } catch (error) {
+      return res.status(500).json({ message: "خطا در بروزرسانی اسلاید" });
+    }
+  });
+
+  app.delete("/api/slides/:id", async (req, res) => {
+    const id = parseInt(req.params.id);
+
+    if (isNaN(id)) {
+      return res.status(400).json({ message: "کد اسلاید نامعتبر است" });
+    }
+
+    const result = await storage.deleteSlide(id);
+
+    if (!result) {
+      return res.status(404).json({ message: "اسلاید پیدا نشد" });
     }
 
     return res.status(204).end();

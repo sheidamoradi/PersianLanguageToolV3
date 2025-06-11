@@ -9,10 +9,11 @@ import {
   articles, type Article, type InsertArticle,
   articleContents, type ArticleContent, type InsertArticleContent,
   workshops, type Workshop, type InsertWorkshop,
-  workshopContents, type WorkshopContent, type InsertWorkshopContent
+  workshopContents, type WorkshopContent, type InsertWorkshopContent,
+  slides, type Slide, type InsertSlide
 } from "@shared/schema";
 import { db } from "./db";
-import { eq } from "drizzle-orm";
+import { eq, asc } from "drizzle-orm";
 
 export interface IStorage {
   // User methods
@@ -79,6 +80,14 @@ export interface IStorage {
   createWorkshopContent(content: InsertWorkshopContent): Promise<WorkshopContent>;
   updateWorkshopContent(id: number, content: Partial<InsertWorkshopContent>): Promise<WorkshopContent | undefined>;
   deleteWorkshopContent(id: number): Promise<boolean>;
+
+  // Slide methods
+  getSlides(): Promise<Slide[]>;
+  getActiveSlides(): Promise<Slide[]>;
+  getSlide(id: number): Promise<Slide | undefined>;
+  createSlide(slide: InsertSlide): Promise<Slide>;
+  updateSlide(id: number, slide: Partial<InsertSlide>): Promise<Slide | undefined>;
+  deleteSlide(id: number): Promise<boolean>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -396,6 +405,49 @@ export class DatabaseStorage implements IStorage {
 
   async deleteWorkshopContent(id: number): Promise<boolean> {
     const result = await db.delete(workshopContents).where(eq(workshopContents.id, id));
+    return result.rowCount > 0;
+  }
+
+  // Slide methods
+  async getSlides(): Promise<Slide[]> {
+    return await db.select().from(slides).orderBy(slides.order);
+  }
+
+  async getActiveSlides(): Promise<Slide[]> {
+    return await db.select().from(slides).where(eq(slides.isActive, true)).orderBy(slides.order);
+  }
+
+  async getSlide(id: number): Promise<Slide | undefined> {
+    const [slide] = await db.select().from(slides).where(eq(slides.id, id));
+    return slide;
+  }
+
+  async createSlide(slide: InsertSlide): Promise<Slide> {
+    const [newSlide] = await db
+      .insert(slides)
+      .values({
+        ...slide,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      })
+      .returning();
+    return newSlide;
+  }
+
+  async updateSlide(id: number, slide: Partial<InsertSlide>): Promise<Slide | undefined> {
+    const [updatedSlide] = await db
+      .update(slides)
+      .set({
+        ...slide,
+        updatedAt: new Date()
+      })
+      .where(eq(slides.id, id))
+      .returning();
+    return updatedSlide;
+  }
+
+  async deleteSlide(id: number): Promise<boolean> {
+    const result = await db.delete(slides).where(eq(slides.id, id));
     return result.rowCount > 0;
   }
 }
