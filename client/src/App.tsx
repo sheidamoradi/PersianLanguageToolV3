@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { useState } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import HomePage from './pages/home-simple';
@@ -21,10 +20,18 @@ const queryClient = new QueryClient({
   },
 });
 
+interface NavButtonProps {
+  id: string;
+  icon: string;
+  label: string;
+  isActive: boolean;
+  onClick: (id: string) => void;
+}
+
 function App() {
   const [activeTab, setActiveTab] = useState('home');
 
-  const NavButton = ({ id, icon, label, isActive, onClick }) => (
+  const NavButton = ({ id, icon, label, isActive, onClick }: NavButtonProps) => (
     <button
       onClick={() => onClick(id)}
       className={`flex flex-col items-center py-2 px-4 transition-colors ${
