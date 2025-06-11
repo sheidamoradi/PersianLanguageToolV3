@@ -47,9 +47,9 @@ app.use((req, res, next) => {
     throw err;
   });
 
-  // Skip Vite setup to prevent interference with custom routes
-  // Vite is disabled to allow direct HTML serving
-  if (app.get("env") !== "development") {
+  if (app.get("env") === "development") {
+    await setupVite(app, server);
+  } else {
     serveStatic(app);
   }
 
