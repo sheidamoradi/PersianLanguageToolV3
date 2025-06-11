@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useParams } from "wouter";
 import MediaPlayer from "@/components/media/MediaPlayer";
 import { type MediaContent, type Module } from "@shared/schema";
-import { Skeleton } from "@/components/ui/skeleton";
+
 
 export default function MediaPlayerPage() {
   const { id } = useParams<{ id: string }>();

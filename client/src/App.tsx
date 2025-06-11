@@ -6,7 +6,7 @@ import Header from "@/components/layout/Header";
 import MobileNavbar from "@/components/layout/MobileNavbar";
 import Home from "@/pages/home-simple";
 import Courses from "@/pages/courses-simple";
-import Projects from "@/pages/projects";
+import Projects from "@/pages/projects-simple";
 import Library from "@/pages/library";
 import Categories from "@/pages/categories";
 import Profile from "@/pages/profile";

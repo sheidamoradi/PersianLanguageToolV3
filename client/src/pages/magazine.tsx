@@ -2,10 +2,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { type Magazine } from "@shared/schema";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+
+
+
+
 import { BookOpen, Calendar, FileText } from "lucide-react";
 import { Link } from "wouter";
 

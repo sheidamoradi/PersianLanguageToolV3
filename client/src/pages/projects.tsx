@@ -2,9 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { type Project } from "@shared/schema";
 import ProjectCard from "@/components/project/ProjectCard";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Input } from "@/components/ui/input";
+// کامپوننت‌های ساده بدون UI library
 
 export default function Projects() {
   const [searchTerm, setSearchTerm] = useState("");

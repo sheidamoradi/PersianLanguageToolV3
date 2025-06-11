@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useParams } from "wouter";
 import PDFViewer from "@/components/document/PDFViewer";
 import { type Document } from "@shared/schema";
-import { Skeleton } from "@/components/ui/skeleton";
+
 
 export default function DocumentViewerPage() {
   const { id } = useParams<{ id: string }>();
