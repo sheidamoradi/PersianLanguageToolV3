@@ -46,9 +46,9 @@ export default function CourseCard({
             </span>
           </div>
           <Link href={progress > 0 ? `/courses/${id}/continue` : `/courses/${id}`}>
-            <Button variant="default" size="sm" className="bg-primary hover:bg-primary/90 text-white">
+            <button className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-md transition-colors">
               {progress > 0 ? 'ادامه' : 'ثبت‌نام'}
-            </Button>
+            </button>
           </Link>
         </div>
       </div>
