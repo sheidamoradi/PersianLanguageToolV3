@@ -463,7 +463,7 @@ export class DatabaseStorage implements IStorage {
 
   async deleteSlide(id: number): Promise<boolean> {
     const result = await db.delete(slides).where(eq(slides.id, id));
-    return result.rowCount > 0;
+    return (result.rowCount ?? 0) > 0;
   }
 
   // Document Category methods
@@ -502,7 +502,7 @@ export class DatabaseStorage implements IStorage {
 
   async deleteDocumentCategory(id: number): Promise<boolean> {
     const result = await db.delete(documentCategories).where(eq(documentCategories.id, id));
-    return result.rowCount > 0;
+    return (result.rowCount ?? 0) > 0;
   }
 
   // Document Tag methods
@@ -537,7 +537,7 @@ export class DatabaseStorage implements IStorage {
 
   async deleteDocumentTag(id: number): Promise<boolean> {
     const result = await db.delete(documentTags).where(eq(documentTags.id, id));
-    return result.rowCount > 0;
+    return (result.rowCount ?? 0) > 0;
   }
 
   // Document methods
@@ -606,7 +606,7 @@ export class DatabaseStorage implements IStorage {
 
   async deleteDocument(id: number): Promise<boolean> {
     const result = await db.delete(documents).where(eq(documents.id, id));
-    return result.rowCount > 0;
+    return (result.rowCount ?? 0) > 0;
   }
 
   async incrementDownloadCount(id: number): Promise<void> {
@@ -646,7 +646,7 @@ export class DatabaseStorage implements IStorage {
       .where(
         eq(documentTagRelations.documentId, documentId) && eq(documentTagRelations.tagId, tagId)
       );
-    return result.rowCount > 0;
+    return (result.rowCount ?? 0) > 0;
   }
 
   async getDocumentTags(documentId: number): Promise<DocumentTag[]> {

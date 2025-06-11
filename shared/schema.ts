@@ -303,6 +303,10 @@ const selectSlideSchemaBase = insertSlideSchemaBase.extend({
 });
 
 export const insertSlideSchema = createInsertSchema(slides).omit({ id: true, createdAt: true, updatedAt: true });
+
+// Slide Types
+export type InsertSlide = z.infer<typeof insertSlideSchema>;
+export type Slide = typeof slides.$inferSelect;
 export const selectSlideSchema = selectSlideSchemaBase;
 
 export type InsertSlide = z.infer<typeof insertSlideSchema>;

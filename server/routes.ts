@@ -4,7 +4,8 @@ import { storage } from "./storage";
 import { ZodError } from "zod";
 import { fromZodError } from "zod-validation-error";
 import { 
-  insertCourseSchema, 
+  insertCourseSchema,
+  insertModuleSchema, 
   insertProjectSchema, 
   insertDocumentSchema,
   insertDocumentCategorySchema,
