@@ -1,13 +1,6 @@
 import { Link, useLocation } from "wouter";
-import { User } from "lucide-react";
+import { User, Menu, X } from "lucide-react";
 import { useState } from "react";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
 import logoPath from "@assets/logo.png";
 
 export default function Header() {
@@ -18,162 +11,139 @@ export default function Header() {
     <header className="bg-white shadow-sm sticky top-0 z-20" dir="rtl">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         {/* Logo and Hamburger Menu */}
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            className="md:hidden p-2 rounded-md hover:bg-gray-100"
+          >
+            {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          </button>
+          <Link href="/" className="flex items-center">
+            <img 
+              src={logoPath} 
+              alt="پیستاط" 
+              className="h-10 w-auto"
+            />
+          </Link>
+        </div>
+
+        {/* User Profile Icon */}
         <div className="flex items-center">
-          {/* Hamburger Menu Button */}
-          <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
-            <SheetTrigger asChild>
-              <button className="ml-3 p-2 text-neutral-400 hover:text-primary transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6">
-                  <line x1="3" y1="6" x2="21" y2="6"></line>
-                  <line x1="3" y1="12" x2="21" y2="12"></line>
-                  <line x1="3" y1="18" x2="21" y2="18"></line>
-                </svg>
-              </button>
-            </SheetTrigger>
-            <SheetContent side="right" className="w-80" dir="rtl">
-              <SheetHeader>
-                <SheetTitle className="text-right sr-only">Navigation</SheetTitle>
-              </SheetHeader>
+          <Link href="/profile" className="p-2 rounded-full hover:bg-gray-100">
+            <User className="h-6 w-6 text-gray-600" />
+          </Link>
+        </div>
+      </div>
+
+      {/* Mobile Menu Overlay */}
+      {isMenuOpen && (
+        <div className="fixed inset-0 z-50 md:hidden">
+          <div className="fixed inset-0 bg-black bg-opacity-50" onClick={() => setIsMenuOpen(false)}></div>
+          <div className="fixed top-0 right-0 h-full w-80 bg-white shadow-lg">
+            <div className="p-4">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-semibold">منو</h2>
+                <button
+                  onClick={() => setIsMenuOpen(false)}
+                  className="p-2 rounded-md hover:bg-gray-100"
+                >
+                  <X className="h-6 w-6" />
+                </button>
+              </div>
               
               <div className="mt-6">
                 {/* User Profile Section */}
-                <div className="bg-neutral-100 rounded-lg p-4 mb-6">
+                <div className="bg-gray-100 rounded-lg p-4 mb-6">
                   <div className="flex items-center mb-3">
-                    <div className="h-12 w-12 rounded-full bg-primary flex items-center justify-center text-white font-medium ml-3">
+                    <div className="h-12 w-12 rounded-full bg-blue-600 flex items-center justify-center text-white font-medium ml-3">
                       کا
                     </div>
                     <div>
-                      <p className="font-medium text-neutral-700">کاربر مهمان</p>
-                      <p className="text-sm text-neutral-500">عضویت ساده</p>
+                      <p className="font-medium text-gray-700">کاربر مهمان</p>
+                      <p className="text-sm text-gray-500">عضویت ساده</p>
                     </div>
                   </div>
                   <div className="flex justify-between items-center">
                     <div>
-                      <p className="text-xs text-neutral-500">پیشرفت</p>
-                      <p className="font-medium text-neutral-700">0%</p>
+                      <p className="text-xs text-gray-500">پیشرفت</p>
+                      <p className="font-medium text-gray-700">0%</p>
                     </div>
-                    <div className="h-2 w-24 bg-neutral-300 rounded-full overflow-hidden">
-                      <div className="h-full bg-primary rounded-full" style={{ width: '0%' }}></div>
+                    <div className="h-2 w-24 bg-gray-300 rounded-full overflow-hidden">
+                      <div className="h-full bg-blue-600 rounded-full" style={{ width: '0%' }}></div>
                     </div>
                   </div>
                 </div>
 
                 {/* Main Menu */}
                 <div className="space-y-1 mb-6">
-                  <h3 className="text-xs uppercase text-neutral-500 font-medium mb-3">منوی اصلی</h3>
+                  <h3 className="text-xs uppercase text-gray-500 font-medium mb-3">منوی اصلی</h3>
                   <Link 
                     href="/" 
-                    className={`flex items-center p-3 rounded-lg transition-colors ${location === "/" ? "bg-primary text-white" : "text-neutral-600 hover:bg-neutral-100"}`}
+                    className={`flex items-center p-3 rounded-lg transition-colors ${location === "/" ? "bg-blue-600 text-white" : "text-gray-600 hover:bg-gray-100"}`}
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    <span className="material-icons ml-3">home</span>
                     <span>خانه</span>
                   </Link>
                   <Link 
                     href="/courses" 
-                    className={`flex items-center p-3 rounded-lg transition-colors ${location === "/courses" ? "bg-primary text-white" : "text-neutral-600 hover:bg-neutral-100"}`}
+                    className={`flex items-center p-3 rounded-lg transition-colors ${location === "/courses" ? "bg-blue-600 text-white" : "text-gray-600 hover:bg-gray-100"}`}
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    <span className="material-icons ml-3">menu_book</span>
                     <span>کارگاه‌های آموزشی</span>
                   </Link>
                   <Link 
                     href="/projects" 
-                    className={`flex items-center p-3 rounded-lg transition-colors ${location === "/projects" ? "bg-primary text-white" : "text-neutral-600 hover:bg-neutral-100"}`}
+                    className={`flex items-center p-3 rounded-lg transition-colors ${location === "/projects" ? "bg-blue-600 text-white" : "text-gray-600 hover:bg-gray-100"}`}
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    <span className="material-icons ml-3">assignment</span>
                     <span>وبینارها</span>
                   </Link>
                   <Link 
                     href="/library" 
-                    className={`flex items-center p-3 rounded-lg transition-colors ${location === "/library" ? "bg-primary text-white" : "text-neutral-600 hover:bg-neutral-100"}`}
+                    className={`flex items-center p-3 rounded-lg transition-colors ${location === "/library" ? "bg-blue-600 text-white" : "text-gray-600 hover:bg-gray-100"}`}
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    <span className="material-icons ml-3">library_books</span>
                     <span>کتابخانه</span>
                   </Link>
                   <Link 
                     href="/magazine" 
-                    className={`flex items-center p-3 rounded-lg transition-colors ${location === "/magazine" ? "bg-primary text-white" : "text-neutral-600 hover:bg-neutral-100"}`}
+                    className={`flex items-center p-3 rounded-lg transition-colors ${location === "/magazine" ? "bg-blue-600 text-white" : "text-gray-600 hover:bg-gray-100"}`}
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    <span className="material-icons ml-3">auto_stories</span>
-                    <span>فصلنامه رویش سبز</span>
+                    <span>مجله</span>
                   </Link>
                 </div>
 
-                {/* Account Menu */}
+                {/* Secondary Menu */}
                 <div className="space-y-1">
-                  <h3 className="text-xs uppercase text-neutral-500 font-medium mb-3">حساب کاربری</h3>
-                  <Link 
-                    href="/admin" 
-                    className={`flex items-center p-3 rounded-lg transition-colors ${location === "/admin" ? "bg-primary text-white" : "text-neutral-600 hover:bg-neutral-100"}`}
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    <span className="material-icons ml-3">dashboard</span>
-                    <span>پنل مدیریت</span>
-                  </Link>
+                  <h3 className="text-xs uppercase text-gray-500 font-medium mb-3">حساب کاربری</h3>
                   <Link 
                     href="/profile" 
-                    className={`flex items-center p-3 rounded-lg transition-colors ${location === "/profile" ? "bg-primary text-white" : "text-neutral-600 hover:bg-neutral-100"}`}
+                    className={`flex items-center p-3 rounded-lg transition-colors ${location === "/profile" ? "bg-blue-600 text-white" : "text-gray-600 hover:bg-gray-100"}`}
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    <span className="material-icons ml-3">person</span>
                     <span>پروفایل</span>
                   </Link>
                   <Link 
-                    href="/settings" 
-                    className={`flex items-center p-3 rounded-lg transition-colors ${location === "/settings" ? "bg-primary text-white" : "text-neutral-600 hover:bg-neutral-100"}`}
+                    href="/cart" 
+                    className={`flex items-center p-3 rounded-lg transition-colors ${location === "/cart" ? "bg-blue-600 text-white" : "text-gray-600 hover:bg-gray-100"}`}
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    <span className="material-icons ml-3">settings</span>
-                    <span>تنظیمات</span>
+                    <span>سبد خرید</span>
+                  </Link>
+                  <Link 
+                    href="/favorites" 
+                    className={`flex items-center p-3 rounded-lg transition-colors ${location === "/favorites" ? "bg-blue-600 text-white" : "text-gray-600 hover:bg-gray-100"}`}
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <span>علاقه‌مندی‌ها</span>
                   </Link>
                 </div>
               </div>
-            </SheetContent>
-          </Sheet>
-          
-          <img src={logoPath} alt="پیستاط" className="w-8 h-8 ml-2" />
-          <h1 className="text-xl font-semibold text-neutral-500">پیستاط</h1>
-        </div>
-        
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center space-x-6 space-x-reverse">
-          <Link href="/" className={location === "/" ? "text-primary font-medium" : "text-neutral-400 hover:text-primary transition-colors font-medium"}>
-            خانه
-          </Link>
-          <Link href="/courses" className={location === "/courses" ? "text-primary font-medium" : "text-neutral-400 hover:text-primary transition-colors font-medium"}>
-            کارگاه‌ها
-          </Link>
-          <Link href="/projects" className={location === "/projects" ? "text-primary font-medium" : "text-neutral-400 hover:text-primary transition-colors font-medium"}>
-            وبینارها
-          </Link>
-          <Link href="/library" className={location === "/library" ? "text-primary font-medium" : "text-neutral-400 hover:text-primary transition-colors font-medium"}>
-            کتابخانه
-          </Link>
-          <Link href="/magazine" className={location === "/magazine" ? "text-primary font-medium" : "text-neutral-400 hover:text-primary transition-colors font-medium"}>
-            فصلنامه رویش سبز
-          </Link>
-          <Link href="/admin" className={location === "/admin" ? "text-primary font-medium" : "text-neutral-400 hover:text-primary transition-colors font-medium"}>
-            پنل مدیریت
-          </Link>
-        </nav>
-        
-        {/* User Menu */}
-        <div className="flex items-center">
-          <button className="ml-4 text-neutral-400 hover:text-primary p-1">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
-              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
-              <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-            </svg>
-          </button>
-          <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center text-white font-medium">
-            کا
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </header>
   );
 }
