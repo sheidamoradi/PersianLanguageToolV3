@@ -956,6 +956,88 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.json({ message: "دانلود با موفقیت ثبت شد" });
   });
 
+  // Course access control API
+  app.get("/api/courses/:courseId/access/:userId", async (req, res) => {
+    try {
+      const courseId = parseInt(req.params.courseId);
+      const userId = parseInt(req.params.userId);
+      
+      if (isNaN(courseId) || isNaN(userId)) {
+        return res.status(400).json({ message: "کد دوره یا کاربر نامعتبر است" });
+      }
+      
+      const canAccess = await storage.canAccessCourse(userId, courseId);
+      const canDownload = await storage.canDownloadContent(userId, courseId);
+      
+      res.json({ canAccess, canDownload });
+    } catch (error) {
+      console.error("Error checking course access:", error);
+      res.status(500).json({ message: "خطا در بررسی دسترسی دوره" });
+    }
+  });
+
+  app.post("/api/users/:userId/grant-course-access", async (req, res) => {
+    try {
+      const userId = parseInt(req.params.userId);
+      const { courseId, accessType, expiryDate } = req.body;
+      
+      if (isNaN(userId)) {
+        return res.status(400).json({ message: "کد کاربر نامعتبر است" });
+      }
+      
+      const access = await storage.grantCourseAccess({
+        userId,
+        courseId,
+        accessType,
+        expiryDate: expiryDate ? new Date(expiryDate) : undefined,
+        isActive: true
+      });
+      
+      res.json(access);
+    } catch (error) {
+      console.error("Error granting course access:", error);
+      res.status(500).json({ message: "خطا در اعطای دسترسی دوره" });
+    }
+  });
+
+  app.delete("/api/users/:userId/revoke-course-access/:courseId", async (req, res) => {
+    try {
+      const userId = parseInt(req.params.userId);
+      const courseId = parseInt(req.params.courseId);
+      
+      if (isNaN(userId) || isNaN(courseId)) {
+        return res.status(400).json({ message: "کد کاربر یا دوره نامعتبر است" });
+      }
+      
+      const success = await storage.revokeCourseAccess(userId, courseId);
+      
+      if (success) {
+        res.json({ message: "دسترسی دوره با موفقیت لغو شد" });
+      } else {
+        res.status(404).json({ message: "دسترسی دوره پیدا نشد" });
+      }
+    } catch (error) {
+      console.error("Error revoking course access:", error);
+      res.status(500).json({ message: "خطا در لغو دسترسی دوره" });
+    }
+  });
+
+  app.get("/api/users/:userId/course-access", async (req, res) => {
+    try {
+      const userId = parseInt(req.params.userId);
+      
+      if (isNaN(userId)) {
+        return res.status(400).json({ message: "کد کاربر نامعتبر است" });
+      }
+      
+      const userAccess = await storage.getUserCourseAccess(userId);
+      res.json(userAccess);
+    } catch (error) {
+      console.error("Error fetching user course access:", error);
+      res.status(500).json({ message: "خطا در بازیابی دسترسی‌های کاربر" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

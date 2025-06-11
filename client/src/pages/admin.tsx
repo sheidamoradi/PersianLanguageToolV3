@@ -21,7 +21,8 @@ export default function AdminPage() {
           { id: "projects", label: "پروژه‌ها", icon: Folder },
           { id: "documents", label: "اسناد", icon: File },
           { id: "slides", label: "اسلایدها", icon: Image },
-          { id: "magazines", label: "مجله‌ها", icon: Calendar }
+          { id: "magazines", label: "مجله‌ها", icon: Calendar },
+          { id: "users", label: "کاربران", icon: Lock }
         ].map(tab => {
           const IconComponent = tab.icon;
           return (
@@ -48,6 +49,7 @@ export default function AdminPage() {
         {activeTab === "documents" && <DocumentsTab />}
         {activeTab === "slides" && <SlidesTab />}
         {activeTab === "magazines" && <MagazinesTab />}
+        {activeTab === "users" && <UsersTab />}
       </div>
     </div>
   );
