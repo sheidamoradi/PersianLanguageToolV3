@@ -410,11 +410,11 @@ export class DatabaseStorage implements IStorage {
 
   // Slide methods
   async getSlides(): Promise<Slide[]> {
-    return await db.select().from(slides).orderBy(slides.order);
+    return await db.select().from(slides).orderBy(asc(slides.order));
   }
 
   async getActiveSlides(): Promise<Slide[]> {
-    return await db.select().from(slides).where(eq(slides.isActive, true)).orderBy(slides.order);
+    return await db.select().from(slides).where(eq(slides.isActive, true)).orderBy(asc(slides.order));
   }
 
   async getSlide(id: number): Promise<Slide | undefined> {

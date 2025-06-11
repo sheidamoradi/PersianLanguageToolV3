@@ -982,6 +982,11 @@ function MagazinesTab() {
     setShowForm(false);
   };
 
+  const handleAddArticle = (magazineId: number) => {
+    // This will be handled by ArticlesManager component
+    console.log('Adding article for magazine:', magazineId);
+  };
+
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
