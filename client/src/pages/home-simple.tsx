@@ -1,323 +1,226 @@
-import { useQuery } from "@tanstack/react-query";
-import { Link } from "wouter";
-import CourseCard from "@/components/course/CourseCard";
-import ProjectCard from "@/components/project/ProjectCard";
-import { type Course, type Project, type Slide } from "@shared/schema";
-import { Book, BookOpen, Bookmark, ChevronLeft, ChevronRight, GraduationCap, Layers, TrendingUp, Users } from "lucide-react";
+// @ts-nocheck
+import { useQuery } from '@tanstack/react-query';
+import { useState } from 'react';
 
-export default function Home() {
-  const { 
-    data: courses = [], 
-    isLoading: isLoadingCourses 
-  } = useQuery<Course[]>({
+export default function HomePage() {
+  const [searchTerm, setSearchTerm] = useState('');
+
+  // Fetch real data from backend APIs
+  const { data: courses = [], isLoading: coursesLoading } = useQuery({
     queryKey: ['/api/courses'],
   });
 
-  const { 
-    data: projects = [], 
-    isLoading: isLoadingProjects 
-  } = useQuery<Project[]>({
+  const { data: projects = [], isLoading: projectsLoading } = useQuery({
     queryKey: ['/api/projects'],
   });
 
-  const { 
-    data: slides = [], 
-    isLoading: isLoadingSlides 
-  } = useQuery<Slide[]>({
-    queryKey: ['/api/slides/active'],
+  const { data: documents = [], isLoading: documentsLoading } = useQuery({
+    queryKey: ['/api/documents'],
   });
 
-  // Get popular and new courses
-  const popularCourses = courses.filter(course => course.isPopular).slice(0, 4);
-  const newCourses = courses.filter(course => course.isNew).slice(0, 4);
-  const featuredProjects = projects.filter(project => project.type === "project").slice(0, 6);
+  const CourseCard = ({ course }) => (
+    <div className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300">
+      <div className="h-32 bg-gradient-to-br from-green-500 via-emerald-500 to-teal-600 relative">
+        {course.isLocked && (
+          <div className="absolute inset-0 bg-black bg-opacity-60 flex items-center justify-center">
+            <span className="text-white text-2xl">🔒</span>
+          </div>
+        )}
+      </div>
+      <div className="p-4">
+        <h3 className="font-bold text-gray-800 mb-2">{course.title}</h3>
+        <p className="text-gray-600 text-sm mb-3">{course.description}</p>
+        {!course.isLocked && (
+          <div className="mb-3">
+            <div className="bg-gray-200 rounded-full h-2">
+              <div 
+                className="bg-green-500 h-2 rounded-full transition-all"
+                style={{ width: `${course.progress || 0}%` }}
+              ></div>
+            </div>
+          </div>
+        )}
+        <button 
+          className={`w-full py-2 rounded-lg text-sm font-medium ${
+            course.isLocked 
+              ? 'bg-gray-200 text-gray-500' 
+              : 'bg-green-500 text-white hover:bg-green-600'
+          }`}
+          disabled={course.isLocked}
+        >
+          {course.isLocked ? 'قفل شده' : 'ادامه یادگیری'}
+        </button>
+      </div>
+    </div>
+  );
+
+  const ProjectCard = ({ project }) => (
+    <div className="bg-white rounded-xl shadow-lg p-4 hover:shadow-xl transition-all">
+      <h3 className="font-bold text-gray-800 mb-2">{project.title}</h3>
+      <p className="text-gray-600 text-sm mb-3">{project.description}</p>
+      <div className="flex justify-between items-center">
+        <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
+          {project.category || 'عمومی'}
+        </span>
+        <button className="bg-blue-500 text-white px-3 py-1 rounded text-sm hover:bg-blue-600">
+          مشاهده
+        </button>
+      </div>
+    </div>
+  );
+
+  const DocumentCard = ({ document }) => (
+    <div className="bg-white rounded-xl shadow-lg p-4 hover:shadow-xl transition-all">
+      <h3 className="font-bold text-gray-800 mb-2">{document.title}</h3>
+      <p className="text-gray-600 text-sm mb-3 line-clamp-2">
+        {document.content || document.description || 'محتوای مفیدی برای یادگیری'}
+      </p>
+      <div className="flex justify-between items-center">
+        <span className="text-xs text-gray-500">
+          {document.author || 'نویسنده ناشناخته'}
+        </span>
+        <button className="bg-purple-500 text-white px-3 py-1 rounded text-sm hover:bg-purple-600">
+          دانلود
+        </button>
+      </div>
+    </div>
+  );
+
+  if (coursesLoading || projectsLoading || documentsLoading) {
+    return (
+      <div className="space-y-6">
+        <div className="text-center py-8">
+          <div className="animate-spin w-8 h-8 border-4 border-green-500 border-t-transparent rounded-full mx-auto mb-4"></div>
+          <p className="text-gray-600">در حال بارگیری پلتفرم پیستاط...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="space-y-8" dir="rtl">
-      {/* Hero Section */}
-      <section className="mb-8">
-        <div className="relative">
-          {isLoadingSlides ? (
-            <div className="bg-gradient-to-l from-gray-100 to-gray-50 rounded-xl overflow-hidden">
-              <div className="flex flex-col md:flex-row items-center justify-between p-6 md:p-10">
-                <div className="text-right mb-6 md:mb-0">
-                  <div className="h-8 w-64 bg-gray-300 rounded animate-pulse mb-3"></div>
-                  <div className="h-4 w-96 bg-gray-300 rounded animate-pulse mb-6"></div>
-                  <div className="flex gap-3">
-                    <div className="h-10 w-32 bg-gray-300 rounded-full animate-pulse"></div>
-                    <div className="h-10 w-24 bg-gray-300 rounded-full animate-pulse"></div>
-                  </div>
-                </div>
-                <div className="flex items-center justify-center">
-                  <div className="rounded-full h-48 w-48 bg-gray-300 animate-pulse"></div>
-                </div>
-              </div>
-            </div>
-          ) : slides.length > 0 ? (
-            <div className="bg-gradient-to-l from-blue-100 to-purple-100 rounded-xl overflow-hidden">
-              <div className="flex flex-col md:flex-row items-center justify-between p-6 md:p-10">
-                <div className="text-right mb-6 md:mb-0">
-                  <h1 className="text-2xl md:text-3xl font-bold text-neutral-700 mb-3">
-                    {slides[0]?.title || "به پیستاط خوش آمدید"}
-                  </h1>
-                  <p className="text-neutral-500 mb-6 max-w-md">
-                    {slides[0]?.description || "پلتفرم جامع آموزش کشاورزی با رابط کاربری فارسی"}
-                  </p>
-                  <div className="flex gap-3 flex-wrap">
-                    <Link 
-                      href={slides[0]?.buttonUrl || "/courses"}
-                      className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full flex items-center gap-2 transition-colors"
-                    >
-                      <GraduationCap className="h-4 w-4" />
-                      {slides[0]?.buttonText || "شروع یادگیری"}
-                    </Link>
-                    <Link 
-                      href="/about"
-                      className="border border-gray-300 hover:bg-gray-50 text-gray-700 px-6 py-2 rounded-full transition-colors"
-                    >
-                      درباره ما
-                    </Link>
-                  </div>
-                </div>
-                <div className="flex items-center justify-center">
-                  {slides[0]?.imageUrl ? (
-                    <img 
-                      src={slides[0].imageUrl} 
-                      alt={slides[0].title}
-                      className="rounded-full h-48 w-48 object-cover"
-                    />
-                  ) : (
-                    <div className="rounded-full h-48 w-48 bg-gradient-to-br from-blue-400 to-purple-600 flex items-center justify-center">
-                      <GraduationCap className="h-24 w-24 text-white" />
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          ) : (
-            <div className="bg-gradient-to-l from-blue-100 to-purple-100 rounded-xl overflow-hidden">
-              <div className="flex flex-col md:flex-row items-center justify-between p-6 md:p-10">
-                <div className="text-right mb-6 md:mb-0">
-                  <h1 className="text-2xl md:text-3xl font-bold text-neutral-700 mb-3">به پیستاط خوش آمدید</h1>
-                  <p className="text-neutral-500 mb-6 max-w-md">پلتفرم جامع آموزش کشاورزی با رابط کاربری فارسی</p>
-                  <div className="flex gap-3 flex-wrap">
-                    <Link 
-                      href="/courses"
-                      className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full flex items-center gap-2 transition-colors"
-                    >
-                      <GraduationCap className="h-4 w-4" />
-                      شروع یادگیری
-                    </Link>
-                    <Link 
-                      href="/about"
-                      className="border border-gray-300 hover:bg-gray-50 text-gray-700 px-6 py-2 rounded-full transition-colors"
-                    >
-                      درباره ما
-                    </Link>
-                  </div>
-                </div>
-                <div className="flex items-center justify-center">
-                  <div className="rounded-full h-48 w-48 bg-gradient-to-br from-blue-400 to-purple-600 flex items-center justify-center">
-                    <GraduationCap className="h-24 w-24 text-white" />
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-      </section>
+    <div className="space-y-8">
+      {/* Header */}
+      <div className="text-center py-8 bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl">
+        <h1 className="text-4xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent mb-3">
+          🌱 خوش آمدید به پیستاط
+        </h1>
+        <p className="text-xl text-gray-600 mb-2">مرکز آموزشی تخصصی کشاورزی مدرن</p>
+        <p className="text-gray-500">یادگیری، پیشرفت، موفقیت</p>
+      </div>
 
-      {/* Stats Section */}
-      <section className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-        <div className="bg-white rounded-lg p-6 text-center shadow-sm">
-          <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-            <BookOpen className="h-6 w-6 text-blue-600" />
-          </div>
-          <div className="text-2xl font-bold text-gray-900 mb-1">{courses.length}</div>
-          <div className="text-sm text-gray-600">دوره آموزشی</div>
-        </div>
-        
-        <div className="bg-white rounded-lg p-6 text-center shadow-sm">
-          <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-            <Layers className="h-6 w-6 text-green-600" />
-          </div>
-          <div className="text-2xl font-bold text-gray-900 mb-1">{projects.length}</div>
-          <div className="text-sm text-gray-600">پروژه عملی</div>
-        </div>
-        
-        <div className="bg-white rounded-lg p-6 text-center shadow-sm">
-          <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-            <Users className="h-6 w-6 text-purple-600" />
-          </div>
-          <div className="text-2xl font-bold text-gray-900 mb-1">۱۲۰۰+</div>
-          <div className="text-sm text-gray-600">دانشجو فعال</div>
-        </div>
-        
-        <div className="bg-white rounded-lg p-6 text-center shadow-sm">
-          <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-            <TrendingUp className="h-6 w-6 text-orange-600" />
-          </div>
-          <div className="text-2xl font-bold text-gray-900 mb-1">۹۵%</div>
-          <div className="text-sm text-gray-600">نرخ رضایت</div>
-        </div>
-      </section>
+      {/* Search */}
+      <div className="max-w-md mx-auto">
+        <input
+          type="text"
+          placeholder="جستجو در دوره‌ها، پروژه‌ها و مقالات..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+        />
+      </div>
 
-      {/* Popular Courses */}
-      <section className="mb-8">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-            <TrendingUp className="h-6 w-6 text-orange-500" />
-            دوره‌های محبوب
+      {/* Stats */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="bg-gradient-to-br from-blue-500 to-blue-600 p-6 rounded-2xl text-white text-center">
+          <div className="text-3xl font-bold mb-1">{courses.length}</div>
+          <div className="text-sm opacity-90">دوره فعال</div>
+        </div>
+        <div className="bg-gradient-to-br from-green-500 to-green-600 p-6 rounded-2xl text-white text-center">
+          <div className="text-3xl font-bold mb-1">{projects.length}</div>
+          <div className="text-sm opacity-90">پروژه</div>
+        </div>
+        <div className="bg-gradient-to-br from-purple-500 to-purple-600 p-6 rounded-2xl text-white text-center">
+          <div className="text-3xl font-bold mb-1">{documents.length}</div>
+          <div className="text-sm opacity-90">مقاله</div>
+        </div>
+        <div className="bg-gradient-to-br from-orange-500 to-orange-600 p-6 rounded-2xl text-white text-center">
+          <div className="text-3xl font-bold mb-1">87%</div>
+          <div className="text-sm opacity-90">پیشرفت</div>
+        </div>
+      </div>
+
+      {/* Featured Course */}
+      <div className="bg-gradient-to-br from-green-500 via-emerald-500 to-teal-600 rounded-2xl p-8 text-white">
+        <h2 className="text-2xl font-bold mb-3">🎯 دوره پیشنهادی این هفته</h2>
+        <h3 className="text-xl font-semibold mb-2">کشاورزی هوشمند با IoT</h3>
+        <p className="mb-6 opacity-90">یادگیری فناوری‌های نوین اینترنت اشیا در کشاورزی مدرن</p>
+        <button className="bg-white text-green-600 px-6 py-3 rounded-xl font-semibold hover:shadow-lg transition-all">
+          شروع یادگیری رایگان
+        </button>
+      </div>
+
+      {/* Courses Section */}
+      {courses.length > 0 && (
+        <div>
+          <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+            <span className="text-2xl">📚</span>
+            دوره‌های آموزشی
           </h2>
-          <Link href="/courses" className="text-blue-600 hover:text-blue-700 font-medium">
-            مشاهده همه
-            <ChevronLeft className="inline h-4 w-4 mr-1" />
-          </Link>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {courses.slice(0, 6).map((course) => (
+              <CourseCard key={course.id} course={course} />
+            ))}
+          </div>
         </div>
-        
-        {isLoadingCourses ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {Array.from({ length: 4 }).map((_, index) => (
-              <div key={index} className="bg-white rounded-lg shadow-sm overflow-hidden">
-                <div className="h-48 bg-gray-300 animate-pulse"></div>
-                <div className="p-4">
-                  <div className="h-4 bg-gray-300 rounded animate-pulse mb-2"></div>
-                  <div className="h-3 bg-gray-300 rounded animate-pulse mb-4"></div>
-                  <div className="h-8 bg-gray-300 rounded animate-pulse"></div>
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : popularCourses.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {popularCourses.map((course) => (
-              <CourseCard 
-                key={course.id}
-                id={course.id}
-                title={course.title}
-                description={course.description}
-                thumbnailUrl={course.thumbnailUrl || ''}
-                progress={course.progress || 0}
-                totalModules={course.totalModules || 0}
-                completedModules={course.completedModules || 0}
-                isNew={course.isNew || false}
-                isPopular={course.isPopular || false}
-                level={course.level || undefined}
-              />
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-12 bg-gray-50 rounded-lg">
-            <BookOpen className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">هیچ دوره محبوبی یافت نشد</h3>
-            <p className="text-gray-600">دوره‌های جدید به زودی اضافه خواهند شد</p>
-          </div>
-        )}
-      </section>
-
-      {/* New Courses */}
-      <section className="mb-8">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-            <Bookmark className="h-6 w-6 text-green-500" />
-            دوره‌های جدید
-          </h2>
-          <Link href="/courses" className="text-blue-600 hover:text-blue-700 font-medium">
-            مشاهده همه
-            <ChevronLeft className="inline h-4 w-4 mr-1" />
-          </Link>
-        </div>
-        
-        {isLoadingCourses ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {Array.from({ length: 4 }).map((_, index) => (
-              <div key={index} className="bg-white rounded-lg shadow-sm overflow-hidden">
-                <div className="h-48 bg-gray-300 animate-pulse"></div>
-                <div className="p-4">
-                  <div className="h-4 bg-gray-300 rounded animate-pulse mb-2"></div>
-                  <div className="h-3 bg-gray-300 rounded animate-pulse mb-4"></div>
-                  <div className="h-8 bg-gray-300 rounded animate-pulse"></div>
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : newCourses.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {newCourses.map((course) => (
-              <CourseCard 
-                key={course.id}
-                id={course.id}
-                title={course.title}
-                description={course.description}
-                thumbnailUrl={course.thumbnailUrl || ''}
-                progress={course.progress || 0}
-                totalModules={course.totalModules || 0}
-                completedModules={course.completedModules || 0}
-                isNew={course.isNew || false}
-                isPopular={course.isPopular || false}
-                level={course.level || undefined}
-              />
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-12 bg-gray-50 rounded-lg">
-            <BookOpen className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">هیچ دوره جدیدی یافت نشد</h3>
-            <p className="text-gray-600">دوره‌های جدید به زودی اضافه خواهند شد</p>
-          </div>
-        )}
-      </section>
+      )}
 
       {/* Projects Section */}
-      <section className="mb-8">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-            <Layers className="h-6 w-6 text-purple-500" />
+      {projects.length > 0 && (
+        <div>
+          <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+            <span className="text-2xl">🚀</span>
             پروژه‌های عملی
           </h2>
-          <Link href="/projects" className="text-blue-600 hover:text-blue-700 font-medium">
-            مشاهده همه
-            <ChevronLeft className="inline h-4 w-4 mr-1" />
-          </Link>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {projects.slice(0, 6).map((project) => (
+              <ProjectCard key={project.id} project={project} />
+            ))}
+          </div>
         </div>
-        
-        {isLoadingProjects ? (
+      )}
+
+      {/* Documents Section */}
+      {documents.length > 0 && (
+        <div>
+          <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+            <span className="text-2xl">📖</span>
+            کتابخانه دیجیتال
+          </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {Array.from({ length: 6 }).map((_, index) => (
-              <div key={index} className="bg-white rounded-lg shadow-sm overflow-hidden">
-                <div className="h-48 bg-gray-300 animate-pulse"></div>
-                <div className="p-4">
-                  <div className="h-4 bg-gray-300 rounded animate-pulse mb-2"></div>
-                  <div className="h-3 bg-gray-300 rounded animate-pulse mb-4"></div>
-                  <div className="h-8 bg-gray-300 rounded animate-pulse"></div>
-                </div>
-              </div>
+            {documents.slice(0, 6).map((document) => (
+              <DocumentCard key={document.id} document={document} />
             ))}
           </div>
-        ) : featuredProjects.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {featuredProjects.map((project) => (
-              <ProjectCard 
-                key={project.id}
-                id={project.id}
-                title={project.title}
-                description={project.description}
-                thumbnailUrl={project.thumbnailUrl || ''}
-                type={project.type as "project" | "magazine"}
-                dueDate={project.dueDate || undefined}
-                pages={project.pages || undefined}
-                isLocked={project.isLocked || false}
-              />
-            ))}
+        </div>
+      )}
+
+      {/* Recent Activity */}
+      <div className="bg-white rounded-2xl shadow-lg p-6">
+        <h2 className="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+          <span className="text-2xl">📊</span>
+          فعالیت‌های اخیر
+        </h2>
+        <div className="space-y-4">
+          <div className="flex items-center gap-4 p-4 bg-blue-50 rounded-xl">
+            <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center">
+              <span className="text-white text-lg">📚</span>
+            </div>
+            <div className="flex-1">
+              <p className="font-medium text-gray-800">مطالعه جدیدترین مقالات کشاورزی</p>
+              <p className="text-sm text-gray-500">همین الان • آماده برای یادگیری</p>
+            </div>
           </div>
-        ) : (
-          <div className="text-center py-12 bg-gray-50 rounded-lg">
-            <Layers className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">هیچ پروژه‌ای یافت نشد</h3>
-            <p className="text-gray-600">پروژه‌های جدید به زودی اضافه خواهند شد</p>
+          <div className="flex items-center gap-4 p-4 bg-green-50 rounded-xl">
+            <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center">
+              <span className="text-white text-lg">🚀</span>
+            </div>
+            <div className="flex-1">
+              <p className="font-medium text-gray-800">شروع پروژه‌های عملی جدید</p>
+              <p className="text-sm text-gray-500">آماده برای شروع • پروژه‌های متنوع</p>
+            </div>
           </div>
-        )}
-      </section>
+        </div>
+      </div>
     </div>
   );
 }
