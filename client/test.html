@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>پیستاط - مرکز آموزشی کشاورزی</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2563eb;
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 40px;
+            font-size: 1.2rem;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+        .card {
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        }
+        .card-blue {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+        }
+        .card-green {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+        .card-purple {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            color: white;
+        }
+        .card-orange {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+        }
+        .card h2 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+        .card p {
+            opacity: 0.9;
+            font-size: 1rem;
+        }
+        .status {
+            background: #10b981;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            display: inline-block;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌱 پیستاط</h1>
+        <p class="subtitle">مرکز آموزشی تخصصی کشاورزی</p>
+        
+        <div class="status">✅ وب‌سایت با موفقیت بارگذاری شد</div>
+        
+        <div class="grid">
+            <div class="card card-blue">
+                <h2>📚 دوره‌ها</h2>
+                <p>آموزش‌های جامع و تخصصی کشاورزی</p>
+            </div>
+            
+            <div class="card card-green">
+                <h2>🚀 پروژه‌ها</h2>
+                <p>پروژه‌های عملی و کاربردی</p>
+            </div>
+            
+            <div class="card card-purple">
+                <h2>📖 کتابخانه</h2>
+                <p>منابع و مقالات آموزشی</p>
+            </div>
+            
+            <div class="card card-orange">
+                <h2>👤 پروفایل</h2>
+                <p>مدیریت حساب کاربری</p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        console.log('✅ پیستاط - وب‌سایت بارگذاری شد');
+        
+        // Add click handlers
+        document.querySelectorAll('.card').forEach(card => {
+            card.addEventListener('click', function() {
+                const title = this.querySelector('h2').textContent;
+                alert(`کلیک شد: ${title}`);
+            });
+        });
+    </script>
+</body>
+</html>
