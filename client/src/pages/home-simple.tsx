@@ -1,24 +1,51 @@
-// @ts-nocheck
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
+
+interface Course {
+  id: number;
+  title: string;
+  description?: string;
+  progress?: number;
+  isLocked?: boolean;
+  level?: string;
+  category?: string;
+}
+
+interface Project {
+  id: number;
+  title: string;
+  description?: string;
+  type?: string;
+  dueDate?: string;
+}
+
+interface Document {
+  id: number;
+  title: string;
+  author?: string;
+  fileType?: string;
+  fileName?: string;
+  content?: string;
+  description?: string;
+}
 
 export default function HomePage() {
   const [searchTerm, setSearchTerm] = useState('');
 
   // Fetch real data from backend APIs
-  const { data: courses = [], isLoading: coursesLoading } = useQuery({
+  const { data: courses = [], isLoading: coursesLoading } = useQuery<Course[]>({
     queryKey: ['/api/courses'],
   });
 
-  const { data: projects = [], isLoading: projectsLoading } = useQuery({
+  const { data: projects = [], isLoading: projectsLoading } = useQuery<Project[]>({
     queryKey: ['/api/projects'],
   });
 
-  const { data: documents = [], isLoading: documentsLoading } = useQuery({
+  const { data: documents = [], isLoading: documentsLoading } = useQuery<Document[]>({
     queryKey: ['/api/documents'],
   });
 
-  const CourseCard = ({ course }) => (
+  const CourseCard = ({ course }: { course: Course }) => (
     <div className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300">
       <div className="h-32 bg-gradient-to-br from-green-500 via-emerald-500 to-teal-600 relative">
         {course.isLocked && (
@@ -54,13 +81,13 @@ export default function HomePage() {
     </div>
   );
 
-  const ProjectCard = ({ project }) => (
+  const ProjectCard = ({ project }: { project: Project }) => (
     <div className="bg-white rounded-xl shadow-lg p-4 hover:shadow-xl transition-all">
       <h3 className="font-bold text-gray-800 mb-2">{project.title}</h3>
       <p className="text-gray-600 text-sm mb-3">{project.description}</p>
       <div className="flex justify-between items-center">
         <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
-          {project.category || 'عمومی'}
+          {project.type || 'عمومی'}
         </span>
         <button className="bg-blue-500 text-white px-3 py-1 rounded text-sm hover:bg-blue-600">
           مشاهده
@@ -69,7 +96,7 @@ export default function HomePage() {
     </div>
   );
 
-  const DocumentCard = ({ document }) => (
+  const DocumentCard = ({ document }: { document: Document }) => (
     <div className="bg-white rounded-xl shadow-lg p-4 hover:shadow-xl transition-all">
       <h3 className="font-bold text-gray-800 mb-2">{document.title}</h3>
       <p className="text-gray-600 text-sm mb-3 line-clamp-2">

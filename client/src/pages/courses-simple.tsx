@@ -15,7 +15,7 @@ export default function Courses() {
   // Filter courses based on search term and category
   const filteredCourses = courses.filter(course => {
     const matchesSearch = course.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         course.description.toLowerCase().includes(searchTerm.toLowerCase());
+                         (course.description || '').toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = selectedCategory === "all" || course.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
@@ -50,7 +50,7 @@ export default function Courses() {
             >
               <option value="all">همه دسته‌ها</option>
               {categories.map(category => (
-                <option key={category} value={category}>{category}</option>
+                <option key={category} value={category || ''}>{category}</option>
               ))}
             </select>
             <button className="border border-gray-300 hover:bg-gray-50 text-gray-700 px-4 py-3 rounded-lg flex items-center gap-2 transition-colors">
@@ -161,7 +161,7 @@ export default function Courses() {
                         ? 'bg-gray-100 text-gray-500 cursor-not-allowed'
                         : 'bg-blue-600 hover:bg-blue-700 text-white'
                     }`}
-                    disabled={course.isLocked}
+                    disabled={course.isLocked || false}
                   >
                     {course.isLocked ? 'محدود شده' : 'مشاهده دوره'}
                   </button>
