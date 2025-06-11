@@ -732,7 +732,7 @@ export class DatabaseStorage implements IStorage {
     
     // Check specific course access
     const access = await this.getCourseAccess(userId, courseId);
-    return access ? access.isActive : false;
+    return access ? (access.isActive ?? false) : false;
   }
 
   async canDownloadContent(userId: number, courseId: number): Promise<boolean> {

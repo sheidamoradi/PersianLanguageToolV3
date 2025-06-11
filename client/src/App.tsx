@@ -26,19 +26,6 @@ import { lazy, Suspense } from "react";
 const Magazine = lazy(() => import("./pages/magazine"));
 
 function Layout({ children }: { children: React.ReactNode }) {
-  // Fetch user data (for now using a static ID of 1)
-  const { data: user, isLoading } = useQuery<User>({
-    queryKey: ['/api/user/1'],
-  });
-
-  if (isLoading) {
-    return <div>در حال بارگذاری...</div>;
-  }
-
-  if (!user) {
-    return <div>خطا در بارگذاری کاربر</div>;
-  }
-
   return (
     <div className="min-h-screen bg-neutral-50" dir="rtl">
       <Header />

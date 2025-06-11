@@ -369,3 +369,244 @@ function MagazinesTab() {
     </div>
   );
 }
+
+// Users Tab Component
+function UsersTab() {
+  const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
+  const [selectedCourseId, setSelectedCourseId] = useState<number>(0);
+  const [accessType, setAccessType] = useState<string>("granted");
+  const [expiryDate, setExpiryDate] = useState<string>("");
+
+  const { data: users = [], isLoading: usersLoading } = useQuery({
+    queryKey: ["/api/users"],
+  });
+
+  const { data: courses = [], isLoading: coursesLoading } = useQuery({
+    queryKey: ["/api/courses"],
+  });
+
+  const { data: userAccess = [], isLoading: accessLoading } = useQuery({
+    queryKey: ["/api/users", selectedUserId, "course-access"],
+    enabled: !!selectedUserId,
+  });
+
+  const grantAccessMutation = useMutation({
+    mutationFn: async (data: { userId: number; courseId: number; accessType: string; expiryDate?: string }) => {
+      return apiRequest(`/api/users/${data.userId}/grant-course-access`, {
+        method: "POST",
+        body: JSON.stringify({
+          courseId: data.courseId,
+          accessType: data.accessType,
+          expiryDate: data.expiryDate,
+        }),
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/users", selectedUserId, "course-access"] });
+      setSelectedCourseId(0);
+      setExpiryDate("");
+    },
+  });
+
+  const revokeAccessMutation = useMutation({
+    mutationFn: async (data: { userId: number; courseId: number }) => {
+      return apiRequest(`/api/users/${data.userId}/revoke-course-access/${data.courseId}`, {
+        method: "DELETE",
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/users", selectedUserId, "course-access"] });
+    },
+  });
+
+  const handleGrantAccess = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (selectedUserId && selectedCourseId) {
+      grantAccessMutation.mutate({
+        userId: selectedUserId,
+        courseId: selectedCourseId,
+        accessType,
+        expiryDate: expiryDate || undefined,
+      });
+    }
+  };
+
+  const handleRevokeAccess = (courseId: number) => {
+    if (selectedUserId) {
+      revokeAccessMutation.mutate({
+        userId: selectedUserId,
+        courseId,
+      });
+    }
+  };
+
+  if (usersLoading || coursesLoading) {
+    return (
+      <div className="text-center py-12">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+        <p className="mt-4 text-gray-600">در حال بارگذاری...</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* User Selection */}
+      <div className="bg-white rounded-lg shadow p-6">
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">انتخاب کاربر</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {(users as any[]).map((user: any) => (
+            <div
+              key={user.id}
+              className={`p-4 border rounded-lg cursor-pointer transition-colors ${
+                selectedUserId === user.id
+                  ? "border-blue-500 bg-blue-50"
+                  : "border-gray-200 hover:border-gray-300"
+              }`}
+              onClick={() => setSelectedUserId(user.id)}
+            >
+              <h3 className="font-medium text-gray-900">
+                {user.name || user.username}
+              </h3>
+              <p className="text-sm text-gray-600">@{user.username}</p>
+              <div className="mt-2 flex gap-2">
+                <span className={`px-2 py-1 text-xs rounded ${
+                  user.role === 'admin' 
+                    ? 'bg-red-100 text-red-800'
+                    : 'bg-gray-100 text-gray-800'
+                }`}>
+                  {user.role === 'admin' ? 'مدیر' : 'کاربر'}
+                </span>
+                <span className={`px-2 py-1 text-xs rounded ${
+                  user.subscriptionStatus === 'vip'
+                    ? 'bg-purple-100 text-purple-800'
+                    : user.subscriptionStatus === 'premium'
+                    ? 'bg-yellow-100 text-yellow-800'
+                    : 'bg-gray-100 text-gray-800'
+                }`}>
+                  {user.subscriptionStatus === 'vip' ? 'ویژه' : 
+                   user.subscriptionStatus === 'premium' ? 'پریمیوم' : 'رایگان'}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {selectedUserId && (
+        <>
+          {/* Grant Access Form */}
+          <div className="bg-white rounded-lg shadow p-6">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">اعطای دسترسی دوره</h2>
+            <form onSubmit={handleGrantAccess} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  انتخاب دوره
+                </label>
+                <select
+                  value={selectedCourseId}
+                  onChange={(e) => setSelectedCourseId(parseInt(e.target.value))}
+                  className="w-full p-3 border border-gray-300 rounded-lg"
+                  required
+                >
+                  <option value={0}>انتخاب کنید...</option>
+                  {(courses as any[]).map((course: any) => (
+                    <option key={course.id} value={course.id}>
+                      {course.title} - {course.accessLevel === 'free' ? 'رایگان' : 
+                                       course.accessLevel === 'premium' ? 'پریمیوم' : 'ویژه'}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  نوع دسترسی
+                </label>
+                <select
+                  value={accessType}
+                  onChange={(e) => setAccessType(e.target.value)}
+                  className="w-full p-3 border border-gray-300 rounded-lg"
+                >
+                  <option value="granted">اعطا شده</option>
+                  <option value="purchased">خریداری شده</option>
+                  <option value="trial">آزمایشی</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  تاریخ انقضا (اختیاری)
+                </label>
+                <input
+                  type="date"
+                  value={expiryDate}
+                  onChange={(e) => setExpiryDate(e.target.value)}
+                  className="w-full p-3 border border-gray-300 rounded-lg"
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={grantAccessMutation.isPending}
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-lg font-medium disabled:opacity-50"
+              >
+                {grantAccessMutation.isPending ? "در حال اعطا..." : "اعطای دسترسی"}
+              </button>
+            </form>
+          </div>
+
+          {/* Current Access */}
+          <div className="bg-white rounded-lg shadow p-6">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">دسترسی‌های فعلی</h2>
+            {accessLoading ? (
+              <div className="text-center py-4">
+                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 mx-auto"></div>
+              </div>
+            ) : (userAccess as any[]).length === 0 ? (
+              <p className="text-gray-600 text-center py-4">
+                هیچ دسترسی‌ای برای این کاربر وجود ندارد
+              </p>
+            ) : (
+              <div className="space-y-3">
+                {(userAccess as any[]).map((access: any) => {
+                  const course = (courses as any[]).find((c: any) => c.id === access.courseId);
+                  return (
+                    <div
+                      key={access.id}
+                      className="flex items-center justify-between p-4 border border-gray-200 rounded-lg"
+                    >
+                      <div>
+                        <h3 className="font-medium text-gray-900">
+                          {course?.title || `دوره شماره ${access.courseId}`}
+                        </h3>
+                        <div className="flex gap-2 mt-1">
+                          <span className="text-sm text-gray-600">
+                            نوع: {access.accessType === 'granted' ? 'اعطا شده' : 
+                                  access.accessType === 'purchased' ? 'خریداری شده' : 'آزمایشی'}
+                          </span>
+                          {access.expiryDate && (
+                            <span className="text-sm text-gray-600">
+                              انقضا: {new Date(access.expiryDate).toLocaleDateString('fa-IR')}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => handleRevokeAccess(access.courseId)}
+                        disabled={revokeAccessMutation.isPending}
+                        className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm disabled:opacity-50"
+                      >
+                        لغو دسترسی
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
