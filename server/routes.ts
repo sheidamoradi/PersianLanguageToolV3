@@ -764,7 +764,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // تگ‌های اسناد API
   app.get("/api/document-tags", async (req, res) => {
-    const tags = await storage.getAllDocumentTags();
+    const tags = await storage.getDocumentTags();
     res.json(tags);
   });
 

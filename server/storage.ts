@@ -51,6 +51,7 @@ export interface IStorage {
 
   // Document Tag methods
   getAllDocumentTags(): Promise<DocumentTag[]>;
+  getDocumentTags(): Promise<DocumentTag[]>;
   getDocumentTag(id: number): Promise<DocumentTag | undefined>;
   createDocumentTag(tag: InsertDocumentTag): Promise<DocumentTag>;
   updateDocumentTag(id: number, tag: Partial<InsertDocumentTag>): Promise<DocumentTag | undefined>;
@@ -549,6 +550,10 @@ export class DatabaseStorage implements IStorage {
   async deleteDocumentTag(id: number): Promise<boolean> {
     const result = await db.delete(documentTags).where(eq(documentTags.id, id));
     return (result.rowCount ?? 0) > 0;
+  }
+
+  async getDocumentTags(): Promise<DocumentTag[]> {
+    return await db.select().from(documentTags).orderBy(asc(documentTags.name));
   }
 
   // Document methods
