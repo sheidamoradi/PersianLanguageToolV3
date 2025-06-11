@@ -4,8 +4,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   Search, 
   Download, 
@@ -28,319 +26,287 @@ interface Document {
   content?: string;
   excerpt?: string;
   author?: string;
-  featuredImageUrl?: string;
-  fileName: string;
-  fileUrl: string;
-  fileType: string;
-  fileSize?: number;
-  categoryId?: number;
-  status: string;
-  downloadCount: number;
-  viewCount: number;
-  isFeatured: boolean;
-  publishedAt: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-interface DocumentCategory {
-  id: number;
-  name: string;
-  slug: string;
-  description?: string;
-}
-
-interface DocumentTag {
-  id: number;
-  name: string;
-  slug: string;
-  color?: string;
+  category?: string;
+  tags?: string[];
+  publishedAt?: string;
+  fileUrl?: string;
+  downloadCount?: number;
+  rating?: number;
+  fileType?: string;
+  fileSize?: string;
+  readTime?: string;
+  featured?: boolean;
 }
 
 export default function Library() {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<string>("all");
-  const [selectedTag, setSelectedTag] = useState<string>("all");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [selectedTag, setSelectedTag] = useState("all");
   const [activeTab, setActiveTab] = useState("all");
 
-  // دریافت اسناد
-  const { data: documents = [], isLoading: documentsLoading } = useQuery({
-    queryKey: ["/api/documents"],
+  const { data: documents, isLoading } = useQuery<Document[]>({
+    queryKey: ['/api/documents'],
   });
 
-  // دریافت دسته‌بندی‌ها
-  const { data: categories = [] } = useQuery({
-    queryKey: ["/api/document-categories"],
+  const { data: categories } = useQuery<string[]>({
+    queryKey: ['/api/documents/categories'],
   });
 
-  // دریافت تگ‌ها
-  const { data: tags = [] } = useQuery({
-    queryKey: ["/api/document-tags"],
+  const { data: tags } = useQuery<string[]>({
+    queryKey: ['/api/documents/tags'],
   });
 
-  const filteredDocuments = documents.filter((doc: Document) => {
-    const matchesSearch = doc.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         doc.excerpt?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         doc.author?.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = selectedCategory === "all" || doc.categoryId === parseInt(selectedCategory);
-    const matchesStatus = doc.status === 'published';
-    
-    return matchesSearch && matchesCategory && matchesStatus;
-  });
-
-  const getDocumentsByTab = () => {
-    switch (activeTab) {
-      case "featured":
-        return filteredDocuments.filter((doc: Document) => doc.isFeatured);
-      case "recent":
-        return [...filteredDocuments].sort((a, b) => 
-          new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
-        ).slice(0, 12);
-      case "popular":
-        return [...filteredDocuments].sort((a, b) => 
-          (b.viewCount + b.downloadCount) - (a.viewCount + a.downloadCount)
-        ).slice(0, 12);
-      default:
-        return filteredDocuments;
-    }
-  };
-
-  const handleDownload = async (document: Document) => {
-    try {
-      // افزایش شمارنده دانلود
-      await fetch(`/api/documents/${document.id}/download`, { method: 'POST' });
-      
-      // دانلود فایل
-      if (document.fileUrl) {
-        const link = window.document.createElement('a');
-        link.href = document.fileUrl;
-        link.download = document.fileName;
-        link.click();
-      }
-    } catch (error) {
-      console.error('خطا در دانلود:', error);
-    }
-  };
-
-  const handleView = async (document: Document) => {
-    // باز کردن صفحه مشاهده سند
-    window.open(`/document-viewer/${document.id}`, '_blank');
-  };
-
-  const formatFileSize = (bytes?: number) => {
-    if (!bytes) return '';
-    const sizes = ['بایت', 'کیلوبایت', 'مگابایت', 'گیگابایت'];
-    const i = Math.floor(Math.log(bytes) / Math.log(1024));
-    return `${Math.round(bytes / Math.pow(1024, i) * 100) / 100} ${sizes[i]}`;
-  };
-
-  const getFileTypeIcon = (fileType: string) => {
-    if (fileType.includes('pdf')) return <FileText className="h-4 w-4" />;
-    if (fileType.includes('image')) return <FileType className="h-4 w-4" />;
-    return <FileType className="h-4 w-4" />;
-  };
-
-  if (documentsLoading) {
+  if (isLoading) {
     return (
-      <div className="container mx-auto px-6 py-8">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-          <p className="mt-4 text-muted-foreground">در حال بارگذاری کتابخانه...</p>
+      <div className="container mx-auto px-4 py-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[1, 2, 3, 4, 5, 6].map((i) => (
+            <div key={i} className="animate-pulse">
+              <div className="bg-gray-200 h-48 rounded-lg mb-4"></div>
+              <div className="bg-gray-200 h-4 rounded mb-2"></div>
+              <div className="bg-gray-200 h-3 rounded mb-2"></div>
+              <div className="bg-gray-200 h-3 rounded w-2/3"></div>
+            </div>
+          ))}
         </div>
       </div>
     );
   }
 
-  const displayDocuments = getDocumentsByTab();
+  const filteredDocuments = documents?.filter((doc: Document) => {
+    const matchesSearch = doc.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         doc.excerpt?.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCategory = selectedCategory === "all" || doc.category === selectedCategory;
+    const matchesTag = selectedTag === "all" || doc.tags?.includes(selectedTag);
+    
+    return matchesSearch && matchesCategory && matchesTag;
+  }) || [];
+
+  const featuredDocuments = filteredDocuments.filter((doc: Document) => doc.featured);
+  const popularDocuments = filteredDocuments
+    .sort((a: Document, b: Document) => (b.downloadCount || 0) - (a.downloadCount || 0))
+    .slice(0, 6);
+
+  const getTabDocuments = () => {
+    switch (activeTab) {
+      case "featured":
+        return featuredDocuments;
+      case "popular":
+        return popularDocuments;
+      case "recent":
+        return filteredDocuments
+          .sort((a: Document, b: Document) => 
+            new Date(b.publishedAt || '').getTime() - new Date(a.publishedAt || '').getTime()
+          );
+      default:
+        return filteredDocuments;
+    }
+  };
 
   return (
-    <div className="container mx-auto px-6 py-8">
+    <div className="container mx-auto px-4 py-8 pb-20">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-right mb-2">کتابخانه دیجیتال پیستاط</h1>
-        <p className="text-muted-foreground text-right">
-          مجموعه‌ای جامع از منابع آموزشی، مقالات علمی و اسناد تخصصی کشاورزی
-        </p>
-        <div className="flex justify-between items-center mt-4 text-sm text-muted-foreground">
-          <div className="flex gap-4">
-            <span>تعداد اسناد: {documents.length}</span>
-            <span>دسته‌بندی‌ها: {categories.length}</span>
-            <span>برچسب‌ها: {tags.length}</span>
-          </div>
-        </div>
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">کتابخانه دیجیتال</h1>
+        <p className="text-gray-600">مجموعه‌ای جامع از منابع آموزشی و تخصصی</p>
       </div>
 
-      {/* Filters */}
-      <div className="mb-6 space-y-4">
-        <div className="flex flex-col sm:flex-row gap-4">
-          <div className="relative flex-1">
-            <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-            <Input
-              placeholder="جستجو در عنوان، محتوا، نویسنده..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pr-10 text-right"
-            />
-          </div>
-          
-          <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-            <SelectTrigger className="w-full sm:w-48">
-              <SelectValue placeholder="دسته‌بندی" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">همه دسته‌ها</SelectItem>
-              {categories.map((category: DocumentCategory) => (
-                <SelectItem key={category.id} value={category.id.toString()}>
-                  {category.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
-          <Select value={selectedTag} onValueChange={setSelectedTag}>
-            <SelectTrigger className="w-full sm:w-48">
-              <SelectValue placeholder="برچسب" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">همه برچسب‌ها</SelectItem>
-              {tags.map((tag: DocumentTag) => (
-                <SelectItem key={tag.id} value={tag.id.toString()}>
-                  {tag.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+      {/* Search and Filters */}
+      <div className="flex flex-col sm:flex-row gap-4 mb-6">
+        <div className="relative flex-1">
+          <Search className="absolute right-3 top-3 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="جستجو در کتابخانه..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pr-9"
+          />
         </div>
-      </div>
-
-      {/* Content Tabs */}
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="all">
-            <BookOpen className="h-4 w-4 ml-1" />
-            همه اسناد ({filteredDocuments.length})
-          </TabsTrigger>
-          <TabsTrigger value="featured">
-            <Star className="h-4 w-4 ml-1" />
-            ویژه ({filteredDocuments.filter(d => d.isFeatured).length})
-          </TabsTrigger>
-          <TabsTrigger value="recent">
-            <Clock className="h-4 w-4 ml-1" />
-            جدیدترین
-          </TabsTrigger>
-          <TabsTrigger value="popular">
-            <TrendingUp className="h-4 w-4 ml-1" />
-            محبوب
-          </TabsTrigger>
-        </TabsList>
-
-        <TabsContent value={activeTab} className="mt-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {displayDocuments.map((document: Document) => (
-              <Card key={document.id} className="hover:shadow-lg transition-all duration-200 hover:-translate-y-1">
-                <CardHeader>
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <CardTitle className="text-right text-lg mb-2 line-clamp-2">
-                        {document.title}
-                      </CardTitle>
-                      <div className="flex gap-2 mb-2">
-                        {document.isFeatured && (
-                          <Badge variant="default" className="bg-yellow-500 hover:bg-yellow-600">
-                            <Star className="h-3 w-3 ml-1" />
-                            ویژه
-                          </Badge>
-                        )}
-                        <Badge variant="outline">
-                          {getFileTypeIcon(document.fileType)}
-                          <span className="mr-1">{document.fileType.split('/')[1]?.toUpperCase() || 'FILE'}</span>
-                        </Badge>
-                      </div>
-                    </div>
-                  </div>
-                  {document.excerpt && (
-                    <CardDescription className="text-right line-clamp-3">
-                      {document.excerpt}
-                    </CardDescription>
-                  )}
-                </CardHeader>
-                
-                <CardContent>
-                  <div className="space-y-3">
-                    {/* Metadata */}
-                    <div className="flex items-center justify-between text-sm text-muted-foreground">
-                      <div className="flex items-center gap-4">
-                        <div className="flex items-center gap-1">
-                          <Eye className="h-4 w-4" />
-                          {document.viewCount}
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <Download className="h-4 w-4" />
-                          {document.downloadCount}
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <Calendar className="h-4 w-4" />
-                        {new Date(document.publishedAt).toLocaleDateString('fa-IR')}
-                      </div>
-                    </div>
-
-                    {/* Author and File Info */}
-                    <div className="space-y-2">
-                      {document.author && (
-                        <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                          <User className="h-4 w-4" />
-                          <span>{document.author}</span>
-                        </div>
-                      )}
-                      <div className="flex items-center justify-between text-xs text-muted-foreground">
-                        <span className="truncate">{document.fileName}</span>
-                        {document.fileSize && <span>{formatFileSize(document.fileSize)}</span>}
-                      </div>
-                    </div>
-
-                    {/* Actions */}
-                    <div className="flex gap-2 pt-2">
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
-                        className="flex-1"
-                        onClick={() => handleView(document)}
-                      >
-                        <FileText className="h-4 w-4 ml-1" />
-                        مشاهده
-                      </Button>
-                      <Button 
-                        size="sm" 
-                        className="flex-1"
-                        onClick={() => handleDownload(document)}
-                      >
-                        <Download className="h-4 w-4 ml-1" />
-                        دانلود
-                      </Button>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+        
+        <div className="flex gap-2">
+          <select 
+            value={selectedCategory} 
+            onChange={(e) => setSelectedCategory(e.target.value)}
+            className="px-3 py-2 border border-input bg-background rounded-md"
+          >
+            <option value="all">همه دسته‌ها</option>
+            {categories?.map((category: string) => (
+              <option key={category} value={category}>
+                {category}
+              </option>
             ))}
-          </div>
+          </select>
+          
+          <select 
+            value={selectedTag} 
+            onChange={(e) => setSelectedTag(e.target.value)}
+            className="px-3 py-2 border border-input bg-background rounded-md"
+          >
+            <option value="all">همه برچسب‌ها</option>
+            {tags?.map((tag: string) => (
+              <option key={tag} value={tag}>
+                {tag}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
 
-          {displayDocuments.length === 0 && (
-            <div className="text-center py-12">
-              <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <p className="text-muted-foreground mb-2">هیچ سندی یافت نشد</p>
-              <p className="text-sm text-muted-foreground">
-                {activeTab === "all" && searchQuery && "نتیجه‌ای برای جستجوی شما یافت نشد"}
-                {activeTab === "all" && !searchQuery && selectedCategory !== "all" && "در این دسته‌بندی سندی موجود نیست"}
-                {activeTab === "all" && !searchQuery && selectedCategory === "all" && "هنوز سندی در کتابخانه ثبت نشده است"}
-                {activeTab === "featured" && "هنوز سندی به عنوان ویژه انتخاب نشده است"}
-                {activeTab === "recent" && "اسناد جدیدی موجود نیست"}
-                {activeTab === "popular" && "هنوز سندی بازدید نشده است"}
-              </p>
-            </div>
-          )}
-        </TabsContent>
-      </Tabs>
+      {/* Statistics */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <div className="bg-blue-50 p-4 rounded-lg text-center">
+          <BookOpen className="h-8 w-8 text-blue-600 mx-auto mb-2" />
+          <div className="text-2xl font-bold text-blue-600">{documents?.length || 0}</div>
+          <div className="text-sm text-gray-600">کل اسناد</div>
+        </div>
+        
+        <div className="bg-green-50 p-4 rounded-lg text-center">
+          <Star className="h-8 w-8 text-green-600 mx-auto mb-2" />
+          <div className="text-2xl font-bold text-green-600">{featuredDocuments.length}</div>
+          <div className="text-sm text-gray-600">ویژه</div>
+        </div>
+        
+        <div className="bg-purple-50 p-4 rounded-lg text-center">
+          <Tag className="h-8 w-8 text-purple-600 mx-auto mb-2" />
+          <div className="text-2xl font-bold text-purple-600">{categories?.length || 0}</div>
+          <div className="text-sm text-gray-600">دسته‌بندی</div>
+        </div>
+        
+        <div className="bg-orange-50 p-4 rounded-lg text-center">
+          <TrendingUp className="h-8 w-8 text-orange-600 mx-auto mb-2" />
+          <div className="text-2xl font-bold text-orange-600">
+            {documents?.reduce((acc: number, doc: Document) => acc + (doc.downloadCount || 0), 0)}
+          </div>
+          <div className="text-sm text-gray-600">دانلود</div>
+        </div>
+      </div>
+
+      {/* Simple Tab Navigation */}
+      <div className="flex gap-2 mb-6 border-b">
+        {[
+          { id: "all", label: "همه" },
+          { id: "featured", label: "ویژه" },
+          { id: "popular", label: "محبوب" },
+          { id: "recent", label: "جدید" }
+        ].map(tab => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id)}
+            className={`px-4 py-2 border-b-2 transition-colors ${
+              activeTab === tab.id 
+                ? 'border-blue-500 text-blue-600 font-medium' 
+                : 'border-transparent text-gray-600 hover:text-gray-800'
+            }`}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Documents Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {getTabDocuments().map((doc: Document) => (
+          <Card key={doc.id} className="hover:shadow-lg transition-shadow duration-200">
+            <CardHeader className="pb-3">
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <CardTitle className="text-lg mb-2 line-clamp-2">
+                    {doc.title}
+                  </CardTitle>
+                  <CardDescription className="line-clamp-2">
+                    {doc.excerpt}
+                  </CardDescription>
+                </div>
+                {doc.featured && (
+                  <Star className="h-5 w-5 text-yellow-500 fill-current flex-shrink-0 mr-2" />
+                )}
+              </div>
+            </CardHeader>
+            
+            <CardContent className="space-y-4">
+              {/* Meta Information */}
+              <div className="flex items-center justify-between text-sm text-gray-600">
+                <div className="flex items-center gap-1">
+                  <User className="h-4 w-4" />
+                  <span>{doc.author || 'نامشخص'}</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <Calendar className="h-4 w-4" />
+                  <span>
+                    {doc.publishedAt 
+                      ? new Date(doc.publishedAt).toLocaleDateString('fa-IR')
+                      : 'نامشخص'
+                    }
+                  </span>
+                </div>
+              </div>
+
+              {/* Tags */}
+              {doc.tags && doc.tags.length > 0 && (
+                <div className="flex flex-wrap gap-1">
+                  {doc.tags.slice(0, 3).map((tag: string) => (
+                    <Badge key={tag} variant="secondary" className="text-xs">
+                      {tag}
+                    </Badge>
+                  ))}
+                  {doc.tags.length > 3 && (
+                    <Badge variant="outline" className="text-xs">
+                      +{doc.tags.length - 3}
+                    </Badge>
+                  )}
+                </div>
+              )}
+
+              {/* File Info */}
+              <div className="flex items-center justify-between text-sm text-gray-600">
+                <div className="flex items-center gap-1">
+                  <FileType className="h-4 w-4" />
+                  <span>{doc.fileType || 'PDF'}</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <Clock className="h-4 w-4" />
+                  <span>{doc.readTime || '۵ دقیقه'}</span>
+                </div>
+              </div>
+
+              {/* Stats */}
+              <div className="flex items-center justify-between text-sm text-gray-600">
+                <div className="flex items-center gap-1">
+                  <Download className="h-4 w-4" />
+                  <span>{doc.downloadCount || 0} دانلود</span>
+                </div>
+                {doc.rating && (
+                  <div className="flex items-center gap-1">
+                    <Star className="h-4 w-4 text-yellow-500" />
+                    <span>{doc.rating.toFixed(1)}</span>
+                  </div>
+                )}
+              </div>
+
+              {/* Actions */}
+              <div className="flex gap-2 pt-2">
+                <Button variant="outline" size="sm" className="flex-1">
+                  <Eye className="h-4 w-4 ml-1" />
+                  مشاهده
+                </Button>
+                <Button variant="default" size="sm" className="flex-1">
+                  <Download className="h-4 w-4 ml-1" />
+                  دانلود
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      {/* Empty State */}
+      {getTabDocuments().length === 0 && (
+        <div className="text-center py-12">
+          <FileText className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+          <h3 className="text-lg font-medium text-gray-900 mb-2">هیچ سندی یافت نشد</h3>
+          <p className="text-gray-600">سعی کنید با کلمات کلیدی دیگری جستجو کنید</p>
+        </div>
+      )}
     </div>
   );
 }
