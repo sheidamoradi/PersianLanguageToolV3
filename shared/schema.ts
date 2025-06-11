@@ -9,7 +9,9 @@ export const users = pgTable("users", {
   name: text("name"),
   progress: integer("progress").default(0),
   membershipType: text("membership_type").default("Basic"),
-  role: text("role").default("user"), // admin, user
+  role: text("role").default("user"), // admin, user, premium
+  subscriptionStatus: text("subscription_status").default("free"), // free, premium, vip
+  subscriptionExpiry: timestamp("subscription_expiry"),
 });
 
 export const courses = pgTable("courses", {
@@ -24,6 +26,9 @@ export const courses = pgTable("courses", {
   level: text("level"),
   isNew: boolean("is_new").default(false),
   isPopular: boolean("is_popular").default(false),
+  accessLevel: text("access_level").default("free"), // free, premium, vip
+  price: integer("price").default(0), // price in tomans
+  isLocked: boolean("is_locked").default(false),
 });
 
 export const modules = pgTable("modules", {
@@ -287,3 +292,18 @@ export const insertSlideSchema = createInsertSchema(slides).omit({ id: true, cre
 // Slide Types
 export type InsertSlide = z.infer<typeof insertSlideSchema>;
 export type Slide = typeof slides.$inferSelect;
+
+// User Course Access Table
+export const userCourseAccess = pgTable("user_course_access", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull(),
+  courseId: integer("course_id").notNull(),
+  accessType: text("access_type").notNull(), // purchased, granted, trial
+  purchaseDate: timestamp("purchase_date").defaultNow(),
+  expiryDate: timestamp("expiry_date"),
+  isActive: boolean("is_active").default(true),
+});
+
+export const insertUserCourseAccessSchema = createInsertSchema(userCourseAccess).omit({ id: true, purchaseDate: true });
+export type InsertUserCourseAccess = z.infer<typeof insertUserCourseAccessSchema>;
+export type UserCourseAccess = typeof userCourseAccess.$inferSelect;

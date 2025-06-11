@@ -13,7 +13,8 @@ import {
   articleContents, type ArticleContent, type InsertArticleContent,
   workshops, type Workshop, type InsertWorkshop,
   workshopContents, type WorkshopContent, type InsertWorkshopContent,
-  slides, type Slide, type InsertSlide
+  slides, type Slide, type InsertSlide,
+  userCourseAccess, type UserCourseAccess, type InsertUserCourseAccess
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, asc, like, and, sql } from "drizzle-orm";
@@ -111,6 +112,16 @@ export interface IStorage {
   createWorkshopContent(content: InsertWorkshopContent): Promise<WorkshopContent>;
   updateWorkshopContent(id: number, content: Partial<InsertWorkshopContent>): Promise<WorkshopContent | undefined>;
   deleteWorkshopContent(id: number): Promise<boolean>;
+
+  // User course access methods
+  getUserCourseAccess(userId: number): Promise<UserCourseAccess[]>;
+  getCourseAccess(userId: number, courseId: number): Promise<UserCourseAccess | undefined>;
+  grantCourseAccess(access: InsertUserCourseAccess): Promise<UserCourseAccess>;
+  revokeCourseAccess(userId: number, courseId: number): Promise<boolean>;
+  
+  // Permission check methods
+  canAccessCourse(userId: number, courseId: number): Promise<boolean>;
+  canDownloadContent(userId: number, courseId: number): Promise<boolean>;
 
   // Slide methods
   getSlides(): Promise<Slide[]>;
@@ -656,6 +667,87 @@ export class DatabaseStorage implements IStorage {
       .innerJoin(documentTagRelations, eq(documentTags.id, documentTagRelations.tagId))
       .where(eq(documentTagRelations.documentId, documentId));
     return results.map(r => r.tag);
+  }
+
+  // User course access methods
+  async getUserCourseAccess(userId: number): Promise<UserCourseAccess[]> {
+    return await db.select().from(userCourseAccess).where(eq(userCourseAccess.userId, userId));
+  }
+
+  async getCourseAccess(userId: number, courseId: number): Promise<UserCourseAccess | undefined> {
+    const [access] = await db
+      .select()
+      .from(userCourseAccess)
+      .where(
+        and(
+          eq(userCourseAccess.userId, userId),
+          eq(userCourseAccess.courseId, courseId),
+          eq(userCourseAccess.isActive, true)
+        )
+      );
+    return access;
+  }
+
+  async grantCourseAccess(access: InsertUserCourseAccess): Promise<UserCourseAccess> {
+    const [newAccess] = await db
+      .insert(userCourseAccess)
+      .values(access)
+      .returning();
+    return newAccess;
+  }
+
+  async revokeCourseAccess(userId: number, courseId: number): Promise<boolean> {
+    const result = await db
+      .update(userCourseAccess)
+      .set({ isActive: false })
+      .where(
+        and(
+          eq(userCourseAccess.userId, userId),
+          eq(userCourseAccess.courseId, courseId)
+        )
+      );
+    return (result.rowCount ?? 0) > 0;
+  }
+
+  async canAccessCourse(userId: number, courseId: number): Promise<boolean> {
+    const user = await this.getUser(userId);
+    const course = await this.getCourse(courseId);
+    
+    if (!user || !course) return false;
+    
+    // Admin can access everything
+    if (user.role === 'admin') return true;
+    
+    // Free courses are accessible to everyone
+    if (course.accessLevel === 'free') return true;
+    
+    // Check user subscription status
+    if (course.accessLevel === 'premium' && (user.subscriptionStatus === 'premium' || user.subscriptionStatus === 'vip')) {
+      return true;
+    }
+    
+    if (course.accessLevel === 'vip' && user.subscriptionStatus === 'vip') {
+      return true;
+    }
+    
+    // Check specific course access
+    const access = await this.getCourseAccess(userId, courseId);
+    return access ? access.isActive : false;
+  }
+
+  async canDownloadContent(userId: number, courseId: number): Promise<boolean> {
+    const user = await this.getUser(userId);
+    if (!user) return false;
+    
+    // Admin can download everything
+    if (user.role === 'admin') return true;
+    
+    // Check if user has access to the course first
+    const hasAccess = await this.canAccessCourse(userId, courseId);
+    if (!hasAccess) return false;
+    
+    // Premium and VIP users can download
+    return user.subscriptionStatus === 'premium' || user.subscriptionStatus === 'vip';
   }
 }
 
