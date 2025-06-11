@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>پیستاط - مرکز آموزشی کشاورزی</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div id="root"></div>
+    
+    <script type="text/babel">
+        const { useState } = React;
+        
+        function App() {
+            const [activeTab, setActiveTab] = useState('home');
+            
+            const NavButton = ({ id, icon, label, isActive, onClick }) => (
+                React.createElement('button', {
+                    onClick: () => onClick(id),
+                    className: `flex flex-col items-center py-2 px-4 transition-colors ${isActive ? 'text-blue-600' : 'text-gray-400 hover:text-gray-600'}`
+                }, [
+                    React.createElement('span', { className: "text-xl mb-1", key: 'icon' }, icon),
+                    React.createElement('span', { className: "text-xs font-medium", key: 'label' }, label)
+                ])
+            );
+            
+            const CourseCard = ({ title, description, progress, isLocked }) => (
+                React.createElement('div', { className: "bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow" }, [
+                    React.createElement('div', { 
+                        className: "h-32 bg-gradient-to-r from-blue-500 to-purple-600 relative",
+                        key: 'header'
+                    }, [
+                        isLocked && React.createElement('div', { 
+                            className: "absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center",
+                            key: 'lock'
+                        }, React.createElement('span', { className: "text-white text-2xl" }, '🔒'))
+                    ]),
+                    React.createElement('div', { className: "p-4", key: 'content' }, [
+                        React.createElement('h3', { className: "font-bold text-gray-800 mb-2", key: 'title' }, title),
+                        React.createElement('p', { className: "text-gray-600 text-sm mb-3", key: 'desc' }, description),
+                        !isLocked && React.createElement('div', { className: "bg-gray-200 rounded-full h-2 mb-2", key: 'progress' }, 
+                            React.createElement('div', { 
+                                className: "bg-blue-500 h-2 rounded-full transition-all",
+                                style: { width: `${progress}%` }
+                            })
+                        ),
+                        React.createElement('div', { className: "flex justify-between items-center", key: 'footer' }, [
+                            React.createElement('span', { className: "text-xs text-gray-500", key: 'status' }, 
+                                isLocked ? 'محدود شده' : `${progress}% تکمیل`
+                            ),
+                            React.createElement('button', { 
+                                className: `px-3 py-1 rounded text-xs font-medium ${isLocked ? 'bg-gray-200 text-gray-500 cursor-not-allowed' : 'bg-blue-500 text-white hover:bg-blue-600'}`,
+                                disabled: isLocked,
+                                key: 'btn'
+                            }, isLocked ? 'قفل' : 'ادامه')
+                        ])
+                    ])
+                ])
+            );
+            
+            const HomePage = () => (
+                React.createElement('div', { className: "space-y-6" }, [
+                    React.createElement('div', { className: "text-center py-6", key: 'header' }, [
+                        React.createElement('h1', { className: "text-3xl font-bold text-gray-800 mb-2", key: 'title' }, '🌱 پیستاط'),
+                        React.createElement('p', { className: "text-gray-600", key: 'subtitle' }, 'مرکز آموزشی تخصصی کشاورزی')
+                    ]),
+                    React.createElement('div', { className: "grid grid-cols-2 md:grid-cols-4 gap-4", key: 'stats' }, [
+                        React.createElement('div', { className: "bg-blue-100 p-4 rounded-xl text-center", key: 'stat1' }, [
+                            React.createElement('div', { className: "text-2xl font-bold text-blue-600", key: 'num' }, '12'),
+                            React.createElement('div', { className: "text-sm text-blue-800", key: 'label' }, 'دوره فعال')
+                        ]),
+                        React.createElement('div', { className: "bg-green-100 p-4 rounded-xl text-center", key: 'stat2' }, [
+                            React.createElement('div', { className: "text-2xl font-bold text-green-600", key: 'num' }, '8'),
+                            React.createElement('div', { className: "text-sm text-green-800", key: 'label' }, 'پروژه')
+                        ]),
+                        React.createElement('div', { className: "bg-purple-100 p-4 rounded-xl text-center", key: 'stat3' }, [
+                            React.createElement('div', { className: "text-2xl font-bold text-purple-600", key: 'num' }, '45'),
+                            React.createElement('div', { className: "text-sm text-purple-800", key: 'label' }, 'مقاله')
+                        ]),
+                        React.createElement('div', { className: "bg-orange-100 p-4 rounded-xl text-center", key: 'stat4' }, [
+                            React.createElement('div', { className: "text-2xl font-bold text-orange-600", key: 'num' }, '95%'),
+                            React.createElement('div', { className: "text-sm text-orange-800", key: 'label' }, 'پیشرفت')
+                        ])
+                    ]),
+                    React.createElement('div', { className: "bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl p-6 text-white", key: 'featured' }, [
+                        React.createElement('h2', { className: "text-xl font-bold mb-2", key: 'title' }, 'دوره پیشنهادی'),
+                        React.createElement('p', { className: "mb-4 opacity-90", key: 'desc' }, 'کشاورزی مدرن و فناوری‌های نوین'),
+                        React.createElement('button', { className: "bg-white text-blue-600 px-4 py-2 rounded-lg font-medium hover:bg-gray-100", key: 'btn' }, 'شروع یادگیری')
+                    ])
+                ])
+            );
+            
+            const CoursesPage = () => (
+                React.createElement('div', { className: "space-y-6" }, [
+                    React.createElement('div', { className: "flex justify-between items-center", key: 'header' }, [
+                        React.createElement('h1', { className: "text-2xl font-bold text-gray-800", key: 'title' }, 'دوره‌های آموزشی'),
+                        React.createElement('button', { className: "bg-blue-500 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-600", key: 'btn' }, 'جستجو')
+                    ]),
+                    React.createElement('div', { className: "grid grid-cols-1 md:grid-cols-2 gap-6", key: 'courses' }, [
+                        React.createElement(CourseCard, { 
+                            title: "مبانی کشاورزی", 
+                            description: "آموزش اصول پایه کشاورزی و زراعت", 
+                            progress: 80, 
+                            isLocked: false,
+                            key: 'course1'
+                        }),
+                        React.createElement(CourseCard, { 
+                            title: "آبیاری مدرن", 
+                            description: "سیستم‌های آبیاری قطره‌ای و هوشمند", 
+                            progress: 60, 
+                            isLocked: false,
+                            key: 'course2'
+                        }),
+                        React.createElement(CourseCard, { 
+                            title: "گلخانه‌داری", 
+                            description: "مدیریت و تولید در گلخانه", 
+                            progress: 0, 
+                            isLocked: true,
+                            key: 'course3'
+                        }),
+                        React.createElement(CourseCard, { 
+                            title: "کشاورزی ارگانیک", 
+                            description: "روش‌های کشاورزی بدون آفت‌کش", 
+                            progress: 0, 
+                            isLocked: true,
+                            key: 'course4'
+                        })
+                    ])
+                ])
+            );
+            
+            const renderCurrentPage = () => {
+                switch (activeTab) {
+                    case 'home': return React.createElement(HomePage);
+                    case 'courses': return React.createElement(CoursesPage);
+                    default: return React.createElement(HomePage);
+                }
+            };
+            
+            return React.createElement('div', { className: "min-h-screen bg-gray-50", dir: "rtl" }, [
+                React.createElement('div', { className: "container mx-auto px-4 py-6 pb-20", key: 'content' }, 
+                    renderCurrentPage()
+                ),
+                React.createElement('div', { className: "fixed bottom-0 left-0 right-0 bg-white border-t shadow-lg", key: 'nav' },
+                    React.createElement('div', { className: "flex justify-around" }, [
+                        React.createElement(NavButton, { 
+                            id: "home", 
+                            icon: "🏠", 
+                            label: "خانه", 
+                            isActive: activeTab === 'home', 
+                            onClick: setActiveTab,
+                            key: 'nav1'
+                        }),
+                        React.createElement(NavButton, { 
+                            id: "courses", 
+                            icon: "📚", 
+                            label: "دوره‌ها", 
+                            isActive: activeTab === 'courses', 
+                            onClick: setActiveTab,
+                            key: 'nav2'
+                        }),
+                        React.createElement(NavButton, { 
+                            id: "projects", 
+                            icon: "🚀", 
+                            label: "پروژه‌ها", 
+                            isActive: activeTab === 'projects', 
+                            onClick: setActiveTab,
+                            key: 'nav3'
+                        }),
+                        React.createElement(NavButton, { 
+                            id: "library", 
+                            icon: "📖", 
+                            label: "کتابخانه", 
+                            isActive: activeTab === 'library', 
+                            onClick: setActiveTab,
+                            key: 'nav4'
+                        }),
+                        React.createElement(NavButton, { 
+                            id: "profile", 
+                            icon: "👤", 
+                            label: "پروفایل", 
+                            isActive: activeTab === 'profile', 
+                            onClick: setActiveTab,
+                            key: 'nav5'
+                        })
+                    ])
+                )
+            ]);
+        }
+        
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(React.createElement(App));
+        
+        console.log('✅ پیستاط - پلتفرم آموزشی بارگذاری شد');
+    </script>
+</body>
+</html>
