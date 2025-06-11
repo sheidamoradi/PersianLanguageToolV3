@@ -282,32 +282,8 @@ export type WorkshopSection = typeof workshopSections.$inferSelect;
 export type InsertWorkshopContent = z.infer<typeof insertWorkshopContentSchema>;
 export type WorkshopContent = typeof workshopContents.$inferSelect;
 
-// Slide Schema for Carousel Management
-const insertSlideSchemaBase = z.object({
-  title: z.string().min(1, "عنوان الزامی است"),
-  description: z.string().min(1, "توضیحات الزامی است"),
-  imageUrl: z.string().optional(),
-  buttonText: z.string().min(1, "متن دکمه الزامی است"),
-  buttonUrl: z.string().min(1, "لینک دکمه الزامی است"),
-  isActive: z.boolean().default(true),
-  order: z.number().default(0),
-  gradientFrom: z.string().optional(),
-  gradientTo: z.string().optional(),
-  iconName: z.string().optional()
-});
-
-const selectSlideSchemaBase = insertSlideSchemaBase.extend({
-  id: z.number(),
-  createdAt: z.string(),
-  updatedAt: z.string()
-});
-
 export const insertSlideSchema = createInsertSchema(slides).omit({ id: true, createdAt: true, updatedAt: true });
 
 // Slide Types
 export type InsertSlide = z.infer<typeof insertSlideSchema>;
 export type Slide = typeof slides.$inferSelect;
-export const selectSlideSchema = selectSlideSchemaBase;
-
-export type InsertSlide = z.infer<typeof insertSlideSchema>;
-export type Slide = z.infer<typeof selectSlideSchema>;
