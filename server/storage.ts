@@ -4,6 +4,9 @@ import {
   modules, type Module, type InsertModule,
   projects, type Project, type InsertProject,
   documents, type Document, type InsertDocument,
+  documentCategories, type DocumentCategory, type InsertDocumentCategory,
+  documentTags, type DocumentTag, type InsertDocumentTag,
+  documentTagRelations, type DocumentTagRelation, type InsertDocumentTagRelation,
   mediaContent, type MediaContent, type InsertMediaContent,
   magazines, type Magazine, type InsertMagazine,
   articles, type Article, type InsertArticle,
@@ -38,10 +41,38 @@ export interface IStorage {
   getProject(id: number): Promise<Project | undefined>;
   createProject(project: InsertProject): Promise<Project>;
 
+  // Document Category methods
+  getDocumentCategories(): Promise<DocumentCategory[]>;
+  getDocumentCategory(id: number): Promise<DocumentCategory | undefined>;
+  createDocumentCategory(category: InsertDocumentCategory): Promise<DocumentCategory>;
+  updateDocumentCategory(id: number, category: Partial<InsertDocumentCategory>): Promise<DocumentCategory | undefined>;
+  deleteDocumentCategory(id: number): Promise<boolean>;
+
+  // Document Tag methods
+  getDocumentTags(): Promise<DocumentTag[]>;
+  getDocumentTag(id: number): Promise<DocumentTag | undefined>;
+  createDocumentTag(tag: InsertDocumentTag): Promise<DocumentTag>;
+  updateDocumentTag(id: number, tag: Partial<InsertDocumentTag>): Promise<DocumentTag | undefined>;
+  deleteDocumentTag(id: number): Promise<boolean>;
+
   // Document methods
   getDocuments(): Promise<Document[]>;
+  getDocumentsByCategory(categoryId: number): Promise<Document[]>;
+  getDocumentsByTag(tagId: number): Promise<Document[]>;
+  getFeaturedDocuments(): Promise<Document[]>;
+  searchDocuments(query: string): Promise<Document[]>;
   getDocument(id: number): Promise<Document | undefined>;
+  getDocumentBySlug(slug: string): Promise<Document | undefined>;
   createDocument(document: InsertDocument): Promise<Document>;
+  updateDocument(id: number, document: Partial<InsertDocument>): Promise<Document | undefined>;
+  deleteDocument(id: number): Promise<boolean>;
+  incrementDownloadCount(id: number): Promise<void>;
+  incrementViewCount(id: number): Promise<void>;
+
+  // Document Tag Relations
+  addTagToDocument(documentId: number, tagId: number): Promise<DocumentTagRelation>;
+  removeTagFromDocument(documentId: number, tagId: number): Promise<boolean>;
+  getDocumentTags(documentId: number): Promise<DocumentTag[]>;
 
   // Media content methods
   getMediaContent(id: number): Promise<MediaContent | undefined>;

@@ -49,15 +49,55 @@ export const projects = pgTable("projects", {
   isLocked: boolean("is_locked").default(false),
 });
 
+export const documentCategories = pgTable("document_categories", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  slug: text("slug").notNull().unique(),
+  description: text("description"),
+  parentId: integer("parent_id"),
+  order: integer("order").default(0),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const documentTags = pgTable("document_tags", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  slug: text("slug").notNull().unique(),
+  color: text("color").default("#6B7280"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 export const documents = pgTable("documents", {
   id: serial("id").primaryKey(),
   title: text("title").notNull(),
+  slug: text("slug").notNull().unique(),
+  content: text("content"),
+  excerpt: text("excerpt"),
+  author: text("author"),
+  featuredImageUrl: text("featured_image_url"),
   fileName: text("file_name").notNull(),
   fileUrl: text("file_url").notNull(),
   fileType: text("file_type").notNull(),
+  fileSize: integer("file_size"),
   totalPages: integer("total_pages"),
-  lastUpdated: text("last_updated"),
+  categoryId: integer("category_id").references(() => documentCategories.id),
+  status: text("status").default("published"), // published, draft, private
   allowDownload: boolean("allow_download").default(true),
+  downloadCount: integer("download_count").default(0),
+  viewCount: integer("view_count").default(0),
+  isFeatured: boolean("is_featured").default(false),
+  publishedAt: timestamp("published_at"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const documentTagRelations = pgTable("document_tag_relations", {
+  id: serial("id").primaryKey(),
+  documentId: integer("document_id").notNull().references(() => documents.id),
+  tagId: integer("tag_id").notNull().references(() => documentTags.id),
+  createdAt: timestamp("created_at").defaultNow(),
 });
 
 export const mediaContent = pgTable("media_content", {
@@ -184,7 +224,10 @@ export const insertUserSchema = createInsertSchema(users).omit({ id: true });
 export const insertCourseSchema = createInsertSchema(courses).omit({ id: true });
 export const insertModuleSchema = createInsertSchema(modules).omit({ id: true });
 export const insertProjectSchema = createInsertSchema(projects).omit({ id: true });
-export const insertDocumentSchema = createInsertSchema(documents).omit({ id: true });
+export const insertDocumentCategorySchema = createInsertSchema(documentCategories).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertDocumentTagSchema = createInsertSchema(documentTags).omit({ id: true, createdAt: true });
+export const insertDocumentSchema = createInsertSchema(documents).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertDocumentTagRelationSchema = createInsertSchema(documentTagRelations).omit({ id: true, createdAt: true });
 export const insertMediaContentSchema = createInsertSchema(mediaContent).omit({ id: true });
 export const insertMagazineSchema = createInsertSchema(magazines).omit({ id: true, createdAt: true, updatedAt: true });
 export const insertArticleSchema = createInsertSchema(articles).omit({ id: true, createdAt: true, updatedAt: true });
@@ -206,8 +249,17 @@ export type Module = typeof modules.$inferSelect;
 export type InsertProject = z.infer<typeof insertProjectSchema>;
 export type Project = typeof projects.$inferSelect;
 
+export type InsertDocumentCategory = z.infer<typeof insertDocumentCategorySchema>;
+export type DocumentCategory = typeof documentCategories.$inferSelect;
+
+export type InsertDocumentTag = z.infer<typeof insertDocumentTagSchema>;
+export type DocumentTag = typeof documentTags.$inferSelect;
+
 export type InsertDocument = z.infer<typeof insertDocumentSchema>;
 export type Document = typeof documents.$inferSelect;
+
+export type InsertDocumentTagRelation = z.infer<typeof insertDocumentTagRelationSchema>;
+export type DocumentTagRelation = typeof documentTagRelations.$inferSelect;
 
 export type InsertMediaContent = z.infer<typeof insertMediaContentSchema>;
 export type MediaContent = typeof mediaContent.$inferSelect;
