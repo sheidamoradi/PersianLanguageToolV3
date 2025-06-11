@@ -278,7 +278,7 @@ export class DatabaseStorage implements IStorage {
 
   async deleteMagazine(id: number): Promise<boolean> {
     const result = await db.delete(magazines).where(eq(magazines.id, id));
-    return result.rowCount > 0;
+    return (result.rowCount ?? 0) > 0;
   }
 
   // Article methods
@@ -321,7 +321,7 @@ export class DatabaseStorage implements IStorage {
 
   async deleteArticle(id: number): Promise<boolean> {
     const result = await db.delete(articles).where(eq(articles.id, id));
-    return result.rowCount > 0;
+    return (result.rowCount ?? 0) > 0;
   }
 
   // Article content methods
@@ -351,7 +351,7 @@ export class DatabaseStorage implements IStorage {
 
   async deleteArticleContent(id: number): Promise<boolean> {
     const result = await db.delete(articleContents).where(eq(articleContents.id, id));
-    return result.rowCount > 0;
+    return (result.rowCount ?? 0) > 0;
   }
 
   // Workshop methods
@@ -390,7 +390,7 @@ export class DatabaseStorage implements IStorage {
 
   async deleteWorkshop(id: number): Promise<boolean> {
     const result = await db.delete(workshops).where(eq(workshops.id, id));
-    return result.rowCount > 0;
+    return (result.rowCount ?? 0) > 0;
   }
 
   // Workshop content methods
@@ -420,7 +420,7 @@ export class DatabaseStorage implements IStorage {
 
   async deleteWorkshopContent(id: number): Promise<boolean> {
     const result = await db.delete(workshopContents).where(eq(workshopContents.id, id));
-    return result.rowCount > 0;
+    return (result.rowCount ?? 0) > 0;
   }
 
   // Slide methods
