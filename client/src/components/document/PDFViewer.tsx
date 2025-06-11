@@ -1,9 +1,6 @@
 import { useState } from "react";
 import { Document, Page } from "react-pdf";
-import { Button } from "@/components/ui/button";
 import { type DocumentViewerProps } from "@/lib/types";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
 import { 
   Download, Share, Printer, ChevronLeft, ChevronRight, 
   ZoomIn, ZoomOut, X 
@@ -19,140 +16,125 @@ const options = {
 };
 
 export default function PDFViewer({ document }: DocumentViewerProps) {
-  const [numPages, setNumPages] = useState<number | null>(null);
+  const [numPages, setNumPages] = useState<number>(0);
   const [pageNumber, setPageNumber] = useState<number>(1);
   const [scale, setScale] = useState<number>(1.0);
-  const [loading, setLoading] = useState<boolean>(true);
-
-  function onDocumentLoadSuccess({ numPages }: { numPages: number }) {
+  
+  function onDocumentLoadSuccess({ numPages }: { numPages: number }): void {
     setNumPages(numPages);
-    setLoading(false);
   }
 
-  function changePage(offset: number) {
-    if (numPages === null) return;
-    
-    const newPageNumber = pageNumber + offset;
-    if (newPageNumber >= 1 && newPageNumber <= numPages) {
-      setPageNumber(newPageNumber);
-    }
-  }
-
-  function changeZoom(delta: number) {
-    const newScale = Math.max(0.5, Math.min(2.0, scale + delta));
-    setScale(newScale);
-  }
+  const zoomIn = () => setScale(prev => Math.min(prev + 0.2, 3.0));
+  const zoomOut = () => setScale(prev => Math.max(prev - 0.2, 0.5));
+  const previousPage = () => setPageNumber(prev => Math.max(prev - 1, 1));
+  const nextPage = () => setPageNumber(prev => Math.min(prev + 1, numPages));
 
   return (
-    <div className="mb-10">
-      <div className="mb-4 flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-semibold text-neutral-500">Document Viewer</h2>
-          <p className="text-neutral-300">View and interact with PDF documents</p>
+    <div className="fixed inset-0 bg-black bg-opacity-75 z-50 flex items-center justify-center p-4">
+      <div className="bg-white rounded-lg w-full max-w-6xl max-h-[95vh] overflow-hidden flex flex-col">
+        {/* Header */}
+        <div className="flex items-center justify-between p-4 border-b">
+          <div>
+            <h2 className="text-xl font-semibold text-gray-900">{document.title}</h2>
+            <p className="text-sm text-gray-600">{document.description}</p>
+          </div>
+          <div className="flex items-center gap-2">
+            {/* Zoom Controls */}
+            <button 
+              onClick={zoomOut}
+              className="p-2 hover:bg-gray-100 rounded-md"
+              title="کوچک کردن"
+            >
+              <ZoomOut className="h-4 w-4" />
+            </button>
+            <span className="text-sm text-gray-600 min-w-[60px] text-center">
+              {Math.round(scale * 100)}%
+            </span>
+            <button 
+              onClick={zoomIn}
+              className="p-2 hover:bg-gray-100 rounded-md"
+              title="بزرگ کردن"
+            >
+              <ZoomIn className="h-4 w-4" />
+            </button>
+            
+            {/* Action Buttons */}
+            <button className="p-2 hover:bg-gray-100 rounded-md" title="دانلود">
+              <Download className="h-4 w-4" />
+            </button>
+            <button className="p-2 hover:bg-gray-100 rounded-md" title="اشتراک‌گذاری">
+              <Share className="h-4 w-4" />
+            </button>
+            <button className="p-2 hover:bg-gray-100 rounded-md" title="چاپ">
+              <Printer className="h-4 w-4" />
+            </button>
+            
+            <Link href="/library">
+              <button className="p-2 hover:bg-gray-100 rounded-md" title="بستن">
+                <X className="h-4 w-4" />
+              </button>
+            </Link>
+          </div>
         </div>
-        <Link href="/">
-          <Button variant="ghost" className="text-neutral-400 hover:text-primary">
-            <X className="h-5 w-5" />
-          </Button>
-        </Link>
-      </div>
-      
-      <Card>
-        <CardHeader className="border-b border-neutral-200 p-4 flex-row justify-between items-center space-y-0">
-          <div className="flex items-center">
-            <span className="material-icons text-status-error text-2xl mr-2">picture_as_pdf</span>
-            <div>
-              <CardTitle className="font-medium text-neutral-500">{document.fileName}</CardTitle>
-              <CardDescription className="text-xs text-neutral-300">Last updated: {document.lastUpdated}</CardDescription>
-            </div>
-          </div>
-          <div className="flex items-center">
-            {document.allowDownload && (
-              <Button variant="ghost" className="p-2 text-neutral-400 hover:text-primary" title="Download PDF">
-                <Download className="h-5 w-5" />
-              </Button>
-            )}
-            <Button variant="ghost" className="p-2 text-neutral-400 hover:text-primary" title="Share">
-              <Share className="h-5 w-5" />
-            </Button>
-            <Button variant="ghost" className="p-2 text-neutral-400 hover:text-primary" title="Print">
-              <Printer className="h-5 w-5" />
-            </Button>
-          </div>
-        </CardHeader>
-        
-        <CardContent className="pdf-viewer p-4 flex flex-col items-center justify-center border-b border-neutral-200 min-h-[400px] bg-neutral-50">
-          <Document
-            file={document.fileUrl}
-            onLoadSuccess={onDocumentLoadSuccess}
-            options={options}
-            loading={<Skeleton className="w-full max-w-2xl h-[600px] mx-auto" />}
-            error={
-              <div className="text-center text-status-error">
-                <p className="font-medium">Failed to load PDF</p>
-                <p className="text-sm">Please try again later</p>
-              </div>
-            }
-          >
-            {loading ? (
-              <Skeleton className="w-full max-w-2xl h-[600px] mx-auto" />
-            ) : (
-              <Page
-                pageNumber={pageNumber}
+
+        {/* PDF Viewer */}
+        <div className="flex-1 overflow-auto bg-gray-100 flex flex-col items-center py-4">
+          <div className="bg-white shadow-lg">
+            <Document
+              file={document.fileUrl}
+              onLoadSuccess={onDocumentLoadSuccess}
+              options={options}
+              loading={
+                <div className="flex items-center justify-center h-96">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                </div>
+              }
+              error={
+                <div className="flex items-center justify-center h-96 text-red-600">
+                  خطا در بارگذاری PDF
+                </div>
+              }
+            >
+              <Page 
+                pageNumber={pageNumber} 
                 scale={scale}
-                renderTextLayer={true}
-                renderAnnotationLayer={true}
-                className="mx-auto shadow-md"
+                loading={
+                  <div className="flex items-center justify-center h-96">
+                    <div className="animate-pulse bg-gray-200 w-full h-full"></div>
+                  </div>
+                }
               />
-            )}
-          </Document>
-        </CardContent>
-        
-        <div className="p-4 flex items-center justify-between">
-          <div className="flex items-center">
-            <Button 
-              variant="ghost" 
-              className="p-1 text-neutral-400 hover:text-primary" 
-              title="Previous Page"
-              onClick={() => changePage(-1)}
-              disabled={pageNumber <= 1}
-            >
-              <ChevronLeft className="h-5 w-5" />
-            </Button>
-            <span className="mx-3 text-sm">Page {pageNumber} of {numPages || document.totalPages}</span>
-            <Button 
-              variant="ghost" 
-              className="p-1 text-neutral-400 hover:text-primary" 
-              title="Next Page"
-              onClick={() => changePage(1)}
-              disabled={pageNumber >= (numPages || document.totalPages)}
-            >
-              <ChevronRight className="h-5 w-5" />
-            </Button>
-          </div>
-          <div className="flex items-center">
-            <Button 
-              variant="ghost" 
-              className="p-1 text-neutral-400 hover:text-primary" 
-              title="Zoom Out"
-              onClick={() => changeZoom(-0.1)}
-              disabled={scale <= 0.5}
-            >
-              <ZoomOut className="h-5 w-5" />
-            </Button>
-            <span className="mx-3 text-sm">{Math.round(scale * 100)}%</span>
-            <Button 
-              variant="ghost" 
-              className="p-1 text-neutral-400 hover:text-primary" 
-              title="Zoom In"
-              onClick={() => changeZoom(0.1)}
-              disabled={scale >= 2.0}
-            >
-              <ZoomIn className="h-5 w-5" />
-            </Button>
+            </Document>
           </div>
         </div>
-      </Card>
+
+        {/* Footer */}
+        <div className="flex items-center justify-between p-4 border-t bg-gray-50">
+          <div className="flex items-center gap-2">
+            <button 
+              onClick={previousPage}
+              disabled={pageNumber <= 1}
+              className="p-2 hover:bg-gray-200 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <ChevronRight className="h-4 w-4" />
+            </button>
+            <span className="text-sm text-gray-600">
+              صفحه {pageNumber} از {numPages}
+            </span>
+            <button 
+              onClick={nextPage}
+              disabled={pageNumber >= numPages}
+              className="p-2 hover:bg-gray-200 rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </button>
+          </div>
+          
+          <div className="text-sm text-gray-500">
+            نویسنده: {document.author} • تاریخ انتشار: {document.publishedAt}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
