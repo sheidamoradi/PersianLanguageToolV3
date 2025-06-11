@@ -689,6 +689,272 @@ export async function registerRoutes(app: Express): Promise<Server> {
     return res.status(204).end();
   });
 
+  // دسته‌بندی اسناد API
+  app.get("/api/document-categories", async (req, res) => {
+    const categories = await storage.getDocumentCategories();
+    res.json(categories);
+  });
+
+  app.get("/api/document-categories/:id", async (req, res) => {
+    const id = parseInt(req.params.id);
+    
+    if (isNaN(id)) {
+      return res.status(400).json({ message: "کد دسته‌بندی نامعتبر است" });
+    }
+
+    const category = await storage.getDocumentCategory(id);
+    
+    if (!category) {
+      return res.status(404).json({ message: "دسته‌بندی پیدا نشد" });
+    }
+
+    res.json(category);
+  });
+
+  app.post("/api/document-categories", async (req, res) => {
+    try {
+      const validatedData = insertDocumentCategorySchema.parse(req.body);
+      const category = await storage.createDocumentCategory(validatedData);
+      res.status(201).json(category);
+    } catch (error) {
+      if (error instanceof ZodError) {
+        const validationError = fromZodError(error);
+        return res.status(400).json({ message: validationError.message });
+      }
+      res.status(500).json({ message: "خطای داخلی سرور" });
+    }
+  });
+
+  app.put("/api/document-categories/:id", async (req, res) => {
+    const id = parseInt(req.params.id);
+    
+    if (isNaN(id)) {
+      return res.status(400).json({ message: "کد دسته‌بندی نامعتبر است" });
+    }
+
+    try {
+      const updatedCategory = await storage.updateDocumentCategory(id, req.body);
+      
+      if (!updatedCategory) {
+        return res.status(404).json({ message: "دسته‌بندی پیدا نشد" });
+      }
+
+      res.json(updatedCategory);
+    } catch (error) {
+      res.status(500).json({ message: "خطای داخلی سرور" });
+    }
+  });
+
+  app.delete("/api/document-categories/:id", async (req, res) => {
+    const id = parseInt(req.params.id);
+    
+    if (isNaN(id)) {
+      return res.status(400).json({ message: "کد دسته‌بندی نامعتبر است" });
+    }
+
+    const result = await storage.deleteDocumentCategory(id);
+    
+    if (!result) {
+      return res.status(404).json({ message: "دسته‌بندی پیدا نشد" });
+    }
+
+    res.status(204).end();
+  });
+
+  // تگ‌های اسناد API
+  app.get("/api/document-tags", async (req, res) => {
+    const tags = await storage.getDocumentTags();
+    res.json(tags);
+  });
+
+  app.get("/api/document-tags/:id", async (req, res) => {
+    const id = parseInt(req.params.id);
+    
+    if (isNaN(id)) {
+      return res.status(400).json({ message: "کد تگ نامعتبر است" });
+    }
+
+    const tag = await storage.getDocumentTag(id);
+    
+    if (!tag) {
+      return res.status(404).json({ message: "تگ پیدا نشد" });
+    }
+
+    res.json(tag);
+  });
+
+  app.post("/api/document-tags", async (req, res) => {
+    try {
+      const validatedData = insertDocumentTagSchema.parse(req.body);
+      const tag = await storage.createDocumentTag(validatedData);
+      res.status(201).json(tag);
+    } catch (error) {
+      if (error instanceof ZodError) {
+        const validationError = fromZodError(error);
+        return res.status(400).json({ message: validationError.message });
+      }
+      res.status(500).json({ message: "خطای داخلی سرور" });
+    }
+  });
+
+  app.put("/api/document-tags/:id", async (req, res) => {
+    const id = parseInt(req.params.id);
+    
+    if (isNaN(id)) {
+      return res.status(400).json({ message: "کد تگ نامعتبر است" });
+    }
+
+    try {
+      const updatedTag = await storage.updateDocumentTag(id, req.body);
+      
+      if (!updatedTag) {
+        return res.status(404).json({ message: "تگ پیدا نشد" });
+      }
+
+      res.json(updatedTag);
+    } catch (error) {
+      res.status(500).json({ message: "خطای داخلی سرور" });
+    }
+  });
+
+  app.delete("/api/document-tags/:id", async (req, res) => {
+    const id = parseInt(req.params.id);
+    
+    if (isNaN(id)) {
+      return res.status(400).json({ message: "کد تگ نامعتبر است" });
+    }
+
+    const result = await storage.deleteDocumentTag(id);
+    
+    if (!result) {
+      return res.status(404).json({ message: "تگ پیدا نشد" });
+    }
+
+    res.status(204).end();
+  });
+
+  // اسناد کتابخانه API
+  app.get("/api/documents", async (req, res) => {
+    const { category, tag, featured, search } = req.query;
+    
+    try {
+      let documents;
+      
+      if (category) {
+        documents = await storage.getDocumentsByCategory(parseInt(category as string));
+      } else if (tag) {
+        documents = await storage.getDocumentsByTag(parseInt(tag as string));
+      } else if (featured === 'true') {
+        documents = await storage.getFeaturedDocuments();
+      } else if (search) {
+        documents = await storage.searchDocuments(search as string);
+      } else {
+        documents = await storage.getDocuments();
+      }
+      
+      res.json(documents);
+    } catch (error) {
+      res.status(500).json({ message: "خطای داخلی سرور" });
+    }
+  });
+
+  app.get("/api/documents/:id", async (req, res) => {
+    const id = parseInt(req.params.id);
+    
+    if (isNaN(id)) {
+      return res.status(400).json({ message: "کد سند نامعتبر است" });
+    }
+
+    const document = await storage.getDocument(id);
+    
+    if (!document) {
+      return res.status(404).json({ message: "سند پیدا نشد" });
+    }
+
+    // افزایش تعداد بازدید
+    await storage.incrementViewCount(id);
+
+    res.json(document);
+  });
+
+  app.get("/api/documents/slug/:slug", async (req, res) => {
+    const { slug } = req.params;
+    
+    const document = await storage.getDocumentBySlug(slug);
+    
+    if (!document) {
+      return res.status(404).json({ message: "سند پیدا نشد" });
+    }
+
+    // افزایش تعداد بازدید
+    await storage.incrementViewCount(document.id);
+
+    res.json(document);
+  });
+
+  app.post("/api/documents", async (req, res) => {
+    try {
+      const validatedData = insertDocumentSchema.parse(req.body);
+      const document = await storage.createDocument(validatedData);
+      res.status(201).json(document);
+    } catch (error) {
+      if (error instanceof ZodError) {
+        const validationError = fromZodError(error);
+        return res.status(400).json({ message: validationError.message });
+      }
+      res.status(500).json({ message: "خطای داخلی سرور" });
+    }
+  });
+
+  app.put("/api/documents/:id", async (req, res) => {
+    const id = parseInt(req.params.id);
+    
+    if (isNaN(id)) {
+      return res.status(400).json({ message: "کد سند نامعتبر است" });
+    }
+
+    try {
+      const updatedDocument = await storage.updateDocument(id, req.body);
+      
+      if (!updatedDocument) {
+        return res.status(404).json({ message: "سند پیدا نشد" });
+      }
+
+      res.json(updatedDocument);
+    } catch (error) {
+      res.status(500).json({ message: "خطای داخلی سرور" });
+    }
+  });
+
+  app.delete("/api/documents/:id", async (req, res) => {
+    const id = parseInt(req.params.id);
+    
+    if (isNaN(id)) {
+      return res.status(400).json({ message: "کد سند نامعتبر است" });
+    }
+
+    const result = await storage.deleteDocument(id);
+    
+    if (!result) {
+      return res.status(404).json({ message: "سند پیدا نشد" });
+    }
+
+    res.status(204).end();
+  });
+
+  app.post("/api/documents/:id/download", async (req, res) => {
+    const id = parseInt(req.params.id);
+    
+    if (isNaN(id)) {
+      return res.status(400).json({ message: "کد سند نامعتبر است" });
+    }
+
+    // افزایش تعداد دانلود
+    await storage.incrementDownloadCount(id);
+    
+    res.json({ message: "دانلود با موفقیت ثبت شد" });
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
