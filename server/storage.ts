@@ -49,7 +49,7 @@ export interface IStorage {
   deleteDocumentCategory(id: number): Promise<boolean>;
 
   // Document Tag methods
-  getDocumentTags(): Promise<DocumentTag[]>;
+  getAllDocumentTags(): Promise<DocumentTag[]>;
   getDocumentTag(id: number): Promise<DocumentTag | undefined>;
   createDocumentTag(tag: InsertDocumentTag): Promise<DocumentTag>;
   updateDocumentTag(id: number, tag: Partial<InsertDocumentTag>): Promise<DocumentTag | undefined>;
@@ -72,7 +72,7 @@ export interface IStorage {
   // Document Tag Relations
   addTagToDocument(documentId: number, tagId: number): Promise<DocumentTagRelation>;
   removeTagFromDocument(documentId: number, tagId: number): Promise<boolean>;
-  getDocumentTags(documentId: number): Promise<DocumentTag[]>;
+  getDocumentTagsByDocument(documentId: number): Promise<DocumentTag[]>;
 
   // Media content methods
   getMediaContent(id: number): Promise<MediaContent | undefined>;
@@ -506,7 +506,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Document Tag methods
-  async getDocumentTags(): Promise<DocumentTag[]> {
+  async getAllDocumentTags(): Promise<DocumentTag[]> {
     return await db.select().from(documentTags);
   }
 
@@ -649,7 +649,7 @@ export class DatabaseStorage implements IStorage {
     return (result.rowCount ?? 0) > 0;
   }
 
-  async getDocumentTags(documentId: number): Promise<DocumentTag[]> {
+  async getDocumentTagsByDocument(documentId: number): Promise<DocumentTag[]> {
     const results = await db
       .select({ tag: documentTags })
       .from(documentTags)
