@@ -12,6 +12,8 @@ import Home from "@/pages/home";
 import Courses from "@/pages/courses";
 import Projects from "@/pages/projects";
 import Library from "@/pages/library";
+import Categories from "@/pages/categories";
+import Profile from "@/pages/profile";
 import DocumentViewer from "@/pages/document-viewer";
 import MediaPlayer from "@/pages/media-player";
 import Admin from "@/pages/admin";
@@ -76,6 +78,16 @@ function Router() {
       <Route path="/library">
         <Layout>
           <Library />
+        </Layout>
+      </Route>
+      <Route path="/categories">
+        <Layout>
+          <Categories />
+        </Layout>
+      </Route>
+      <Route path="/profile">
+        <Layout>
+          <Profile />
         </Layout>
       </Route>
       <Route path="/documents/:id">

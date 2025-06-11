@@ -1,48 +1,42 @@
 import { Link, useLocation } from "wouter";
+import { Home, Grid3X3, User } from "lucide-react";
 
 export default function MobileNavbar() {
   const [location] = useLocation();
   
   const isActive = (path: string) => location === path;
+  const isCategoryActive = () => {
+    return ['/courses', '/projects', '/library', '/magazine', '/categories'].includes(location);
+  };
   
   return (
-    <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-neutral-200 px-2 py-3 z-20" dir="rtl">
-      <div className="flex justify-around">
-        <Link href="/" className={`relative flex flex-col items-center p-2 transition-all duration-200 ${isActive('/') ? 'text-primary' : 'text-neutral-400'}`}>
-          <span className="material-icons text-2xl">home</span>
-          <span className={`absolute -top-8 bg-black text-white text-xs px-2 py-1 rounded transition-opacity duration-200 ${isActive('/') ? 'opacity-100' : 'opacity-0'} pointer-events-none`}>
-            خانه
-          </span>
+    <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-neutral-200 px-4 py-3 z-20" dir="rtl">
+      <div className="flex justify-around items-center">
+        {/* خانه */}
+        <Link href="/" className={`relative flex flex-col items-center p-3 transition-all duration-200 ${isActive('/') ? 'text-primary' : 'text-neutral-400'}`}>
+          <Home className="h-6 w-6" />
+          <span className="text-xs mt-1">خانه</span>
+          {isActive('/') && (
+            <div className="absolute -top-1 w-2 h-2 bg-primary rounded-full"></div>
+          )}
         </Link>
-        <Link href="/courses" className={`relative flex flex-col items-center p-2 transition-all duration-200 ${isActive('/courses') ? 'text-primary' : 'text-neutral-400'}`}>
-          <span className="material-icons text-2xl">menu_book</span>
-          <span className={`absolute -top-8 bg-black text-white text-xs px-2 py-1 rounded transition-opacity duration-200 ${isActive('/courses') ? 'opacity-100' : 'opacity-0'} pointer-events-none`}>
-            کارگاه‌ها
-          </span>
+
+        {/* دسته‌بندی‌ها (۴ خانه) */}
+        <Link href="/categories" className={`relative flex flex-col items-center p-3 transition-all duration-200 ${isCategoryActive() ? 'text-primary' : 'text-neutral-400'}`}>
+          <Grid3X3 className="h-6 w-6" />
+          <span className="text-xs mt-1">دسته‌ها</span>
+          {isCategoryActive() && (
+            <div className="absolute -top-1 w-2 h-2 bg-primary rounded-full"></div>
+          )}
         </Link>
-        <Link href="/projects" className={`relative flex flex-col items-center p-2 transition-all duration-200 ${isActive('/projects') ? 'text-primary' : 'text-neutral-400'}`}>
-          <span className="material-icons text-2xl">assignment</span>
-          <span className={`absolute -top-8 bg-black text-white text-xs px-2 py-1 rounded transition-opacity duration-200 ${isActive('/projects') ? 'opacity-100' : 'opacity-0'} pointer-events-none`}>
-            وبینارها
-          </span>
-        </Link>
-        <Link href="/library" className={`relative flex flex-col items-center p-2 transition-all duration-200 ${isActive('/library') ? 'text-primary' : 'text-neutral-400'}`}>
-          <span className="material-icons text-2xl">library_books</span>
-          <span className={`absolute -top-8 bg-black text-white text-xs px-2 py-1 rounded transition-opacity duration-200 ${isActive('/library') ? 'opacity-100' : 'opacity-0'} pointer-events-none`}>
-            کتابخانه
-          </span>
-        </Link>
-        <Link href="/magazine" className={`relative flex flex-col items-center p-2 transition-all duration-200 ${isActive('/magazine') ? 'text-primary' : 'text-neutral-400'}`}>
-          <span className="material-icons text-2xl">auto_stories</span>
-          <span className={`absolute -top-8 bg-black text-white text-xs px-2 py-1 rounded transition-opacity duration-200 ${isActive('/magazine') ? 'opacity-100' : 'opacity-0'} pointer-events-none`}>
-            رویش سبز
-          </span>
-        </Link>
-        <Link href="/admin" className={`relative flex flex-col items-center p-2 transition-all duration-200 ${isActive('/admin') ? 'text-primary' : 'text-neutral-400'}`}>
-          <span className="material-icons text-2xl">dashboard</span>
-          <span className={`absolute -top-8 bg-black text-white text-xs px-2 py-1 rounded transition-opacity duration-200 ${isActive('/admin') ? 'opacity-100' : 'opacity-0'} pointer-events-none`}>
-            مدیریت
-          </span>
+
+        {/* پروفایل */}
+        <Link href="/profile" className={`relative flex flex-col items-center p-3 transition-all duration-200 ${isActive('/profile') ? 'text-primary' : 'text-neutral-400'}`}>
+          <User className="h-6 w-6" />
+          <span className="text-xs mt-1">پروفایل</span>
+          {isActive('/profile') && (
+            <div className="absolute -top-1 w-2 h-2 bg-primary rounded-full"></div>
+          )}
         </Link>
       </div>
     </nav>
