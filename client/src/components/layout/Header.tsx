@@ -1,7 +1,6 @@
 import { Link, useLocation } from "wouter";
 import { User, Menu, X, Bell, Search } from "lucide-react";
 import { useState } from "react";
-import logoPath from "@assets/logo.png";
 
 export default function Header() {
   const [location] = useLocation();
@@ -15,9 +14,9 @@ export default function Header() {
         <div className="flex items-center gap-4">
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="md:hidden p-2 rounded-md hover:bg-gray-100"
+            className="md:hidden p-2 rounded-md hover:bg-green-50 group transition-colors"
           >
-            {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            {isMenuOpen ? <X className="h-6 w-6 text-gray-500 group-hover:text-green-600 transition-colors" /> : <Menu className="h-6 w-6 text-gray-500 group-hover:text-green-600 transition-colors" />}
           </button>
           <div 
             onClick={() => {
@@ -33,24 +32,37 @@ export default function Header() {
             }}
             className="flex items-center cursor-pointer"
           >
-            <img 
-              src={logoPath} 
-              alt="پیستاط - پلتفرم آموزش کشاورزی" 
-              className="h-12 w-auto"
-            />
+            <div className="flex items-center">
+              <svg width="48" height="48" viewBox="0 0 100 100" className="text-gray-600 hover:text-green-600 transition-colors">
+                <path d="M20 50C20 30 35 15 55 15C65 15 73 20 78 28C83 20 91 15 101 15C121 15 136 30 136 50C136 70 121 85 101 85C91 85 83 80 78 72C73 80 65 85 55 85C35 85 20 70 20 50Z" 
+                      fill="currentColor" 
+                      transform="scale(0.4) translate(25, 25)"/>
+                <text x="50" y="75" 
+                      textAnchor="middle" 
+                      fontFamily="Arial, sans-serif" 
+                      fontSize="12" 
+                      fontWeight="bold" 
+                      fill="currentColor">Pistat</text>
+                <text x="50" y="90" 
+                      textAnchor="middle" 
+                      fontFamily="Arial, sans-serif" 
+                      fontSize="10" 
+                      fill="currentColor">پیستاط</text>
+              </svg>
+            </div>
           </div>
         </div>
 
         {/* Right side icons */}
         <div className="flex items-center gap-2">
           {/* Search Icon */}
-          <button className="p-2 rounded-full hover:bg-gray-100">
-            <Search className="h-6 w-6 text-gray-600" />
+          <button className="p-2 rounded-full hover:bg-green-50 group transition-colors">
+            <Search className="h-6 w-6 text-gray-500 group-hover:text-green-600 transition-colors" />
           </button>
           
           {/* Notifications Icon */}
-          <button className="p-2 rounded-full hover:bg-gray-100 relative">
-            <Bell className="h-6 w-6 text-gray-600" />
+          <button className="p-2 rounded-full hover:bg-green-50 group transition-colors relative">
+            <Bell className="h-6 w-6 text-gray-500 group-hover:text-green-600 transition-colors" />
             {/* Notification badge */}
             <span className="absolute -top-1 -right-1 h-4 w-4 bg-red-500 text-white rounded-full text-xs flex items-center justify-center">
               3
@@ -58,8 +70,8 @@ export default function Header() {
           </button>
           
           {/* User Profile Icon */}
-          <Link href="/profile" className="p-2 rounded-full hover:bg-gray-100">
-            <User className="h-6 w-6 text-gray-600" />
+          <Link href="/profile" className="p-2 rounded-full hover:bg-green-50 group transition-colors">
+            <User className="h-6 w-6 text-gray-500 group-hover:text-green-600 transition-colors" />
           </Link>
         </div>
       </div>

@@ -1,0 +1,21 @@
+<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <!-- Simple leaf icon -->
+  <path d="M20 50C20 30 35 15 55 15C65 15 73 20 78 28C83 20 91 15 101 15C121 15 136 30 136 50C136 70 121 85 101 85C91 85 83 80 78 72C73 80 65 85 55 85C35 85 20 70 20 50Z" 
+        fill="currentColor" 
+        transform="scale(0.4) translate(25, 25)"/>
+  
+  <!-- Text "Pistat" -->
+  <text x="50" y="75" 
+        text-anchor="middle" 
+        font-family="Arial, sans-serif" 
+        font-size="12" 
+        font-weight="bold" 
+        fill="currentColor">Pistat</text>
+  
+  <!-- Persian text "پیستاط" -->
+  <text x="50" y="90" 
+        text-anchor="middle" 
+        font-family="Arial, sans-serif" 
+        font-size="10" 
+        fill="currentColor">پیستاط</text>
+</svg>
