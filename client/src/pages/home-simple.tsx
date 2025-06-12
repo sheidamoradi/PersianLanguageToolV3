@@ -255,6 +255,40 @@ export default function HomePage() {
         )}
       </div>
 
+      {/* Additional Sections */}
+      <div className="grid grid-cols-4 gap-4 px-4">
+        {/* Webinar */}
+        <div className="text-center">
+          <div className="w-16 h-16 mx-auto mb-2 bg-red-500 rounded-full flex items-center justify-center shadow-lg">
+            <span className="text-white text-2xl">🎬</span>
+          </div>
+          <p className="text-xs text-gray-700 font-medium">وبینار</p>
+        </div>
+
+        {/* Library */}
+        <div className="text-center">
+          <div className="w-16 h-16 mx-auto mb-2 bg-indigo-500 rounded-full flex items-center justify-center shadow-lg">
+            <span className="text-white text-2xl">📚</span>
+          </div>
+          <p className="text-xs text-gray-700 font-medium">کتابخانه</p>
+        </div>
+
+        {/* Instagram */}
+        <div className="text-center">
+          <div className="w-16 h-16 mx-auto mb-2 bg-pink-500 rounded-full flex items-center justify-center shadow-lg">
+            <span className="text-white text-2xl">📸</span>
+          </div>
+          <p className="text-xs text-gray-700 font-medium">اینستاگرام پیستاط</p>
+        </div>
+
+        {/* Magazine */}
+        <div className="text-center">
+          <div className="w-16 h-16 mx-auto mb-2 bg-teal-500 rounded-full flex items-center justify-center shadow-lg">
+            <span className="text-white text-2xl">📖</span>
+          </div>
+          <p className="text-xs text-gray-700 font-medium">فصلنامه رویش سبز</p>
+        </div>
+      </div>
 
     </div>
   );
