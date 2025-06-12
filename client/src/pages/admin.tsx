@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { type Course, type Project, type Document, type MediaContent, type Magazine, type Article, type ArticleContent, type Slide, type Workshop, type WorkshopSection } from "@shared/schema";
 import { Calendar, Edit, Eye, File, Folder, Image, Lock, LockOpen, MoreHorizontal, Plus, RefreshCw, Trash, Upload, Video } from "lucide-react";
@@ -251,61 +251,370 @@ function DocumentsTab() {
 }
 
 function SlidesTab() {
+  const [showForm, setShowForm] = useState(false);
+  const [editingSlide, setEditingSlide] = useState<Slide | null>(null);
+  const [formData, setFormData] = useState({
+    title: '',
+    description: '',
+    imageUrl: '',
+    buttonText: '',
+    buttonUrl: '',
+    isActive: true,
+    order: 0,
+    gradientFrom: 'blue-500',
+    gradientTo: 'purple-600',
+    iconName: 'GraduationCap'
+  });
+
   const { data: slides, isLoading } = useQuery<Slide[]>({
     queryKey: ['/api/slides'],
   });
+
+  const queryClient = useQueryClient();
+
+  const createSlideMutation = useMutation({
+    mutationFn: async (slideData: any) => {
+      return apiRequest('/api/slides', {
+        method: 'POST',
+        body: JSON.stringify(slideData),
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/slides'] });
+      setShowForm(false);
+      resetForm();
+    },
+  });
+
+  const updateSlideMutation = useMutation({
+    mutationFn: async ({ id, ...slideData }: any) => {
+      return apiRequest(`/api/slides/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify(slideData),
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/slides'] });
+      setShowForm(false);
+      setEditingSlide(null);
+      resetForm();
+    },
+  });
+
+  const deleteSlideMutation = useMutation({
+    mutationFn: async (id: number) => {
+      return apiRequest(`/api/slides/${id}`, {
+        method: 'DELETE',
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/slides'] });
+    },
+  });
+
+  const resetForm = () => {
+    setFormData({
+      title: '',
+      description: '',
+      imageUrl: '',
+      buttonText: '',
+      buttonUrl: '',
+      isActive: true,
+      order: 0,
+      gradientFrom: 'blue-500',
+      gradientTo: 'purple-600',
+      iconName: 'GraduationCap'
+    });
+  };
+
+  const handleEdit = (slide: Slide) => {
+    setEditingSlide(slide);
+    setFormData({
+      title: slide.title,
+      description: slide.description,
+      imageUrl: slide.imageUrl || '',
+      buttonText: slide.buttonText,
+      buttonUrl: slide.buttonUrl,
+      isActive: slide.isActive || true,
+      order: slide.order || 0,
+      gradientFrom: slide.gradientFrom || 'blue-500',
+      gradientTo: slide.gradientTo || 'purple-600',
+      iconName: slide.iconName || 'GraduationCap'
+    });
+    setShowForm(true);
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (editingSlide) {
+      updateSlideMutation.mutate({ id: editingSlide.id, ...formData });
+    } else {
+      createSlideMutation.mutate(formData);
+    }
+  };
+
+  const handleDelete = (id: number) => {
+    if (confirm('آیا از حذف این اسلاید اطمینان دارید؟')) {
+      deleteSlideMutation.mutate(id);
+    }
+  };
 
   if (isLoading) {
     return <div className="text-center py-8">در حال بارگذاری...</div>;
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-md">
-      <div className="p-6 border-b">
-        <div className="flex items-center justify-between">
-          <h2 className="text-xl font-semibold">مدیریت اسلایدها</h2>
-          <button className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors flex items-center gap-2">
-            <Plus className="h-4 w-4" />
-            افزودن اسلاید جدید
-          </button>
+    <div className="space-y-6">
+      <div className="bg-white rounded-lg shadow-md">
+        <div className="p-6 border-b">
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-semibold">مدیریت اسلایدها</h2>
+            <button 
+              onClick={() => {
+                setShowForm(!showForm);
+                setEditingSlide(null);
+                resetForm();
+              }}
+              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors flex items-center gap-2"
+            >
+              <Plus className="h-4 w-4" />
+              {showForm ? 'لغو' : 'افزودن اسلاید جدید'}
+            </button>
+          </div>
         </div>
-      </div>
-      
-      <div className="p-6">
-        {slides && slides.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {slides.map(slide => (
-              <div key={slide.id} className="border rounded-lg p-4">
-                <div className="flex items-start justify-between mb-3">
-                  <h3 className="font-medium">{slide.title}</h3>
-                  <span className={`px-2 py-1 text-xs rounded-full ${
-                    slide.isActive ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'
-                  }`}>
-                    {slide.isActive ? 'فعال' : 'غیرفعال'}
-                  </span>
+        
+        {showForm && (
+          <div className="p-6 border-t bg-gray-50">
+            <h3 className="text-lg font-semibold mb-4">
+              {editingSlide ? 'ویرایش اسلاید' : 'افزودن اسلاید جدید'}
+            </h3>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    عنوان اسلاید
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.title}
+                    onChange={(e) => setFormData({...formData, title: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required
+                  />
                 </div>
-                <p className="text-sm text-gray-600 mb-4">{slide.description}</p>
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-gray-500">ترتیب: {slide.order}</span>
-                  <div className="flex gap-1">
-                    <button className="p-1 hover:bg-gray-100 rounded">
-                      <Edit className="h-4 w-4" />
-                    </button>
-                    <button className="p-1 hover:bg-gray-100 rounded text-red-500">
-                      <Trash className="h-4 w-4" />
-                    </button>
-                  </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    متن دکمه
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.buttonText}
+                    onChange={(e) => setFormData({...formData, buttonText: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required
+                  />
                 </div>
               </div>
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-12">
-            <Image className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">هیچ اسلایدی یافت نشد</h3>
-            <p className="text-gray-600">برای شروع، اسلاید جدیدی اضافه کنید</p>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  توضیحات
+                </label>
+                <textarea
+                  value={formData.description}
+                  onChange={(e) => setFormData({...formData, description: e.target.value})}
+                  rows={3}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  required
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    لینک دکمه
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.buttonUrl}
+                    onChange={(e) => setFormData({...formData, buttonUrl: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="/courses"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    URL تصویر (اختیاری)
+                  </label>
+                  <input
+                    type="url"
+                    value={formData.imageUrl}
+                    onChange={(e) => setFormData({...formData, imageUrl: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="https://example.com/image.jpg"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    رنگ شروع گرادیان
+                  </label>
+                  <select
+                    value={formData.gradientFrom}
+                    onChange={(e) => setFormData({...formData, gradientFrom: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="blue-500">آبی</option>
+                    <option value="green-500">سبز</option>
+                    <option value="purple-500">بنفش</option>
+                    <option value="red-500">قرمز</option>
+                    <option value="yellow-500">زرد</option>
+                    <option value="pink-500">صورتی</option>
+                    <option value="indigo-500">نیلی</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    رنگ پایان گرادیان
+                  </label>
+                  <select
+                    value={formData.gradientTo}
+                    onChange={(e) => setFormData({...formData, gradientTo: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="purple-600">بنفش تیره</option>
+                    <option value="blue-600">آبی تیره</option>
+                    <option value="green-600">سبز تیره</option>
+                    <option value="red-600">قرمز تیره</option>
+                    <option value="yellow-600">زرد تیره</option>
+                    <option value="pink-600">صورتی تیره</option>
+                    <option value="indigo-600">نیلی تیره</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    آیکون
+                  </label>
+                  <select
+                    value={formData.iconName}
+                    onChange={(e) => setFormData({...formData, iconName: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="GraduationCap">فارغ‌التحصیلی</option>
+                    <option value="BookOpen">کتاب باز</option>
+                    <option value="Rocket">موشک</option>
+                    <option value="Star">ستاره</option>
+                    <option value="Trophy">جام</option>
+                    <option value="Target">هدف</option>
+                    <option value="Lightbulb">لامپ</option>
+                    <option value="Heart">قلب</option>
+                    <option value="Globe">کره زمین</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    ترتیب نمایش
+                  </label>
+                  <input
+                    type="number"
+                    value={formData.order}
+                    onChange={(e) => setFormData({...formData, order: parseInt(e.target.value) || 0})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    min="0"
+                  />
+                </div>
+
+                <div className="flex items-center">
+                  <input
+                    type="checkbox"
+                    id="isActive"
+                    checked={formData.isActive}
+                    onChange={(e) => setFormData({...formData, isActive: e.target.checked})}
+                    className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                  />
+                  <label htmlFor="isActive" className="mr-2 text-sm font-medium text-gray-700">
+                    اسلاید فعال باشد
+                  </label>
+                </div>
+              </div>
+
+              <div className="flex gap-3">
+                <button
+                  type="submit"
+                  disabled={createSlideMutation.isPending || updateSlideMutation.isPending}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50"
+                >
+                  {createSlideMutation.isPending || updateSlideMutation.isPending ? 'در حال ذخیره...' : 
+                   editingSlide ? 'بروزرسانی اسلاید' : 'ایجاد اسلاید'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowForm(false);
+                    setEditingSlide(null);
+                    resetForm();
+                  }}
+                  className="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition-colors"
+                >
+                  لغو
+                </button>
+              </div>
+            </form>
           </div>
         )}
+        
+        <div className="p-6">
+          {slides && slides.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {slides.map(slide => (
+                <div key={slide.id} className="border rounded-lg p-4">
+                  <div className="flex items-start justify-between mb-3">
+                    <h3 className="font-medium">{slide.title}</h3>
+                    <span className={`px-2 py-1 text-xs rounded-full ${
+                      slide.isActive ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'
+                    }`}>
+                      {slide.isActive ? 'فعال' : 'غیرفعال'}
+                    </span>
+                  </div>
+                  <p className="text-sm text-gray-600 mb-4">{slide.description}</p>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs text-gray-500">ترتیب: {slide.order}</span>
+                    <div className="flex gap-1">
+                      <button 
+                        onClick={() => handleEdit(slide)}
+                        className="p-1 hover:bg-gray-100 rounded"
+                      >
+                        <Edit className="h-4 w-4" />
+                      </button>
+                      <button 
+                        onClick={() => handleDelete(slide.id)}
+                        className="p-1 hover:bg-gray-100 rounded text-red-500"
+                      >
+                        <Trash className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <Image className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-gray-900 mb-2">هیچ اسلایدی یافت نشد</h3>
+              <p className="text-gray-600">برای شروع، اسلاید جدیدی اضافه کنید</p>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
