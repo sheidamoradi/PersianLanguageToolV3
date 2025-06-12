@@ -61,8 +61,10 @@ export default function HomePage() {
       {/* Workshops Section */}
       <div>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-bold text-gray-800">کارگاه‌های آموزشی</h2>
-          <span className="text-blue-500">🎓</span>
+          <h2 className="text-xl font-bold text-gray-800 flex items-center">
+            <span className="ml-2" style={{color: 'hsl(118, 54%, 40%)'}}>🎓</span>
+            کارگاه‌های آموزشی
+          </h2>
         </div>
         
         <div className="grid grid-cols-3 gap-4 mb-4">
@@ -102,8 +104,10 @@ export default function HomePage() {
       {/* Webinar Section */}
       <div>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-bold text-gray-800">وبینار</h2>
-          <span className="text-orange-500">🎬</span>
+          <h2 className="text-xl font-bold text-gray-800 flex items-center">
+            <span className="ml-2" style={{color: 'hsl(118, 54%, 40%)'}}>🎬</span>
+            وبینار
+          </h2>
         </div>
         
         <div className="grid grid-cols-3 gap-4 mb-4">
@@ -146,8 +150,10 @@ export default function HomePage() {
       {/* Library Section */}
       <div>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-bold text-gray-800">کتابخانه</h2>
-          <span className="text-purple-500">📚</span>
+          <h2 className="text-xl font-bold text-gray-800 flex items-center">
+            <span className="ml-2" style={{color: 'hsl(118, 54%, 40%)'}}>📚</span>
+            کتابخانه
+          </h2>
         </div>
         
         <div className="grid grid-cols-3 gap-4 mb-4">
@@ -191,8 +197,8 @@ export default function HomePage() {
       <div>
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-xl font-bold text-gray-800 flex items-center">
+            <span className="text-green-600 ml-2">📷</span>
             اینستاگرام پیستاط
-            <span className="text-pink-500 mr-2">📷</span>
           </h2>
         </div>
         
@@ -242,8 +248,8 @@ export default function HomePage() {
       <div>
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-xl font-bold text-gray-800 flex items-center">
+            <span className="text-green-600 ml-2">📰</span>
             فصلنامه رویش سبز
-            <span className="text-green-500 mr-2">📰</span>
           </h2>
         </div>
         
