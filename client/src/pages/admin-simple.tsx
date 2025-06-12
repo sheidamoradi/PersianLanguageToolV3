@@ -252,9 +252,22 @@ export default function AdminSimple() {
         <div className="flex flex-col h-full">
           <div className="p-4 border-b">
             <div className="flex items-center space-x-3 rtl:space-x-reverse">
-              <div className="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-lg">پ</span>
-              </div>
+              <svg width="32" height="32" viewBox="0 0 100 100" className="text-gray-600">
+                <path d="M20 50C20 30 35 15 55 15C65 15 73 20 78 28C83 20 91 15 101 15C121 15 136 30 136 50C136 70 121 85 101 85C91 85 83 80 78 72C73 80 65 85 55 85C35 85 20 70 20 50Z" 
+                      fill="currentColor" 
+                      transform="scale(0.4) translate(25, 25)"/>
+                <text x="50" y="75" 
+                      textAnchor="middle" 
+                      fontFamily="Arial, sans-serif" 
+                      fontSize="12" 
+                      fontWeight="bold" 
+                      fill="currentColor">Pistat</text>
+                <text x="50" y="90" 
+                      textAnchor="middle" 
+                      fontFamily="Arial, sans-serif" 
+                      fontSize="10" 
+                      fill="currentColor">پیستاط</text>
+              </svg>
               <h1 className="text-xl font-bold text-gray-900">پنل مدیریت</h1>
             </div>
           </div>
