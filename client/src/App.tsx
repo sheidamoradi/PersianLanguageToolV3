@@ -5,6 +5,7 @@ import CoursesPage from './pages/courses-simple';
 import ProjectsPage from './pages/projects-simple';
 import LibraryPage from './pages/library-simple';
 import ProfilePage from './pages/profile-simple';
+import Header from './components/layout/Header';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -57,7 +58,8 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-green-50" dir="rtl">
-        <div className="container mx-auto px-4 py-6 pb-24 max-w-7xl">
+        <Header />
+        <div className="container mx-auto px-4 py-6 pb-24 max-w-7xl pt-20">
           {renderCurrentPage()}
         </div>
 

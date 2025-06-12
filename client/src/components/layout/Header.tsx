@@ -1,5 +1,5 @@
 import { Link, useLocation } from "wouter";
-import { User, Menu, X } from "lucide-react";
+import { User, Menu, X, Bell, Search } from "lucide-react";
 import { useState } from "react";
 import logoPath from "@assets/logo.png";
 
@@ -21,14 +21,29 @@ export default function Header() {
           <Link href="/" className="flex items-center">
             <img 
               src={logoPath} 
-              alt="پیستاط" 
-              className="h-10 w-auto"
+              alt="پیستاط - پلتفرم آموزش کشاورزی" 
+              className="h-12 w-auto"
             />
           </Link>
         </div>
 
-        {/* User Profile Icon */}
-        <div className="flex items-center">
+        {/* Right side icons */}
+        <div className="flex items-center gap-2">
+          {/* Search Icon */}
+          <button className="p-2 rounded-full hover:bg-gray-100">
+            <Search className="h-6 w-6 text-gray-600" />
+          </button>
+          
+          {/* Notifications Icon */}
+          <button className="p-2 rounded-full hover:bg-gray-100 relative">
+            <Bell className="h-6 w-6 text-gray-600" />
+            {/* Notification badge */}
+            <span className="absolute -top-1 -right-1 h-4 w-4 bg-red-500 text-white rounded-full text-xs flex items-center justify-center">
+              3
+            </span>
+          </button>
+          
+          {/* User Profile Icon */}
           <Link href="/profile" className="p-2 rounded-full hover:bg-gray-100">
             <User className="h-6 w-6 text-gray-600" />
           </Link>
