@@ -197,7 +197,7 @@ export default function HomePage() {
       <div>
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-xl font-bold text-gray-800 flex items-center">
-            <span className="text-green-600 ml-2">📷</span>
+            <span className="ml-2" style={{color: 'hsl(118, 54%, 40%)'}}>📷</span>
             اینستاگرام پیستاط
           </h2>
         </div>
@@ -248,7 +248,7 @@ export default function HomePage() {
       <div>
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-xl font-bold text-gray-800 flex items-center">
-            <span className="text-green-600 ml-2">📰</span>
+            <span className="ml-2" style={{color: 'hsl(118, 54%, 40%)'}}>📰</span>
             فصلنامه رویش سبز
           </h2>
         </div>
