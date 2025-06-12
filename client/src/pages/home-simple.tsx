@@ -256,37 +256,41 @@ export default function HomePage() {
       </div>
 
       {/* Additional Sections */}
-      <div className="grid grid-cols-4 gap-4 px-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {/* Webinar */}
-        <div className="text-center">
-          <div className="w-16 h-16 mx-auto mb-2 bg-red-500 rounded-full flex items-center justify-center shadow-lg">
-            <span className="text-white text-2xl">🎬</span>
+        <div className="bg-orange-500 rounded-xl p-6 text-center text-white shadow-lg">
+          <div className="w-12 h-12 mx-auto mb-3 bg-white bg-opacity-20 rounded-xl flex items-center justify-center">
+            <span className="text-white text-2xl">👥</span>
           </div>
-          <p className="text-xs text-gray-700 font-medium">وبینار</p>
+          <h3 className="font-medium text-sm">وبینار</h3>
+          <p className="text-xs opacity-90 mt-1">شرکت در وبینارها</p>
         </div>
 
         {/* Library */}
-        <div className="text-center">
-          <div className="w-16 h-16 mx-auto mb-2 bg-indigo-500 rounded-full flex items-center justify-center shadow-lg">
+        <div className="bg-green-500 rounded-xl p-6 text-center text-white shadow-lg">
+          <div className="w-12 h-12 mx-auto mb-3 bg-white bg-opacity-20 rounded-xl flex items-center justify-center">
             <span className="text-white text-2xl">📚</span>
           </div>
-          <p className="text-xs text-gray-700 font-medium">کتابخانه</p>
+          <h3 className="font-medium text-sm">کتابخانه</h3>
+          <p className="text-xs opacity-90 mt-1">مطالعه کتاب‌ها</p>
         </div>
 
         {/* Instagram */}
-        <div className="text-center">
-          <div className="w-16 h-16 mx-auto mb-2 bg-pink-500 rounded-full flex items-center justify-center shadow-lg">
-            <span className="text-white text-2xl">📸</span>
+        <div className="bg-pink-500 rounded-xl p-6 text-center text-white shadow-lg">
+          <div className="w-12 h-12 mx-auto mb-3 bg-white bg-opacity-20 rounded-xl flex items-center justify-center">
+            <span className="text-white text-2xl">📷</span>
           </div>
-          <p className="text-xs text-gray-700 font-medium">اینستاگرام پیستاط</p>
+          <h3 className="font-medium text-sm">اینستاگرام پیستاط</h3>
+          <p className="text-xs opacity-90 mt-1">دنبال کردن</p>
         </div>
 
         {/* Magazine */}
-        <div className="text-center">
-          <div className="w-16 h-16 mx-auto mb-2 bg-teal-500 rounded-full flex items-center justify-center shadow-lg">
+        <div className="bg-purple-500 rounded-xl p-6 text-center text-white shadow-lg">
+          <div className="w-12 h-12 mx-auto mb-3 bg-white bg-opacity-20 rounded-xl flex items-center justify-center">
             <span className="text-white text-2xl">📖</span>
           </div>
-          <p className="text-xs text-gray-700 font-medium">فصلنامه رویش سبز</p>
+          <h3 className="font-medium text-sm">فصلنامه رویش سبز</h3>
+          <p className="text-xs opacity-90 mt-1">مطالعه فصلنامه</p>
         </div>
       </div>
 
