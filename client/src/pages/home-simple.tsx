@@ -255,43 +255,156 @@ export default function HomePage() {
         )}
       </div>
 
-      {/* Additional Sections */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {/* Webinar */}
-        <div className="bg-orange-500 rounded-xl p-6 text-center text-white shadow-lg">
-          <div className="w-12 h-12 mx-auto mb-3 bg-white bg-opacity-20 rounded-xl flex items-center justify-center">
-            <span className="text-white text-2xl">👥</span>
-          </div>
-          <h3 className="font-medium text-sm">وبینار</h3>
-          <p className="text-xs opacity-90 mt-1">شرکت در وبینارها</p>
+      {/* Webinar Section */}
+      <div>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-bold text-gray-800">وبینار</h2>
+          <span className="text-orange-500">🎬</span>
         </div>
+        
+        <div className="grid grid-cols-3 gap-4 mb-4">
+          <div className="bg-white rounded-xl p-4 shadow-sm border">
+            <div className="w-full h-24 bg-orange-100 rounded-lg mb-3 flex items-center justify-center">
+              <span className="text-orange-600 text-2xl">📹</span>
+            </div>
+            <h3 className="font-medium text-gray-800 text-sm mb-1">وبینار کشاورزی مدرن</h3>
+            <p className="text-xs text-gray-500">تکنیک‌های نوین کشاورزی</p>
+          </div>
+          
+          <div className="bg-white rounded-xl p-4 shadow-sm border">
+            <div className="w-full h-24 bg-orange-100 rounded-lg mb-3 flex items-center justify-center">
+              <span className="text-orange-600 text-2xl">💡</span>
+            </div>
+            <h3 className="font-medium text-gray-800 text-sm mb-1">نوآوری در کشاورزی</h3>
+            <p className="text-xs text-gray-500">ایده‌های خلاقانه</p>
+          </div>
+          
+          <div className="bg-white rounded-xl p-4 shadow-sm border">
+            <div className="w-full h-24 bg-orange-100 rounded-lg mb-3 flex items-center justify-center">
+              <span className="text-orange-600 text-2xl">🌱</span>
+            </div>
+            <h3 className="font-medium text-gray-800 text-sm mb-1">رشد پایدار محصولات</h3>
+            <p className="text-xs text-gray-500">تولید ارگانیک</p>
+          </div>
+        </div>
+        
+        <button className="w-full bg-orange-50 text-orange-600 py-3 rounded-xl font-medium border border-orange-200">
+          مشاهده همه وبینارها
+        </button>
+      </div>
 
-        {/* Library */}
-        <div className="bg-green-500 rounded-xl p-6 text-center text-white shadow-lg">
-          <div className="w-12 h-12 mx-auto mb-3 bg-white bg-opacity-20 rounded-xl flex items-center justify-center">
-            <span className="text-white text-2xl">📚</span>
-          </div>
-          <h3 className="font-medium text-sm">کتابخانه</h3>
-          <p className="text-xs opacity-90 mt-1">مطالعه کتاب‌ها</p>
+      {/* Library Section */}
+      <div>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-bold text-gray-800">کتابخانه</h2>
+          <span className="text-blue-500">📚</span>
         </div>
+        
+        <div className="grid grid-cols-3 gap-4 mb-4">
+          <div className="bg-white rounded-xl p-4 shadow-sm border">
+            <div className="w-full h-24 bg-blue-100 rounded-lg mb-3 flex items-center justify-center">
+              <span className="text-blue-600 text-2xl">📖</span>
+            </div>
+            <h3 className="font-medium text-gray-800 text-sm mb-1">راهنمای کشاورزی</h3>
+            <p className="text-xs text-gray-500">اصول پایه کشاورزی</p>
+          </div>
+          
+          <div className="bg-white rounded-xl p-4 shadow-sm border">
+            <div className="w-full h-24 bg-blue-100 rounded-lg mb-3 flex items-center justify-center">
+              <span className="text-blue-600 text-2xl">📋</span>
+            </div>
+            <h3 className="font-medium text-gray-800 text-sm mb-1">مدیریت مزرعه</h3>
+            <p className="text-xs text-gray-500">تکنیک‌های مدیریتی</p>
+          </div>
+          
+          <div className="bg-white rounded-xl p-4 shadow-sm border">
+            <div className="w-full h-24 bg-blue-100 rounded-lg mb-3 flex items-center justify-center">
+              <span className="text-blue-600 text-2xl">🌾</span>
+            </div>
+            <h3 className="font-medium text-gray-800 text-sm mb-1">علم خاک</h3>
+            <p className="text-xs text-gray-500">شناخت انواع خاک</p>
+          </div>
+        </div>
+        
+        <button className="w-full bg-blue-50 text-blue-600 py-3 rounded-xl font-medium border border-blue-200">
+          مشاهده همه کتاب‌ها
+        </button>
+      </div>
 
-        {/* Instagram */}
-        <div className="bg-pink-500 rounded-xl p-6 text-center text-white shadow-lg">
-          <div className="w-12 h-12 mx-auto mb-3 bg-white bg-opacity-20 rounded-xl flex items-center justify-center">
-            <span className="text-white text-2xl">📷</span>
-          </div>
-          <h3 className="font-medium text-sm">اینستاگرام پیستاط</h3>
-          <p className="text-xs opacity-90 mt-1">دنبال کردن</p>
+      {/* Instagram Section */}
+      <div>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-bold text-gray-800">اینستاگرام پیستاط</h2>
+          <span className="text-pink-500">📷</span>
         </div>
+        
+        <div className="grid grid-cols-3 gap-4 mb-4">
+          <div className="bg-white rounded-xl p-4 shadow-sm border">
+            <div className="w-full h-24 bg-pink-100 rounded-lg mb-3 flex items-center justify-center">
+              <span className="text-pink-600 text-2xl">🌻</span>
+            </div>
+            <h3 className="font-medium text-gray-800 text-sm mb-1">باغ زیبای امروز</h3>
+            <p className="text-xs text-gray-500">عکس‌های الهام‌بخش</p>
+          </div>
+          
+          <div className="bg-white rounded-xl p-4 shadow-sm border">
+            <div className="w-full h-24 bg-pink-100 rounded-lg mb-3 flex items-center justify-center">
+              <span className="text-pink-600 text-2xl">🍅</span>
+            </div>
+            <h3 className="font-medium text-gray-800 text-sm mb-1">برداشت محصول</h3>
+            <p className="text-xs text-gray-500">لحظات برداشت</p>
+          </div>
+          
+          <div className="bg-white rounded-xl p-4 shadow-sm border">
+            <div className="w-full h-24 bg-pink-100 rounded-lg mb-3 flex items-center justify-center">
+              <span className="text-pink-600 text-2xl">🌿</span>
+            </div>
+            <h3 className="font-medium text-gray-800 text-sm mb-1">نکات کاربردی</h3>
+            <p className="text-xs text-gray-500">ترفندهای روزانه</p>
+          </div>
+        </div>
+        
+        <button className="w-full bg-pink-50 text-pink-600 py-3 rounded-xl font-medium border border-pink-200">
+          مشاهده همه پست‌ها
+        </button>
+      </div>
 
-        {/* Magazine */}
-        <div className="bg-purple-500 rounded-xl p-6 text-center text-white shadow-lg">
-          <div className="w-12 h-12 mx-auto mb-3 bg-white bg-opacity-20 rounded-xl flex items-center justify-center">
-            <span className="text-white text-2xl">📖</span>
-          </div>
-          <h3 className="font-medium text-sm">فصلنامه رویش سبز</h3>
-          <p className="text-xs opacity-90 mt-1">مطالعه فصلنامه</p>
+      {/* Magazine Section */}
+      <div>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-bold text-gray-800">فصلنامه رویش سبز</h2>
+          <span className="text-green-500">📰</span>
         </div>
+        
+        <div className="grid grid-cols-3 gap-4 mb-4">
+          <div className="bg-white rounded-xl p-4 shadow-sm border">
+            <div className="w-full h-24 bg-green-100 rounded-lg mb-3 flex items-center justify-center">
+              <span className="text-green-600 text-2xl">🌱</span>
+            </div>
+            <h3 className="font-medium text-gray-800 text-sm mb-1">شماره زمستان</h3>
+            <p className="text-xs text-gray-500">کشاورزی فصل سرد</p>
+          </div>
+          
+          <div className="bg-white rounded-xl p-4 shadow-sm border">
+            <div className="w-full h-24 bg-green-100 rounded-lg mb-3 flex items-center justify-center">
+              <span className="text-green-600 text-2xl">☀️</span>
+            </div>
+            <h3 className="font-medium text-gray-800 text-sm mb-1">شماره تابستان</h3>
+            <p className="text-xs text-gray-500">مدیریت آبیاری</p>
+          </div>
+          
+          <div className="bg-white rounded-xl p-4 shadow-sm border">
+            <div className="w-full h-24 bg-green-100 rounded-lg mb-3 flex items-center justify-center">
+              <span className="text-green-600 text-2xl">🍂</span>
+            </div>
+            <h3 className="font-medium text-gray-800 text-sm mb-1">شماره پاییز</h3>
+            <p className="text-xs text-gray-500">برداشت و نگهداری</p>
+          </div>
+        </div>
+        
+        <button className="w-full bg-green-50 text-green-600 py-3 rounded-xl font-medium border border-green-200">
+          مشاهده همه شماره‌ها
+        </button>
       </div>
 
     </div>
