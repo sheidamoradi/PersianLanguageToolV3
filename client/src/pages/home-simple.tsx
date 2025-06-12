@@ -125,7 +125,7 @@ export default function HomePage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 rtl">
       {/* Hero Slider */}
       <div className="bg-gradient-to-br from-green-100 to-emerald-100 rounded-2xl p-8 text-center relative">
         {/* Navigation arrows */}
@@ -300,10 +300,6 @@ export default function HomePage() {
           </div>
         </div>
         
-        <button className="w-full bg-gray-50 text-gray-600 py-3 rounded-xl font-medium border border-gray-200 flex items-center justify-center">
-          <span className="mr-2">◀</span>
-          مشاهده همه
-        </button>
       </div>
 
       {/* Library Section */}

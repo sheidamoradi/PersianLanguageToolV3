@@ -3,26 +3,26 @@
 @tailwind utilities;
 
 :root {
-      --background: 0 0% 100%;
---foreground: 20 14.3% 4.1%;
---muted: 60 4.8% 95.9%;
---muted-foreground: 25 5.3% 44.7%;
+--background: 0 0% 98%; /* #FAFAFA - پس‌زمینه کرم روشن */
+--foreground: 210 40% 15%; /* #1F2937 - متن اصلی تیره */
+--muted: 210 15% 95%; /* #F3F4F6 - پس‌زمینه کم‌رنگ */
+--muted-foreground: 210 20% 45%; /* #6B7280 - متن کم‌رنگ */
 --popover: 0 0% 100%;
---popover-foreground: 20 14.3% 4.1%;
---card: 0 0% 100%;
---card-foreground: 20 14.3% 4.1%;
---border: 20 5.9% 90%;
---input: 20 5.9% 90%;
---primary: 118 54% 40%; /* سبز تیره لوگو پیستاط */
+--popover-foreground: 210 40% 15%;
+--card: 0 0% 100%; /* #FFFFFF - پس‌زمینه کارت‌ها */
+--card-foreground: 210 40% 15%;
+--border: 210 20% 88%; /* #E5E7EB - حاشیه ملایم */
+--input: 210 20% 88%;
+--primary: 142 76% 36%; /* #059669 - سبز اصلی */
 --primary-foreground: 0 0% 100%;
---secondary: 118 30% 92%; /* سبز بسیار روشن */
---secondary-foreground: 118 54% 25%;
---accent: 118 54% 40%;
+--secondary: 142 40% 95%; /* #ECFDF5 - سبز بسیار روشن */
+--secondary-foreground: 142 76% 25%;
+--accent: 142 76% 36%;
 --accent-foreground: 0 0% 100%;
---destructive: 0 84.2% 60.2%;
---destructive-foreground: 60 9.1% 97.8%;
---ring: 118 54% 40%;
---radius: 0.5rem;
+--destructive: 0 84% 60%;
+--destructive-foreground: 60 9% 98%;
+--ring: 142 76% 36%;
+--radius: 0.75rem;
   }
   .dark {
       --background: 240 10% 3.9%;
