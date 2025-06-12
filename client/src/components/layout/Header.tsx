@@ -33,21 +33,28 @@ export default function Header() {
             className="flex items-center cursor-pointer"
           >
             <div className="flex items-center">
-              <svg width="48" height="48" viewBox="0 0 100 100" className="text-gray-600 hover:text-green-600 transition-colors">
-                <path d="M20 50C20 30 35 15 55 15C65 15 73 20 78 28C83 20 91 15 101 15C121 15 136 30 136 50C136 70 121 85 101 85C91 85 83 80 78 72C73 80 65 85 55 85C35 85 20 70 20 50Z" 
-                      fill="currentColor" 
-                      transform="scale(0.4) translate(25, 25)"/>
-                <text x="50" y="75" 
+              <svg width="48" height="48" viewBox="0 0 200 200" className="hover:opacity-80 transition-opacity">
+                {/* Main dark green leaf */}
+                <path d="M45 70 C45 45, 65 25, 90 25 C100 25, 108 30, 113 38 C118 30, 126 25, 136 25 C161 25, 181 45, 181 70 C181 95, 161 115, 136 115 C126 115, 118 110, 113 102 C108 110, 100 115, 90 115 C65 115, 45 95, 45 70 Z" 
+                      fill="#578057"/>
+                {/* Light green accent leaf */}
+                <path d="M120 65 C120 50, 130 40, 145 40 C155 40, 163 45, 168 53 C173 45, 181 40, 191 40 C206 40, 216 50, 216 65 C216 80, 206 90, 191 90 C181 90, 173 85, 168 77 C163 85, 155 90, 145 90 C130 90, 120 80, 120 65 Z" 
+                      fill="#9CB891"/>
+                {/* Text "Pistat" */}
+                <text x="100" y="140" 
                       textAnchor="middle" 
                       fontFamily="Arial, sans-serif" 
-                      fontSize="12" 
+                      fontSize="16" 
                       fontWeight="bold" 
-                      fill="currentColor">Pistat</text>
-                <text x="50" y="90" 
+                      fill="#6B7280">Pistat</text>
+                {/* Green underline */}
+                <line x1="65" y1="150" x2="135" y2="150" stroke="#9CB891" strokeWidth="2"/>
+                {/* Persian text "پیستاط" */}
+                <text x="100" y="170" 
                       textAnchor="middle" 
                       fontFamily="Arial, sans-serif" 
-                      fontSize="10" 
-                      fill="currentColor">پیستاط</text>
+                      fontSize="14" 
+                      fill="#6B7280">پیستاط</text>
               </svg>
             </div>
           </div>
