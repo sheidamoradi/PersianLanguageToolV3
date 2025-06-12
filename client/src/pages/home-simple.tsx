@@ -262,7 +262,7 @@ export default function HomePage() {
           <span className="text-orange-500">🎬</span>
         </div>
         
-        <div className="grid grid-cols-4 gap-4 mb-4">
+        <div className="grid grid-cols-3 gap-4 mb-4">
           <div className="bg-white rounded-xl p-4 text-center shadow-sm border">
             <div className="w-12 h-12 mx-auto mb-3 bg-blue-100 rounded-full flex items-center justify-center">
               <span className="text-blue-600 text-xl">📄</span>
@@ -289,17 +289,14 @@ export default function HomePage() {
             <p className="text-xs text-gray-500 mb-2">راهنماهای عملی و کاربردی</p>
             <button className="text-xs text-yellow-600 bg-yellow-50 px-3 py-1 rounded">مطالعه راهنماها</button>
           </div>
-          
-          <div className="bg-white rounded-xl p-4 text-center shadow-sm border">
-            <div className="w-12 h-12 mx-auto mb-3 bg-purple-100 rounded-full flex items-center justify-center">
-              <span className="text-purple-600 text-xl">📝</span>
-            </div>
-            <h3 className="font-medium text-gray-800 text-sm mb-1">مقالات و نوشته‌ها</h3>
-            <p className="text-xs text-gray-500 mb-2">مجموعه‌ای از مقالات آموزشی و تخصصی</p>
-            <button className="text-xs text-purple-600 bg-purple-50 px-3 py-1 rounded">مشاهده کتابخانه</button>
-          </div>
         </div>
         
+        <div className="text-center">
+          <button className="bg-gray-50 text-gray-600 px-6 py-2 rounded-xl font-medium border border-gray-200 flex items-center mx-auto">
+            <span className="ml-2">◀</span>
+            مشاهده همه
+          </button>
+        </div>
       </div>
 
       {/* Library Section */}
@@ -309,7 +306,7 @@ export default function HomePage() {
           <span className="text-purple-500">📚</span>
         </div>
         
-        <div className="grid grid-cols-4 gap-4 mb-4">
+        <div className="grid grid-cols-3 gap-4 mb-4">
           <div className="bg-white rounded-xl p-4 text-center shadow-sm border">
             <div className="w-12 h-12 mx-auto mb-3 bg-blue-100 rounded-full flex items-center justify-center">
               <span className="text-blue-600 text-xl">📄</span>
@@ -336,21 +333,14 @@ export default function HomePage() {
             <p className="text-xs text-gray-500 mb-2">راهنماهای عملی و کاربردی</p>
             <button className="text-xs text-yellow-600 bg-yellow-50 px-3 py-1 rounded">مطالعه راهنماها</button>
           </div>
-          
-          <div className="bg-white rounded-xl p-4 text-center shadow-sm border">
-            <div className="w-12 h-12 mx-auto mb-3 bg-purple-100 rounded-full flex items-center justify-center">
-              <span className="text-purple-600 text-xl">📝</span>
-            </div>
-            <h3 className="font-medium text-gray-800 text-sm mb-1">مقالات و نوشته‌ها</h3>
-            <p className="text-xs text-gray-500 mb-2">مجموعه‌ای از مقالات آموزشی و تخصصی</p>
-            <button className="text-xs text-purple-600 bg-purple-50 px-3 py-1 rounded">مشاهده کتابخانه</button>
-          </div>
         </div>
         
-        <button className="w-full bg-gray-50 text-gray-600 py-3 rounded-xl font-medium border border-gray-200 flex items-center justify-center">
-          <span className="mr-2">◀</span>
-          مشاهده همه
-        </button>
+        <div className="text-center">
+          <button className="bg-gray-50 text-gray-600 px-6 py-2 rounded-xl font-medium border border-gray-200 flex items-center mx-auto">
+            <span className="ml-2">◀</span>
+            مشاهده همه
+          </button>
+        </div>
       </div>
 
       {/* Instagram Section */}
@@ -442,10 +432,12 @@ export default function HomePage() {
           </div>
         </div>
         
-        <button className="w-full bg-gray-50 text-gray-600 py-3 rounded-xl font-medium border border-gray-200 flex items-center justify-center">
-          <span className="mr-2">◀</span>
-          مشاهده همه
-        </button>
+        <div className="text-center">
+          <button className="bg-gray-50 text-gray-600 px-6 py-2 rounded-xl font-medium border border-gray-200 flex items-center mx-auto">
+            <span className="ml-2">◀</span>
+            مشاهده همه
+          </button>
+        </div>
       </div>
 
     </div>
