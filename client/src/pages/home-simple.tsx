@@ -161,40 +161,38 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* Quick Access Section */}
-      <div>
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-bold text-gray-800">دسترسی سریع</h2>
-          <span className="text-blue-500">📌</span>
+      {/* Quick Access Section - Circular Icons */}
+      <div className="grid grid-cols-4 gap-4 px-4">
+        {/* Magazine */}
+        <div className="text-center">
+          <div className="w-16 h-16 mx-auto mb-2 bg-green-500 rounded-full flex items-center justify-center shadow-lg">
+            <span className="text-white text-2xl">📖</span>
+          </div>
+          <p className="text-xs text-gray-700 font-medium">فصلنامه رویش سبز</p>
         </div>
-        
-        <div className="grid grid-cols-3 gap-4">
-          {/* Library */}
-          <div className="bg-white rounded-xl p-6 text-center shadow-sm border">
-            <div className="w-12 h-12 mx-auto mb-3 bg-purple-100 rounded-xl flex items-center justify-center">
-              <span className="text-purple-600 text-xl">📚</span>
-            </div>
-            <h3 className="font-medium text-gray-800 mb-1">کتابخانه</h3>
-            <p className="text-xs text-gray-500">مطالعه مقالات و راهنماها</p>
-          </div>
 
-          {/* Videos */}
-          <div className="bg-white rounded-xl p-6 text-center shadow-sm border">
-            <div className="w-12 h-12 mx-auto mb-3 bg-orange-100 rounded-xl flex items-center justify-center">
-              <span className="text-orange-600 text-xl">🎥</span>
-            </div>
-            <h3 className="font-medium text-gray-800 mb-1">ویدیوهای آموزشی</h3>
-            <p className="text-xs text-gray-500">مشاهده کلیپ آموزشی پیستاط</p>
+        {/* Videos */}
+        <div className="text-center">
+          <div className="w-16 h-16 mx-auto mb-2 bg-orange-500 rounded-full flex items-center justify-center shadow-lg">
+            <span className="text-white text-2xl">🎥</span>
           </div>
+          <p className="text-xs text-gray-700 font-medium">ویدئو آموزشی</p>
+        </div>
 
-          {/* Magazine */}
-          <div className="bg-white rounded-xl p-6 text-center shadow-sm border">
-            <div className="w-12 h-12 mx-auto mb-3 bg-green-100 rounded-xl flex items-center justify-center">
-              <span className="text-green-600 text-xl">📖</span>
-            </div>
-            <h3 className="font-medium text-gray-800 mb-1">فصلنامه رویش سبز</h3>
-            <p className="text-xs text-gray-500">مطالعه آخرین شماره فصلنامه</p>
+        {/* Library */}
+        <div className="text-center">
+          <div className="w-16 h-16 mx-auto mb-2 bg-purple-500 rounded-full flex items-center justify-center shadow-lg">
+            <span className="text-white text-2xl">📚</span>
           </div>
+          <p className="text-xs text-gray-700 font-medium">کتابچه</p>
+        </div>
+
+        {/* Contact */}
+        <div className="text-center">
+          <div className="w-16 h-16 mx-auto mb-2 bg-blue-500 rounded-full flex items-center justify-center shadow-lg">
+            <span className="text-white text-2xl">📞</span>
+          </div>
+          <p className="text-xs text-gray-700 font-medium">تماس با ما</p>
         </div>
       </div>
 
