@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import HomePage from './pages/home-simple';
 import CoursesPage from './pages/courses-simple';
 import ProjectsPage from './pages/projects-simple';
 import LibraryPage from './pages/library-simple';
 import ProfilePage from './pages/profile-simple';
+import AdminPage from './pages/admin';
 import Header from './components/layout/Header';
 
 const queryClient = new QueryClient({
@@ -32,6 +33,17 @@ interface NavButtonProps {
 function App() {
   const [activeTab, setActiveTab] = useState('home');
 
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      if (event.data.type === 'OPEN_ADMIN') {
+        setActiveTab('admin');
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, []);
+
   const NavButton = ({ id, icon, label, isActive, onClick }: NavButtonProps) => (
     <button
       onClick={() => onClick(id)}
@@ -51,6 +63,7 @@ function App() {
       case 'projects': return <ProjectsPage />;
       case 'library': return <LibraryPage />;
       case 'profile': return <ProfilePage />;
+      case 'admin': return <AdminPage />;
       default: return <HomePage />;
     }
   };
@@ -99,6 +112,13 @@ function App() {
               icon="👤"
               label="پروفایل"
               isActive={activeTab === 'profile'}
+              onClick={setActiveTab}
+            />
+            <NavButton
+              id="admin"
+              icon="⚙️"
+              label="مدیریت"
+              isActive={activeTab === 'admin'}
               onClick={setActiveTab}
             />
           </div>

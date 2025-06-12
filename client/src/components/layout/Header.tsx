@@ -6,6 +6,7 @@ import logoPath from "@assets/logo.png";
 export default function Header() {
   const [location] = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [logoClickCount, setLogoClickCount] = useState(0);
   
   return (
     <header className="bg-white shadow-sm sticky top-0 z-20" dir="rtl">
@@ -18,13 +19,26 @@ export default function Header() {
           >
             {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>
-          <Link href="/" className="flex items-center">
+          <div 
+            onClick={() => {
+              const newCount = logoClickCount + 1;
+              setLogoClickCount(newCount);
+              if (newCount >= 5) {
+                // Open admin panel by posting message to parent
+                window.postMessage({ type: 'OPEN_ADMIN' }, '*');
+                setLogoClickCount(0);
+              }
+              // Reset count after 3 seconds
+              setTimeout(() => setLogoClickCount(0), 3000);
+            }}
+            className="flex items-center cursor-pointer"
+          >
             <img 
               src={logoPath} 
               alt="پیستاط - پلتفرم آموزش کشاورزی" 
               className="h-12 w-auto"
             />
-          </Link>
+          </div>
         </div>
 
         {/* Right side icons */}
@@ -153,6 +167,24 @@ export default function Header() {
                   >
                     <span>علاقه‌مندی‌ها</span>
                   </Link>
+                  
+                  {/* Admin Link */}
+                  <div className="border-t pt-3 mt-3">
+                    <h3 className="text-xs uppercase text-gray-500 font-medium mb-3">مدیریت</h3>
+                    <button 
+                      onClick={() => {
+                        setIsMenuOpen(false);
+                        // Function to switch to admin tab would be passed as prop
+                        // For now using a simple approach
+                        if (window.location.pathname !== '/admin') {
+                          window.location.hash = 'admin';
+                        }
+                      }}
+                      className="flex items-center p-3 rounded-lg transition-colors text-gray-600 hover:bg-gray-100 w-full text-right"
+                    >
+                      <span>پنل مدیریت</span>
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
