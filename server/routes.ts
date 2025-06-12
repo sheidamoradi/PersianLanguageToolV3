@@ -468,6 +468,86 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Slides API
+  app.get("/api/slides", async (req, res) => {
+    const slides = await storage.getSlides();
+    res.json(slides);
+  });
+
+  app.get("/api/slides/active", async (req, res) => {
+    const slides = await storage.getActiveSlides();
+    res.json(slides);
+  });
+
+  app.get("/api/slides/:id", async (req, res) => {
+    const id = parseInt(req.params.id);
+
+    if (isNaN(id)) {
+      return res.status(400).json({ message: "Invalid slide ID" });
+    }
+
+    const slide = await storage.getSlide(id);
+
+    if (!slide) {
+      return res.status(404).json({ message: "Slide not found" });
+    }
+
+    return res.json(slide);
+  });
+
+  app.post("/api/slides", async (req, res) => {
+    try {
+      const slideData = insertSlideSchema.parse(req.body);
+      const slide = await storage.createSlide(slideData);
+      return res.status(201).json(slide);
+    } catch (error) {
+      if (error instanceof ZodError) {
+        return res.status(400).json({ message: fromZodError(error).toString() });
+      }
+      return res.status(500).json({ message: "خطا در ایجاد اسلاید" });
+    }
+  });
+
+  app.put("/api/slides/:id", async (req, res) => {
+    const id = parseInt(req.params.id);
+
+    if (isNaN(id)) {
+      return res.status(400).json({ message: "Invalid slide ID" });
+    }
+
+    try {
+      const slideData = insertSlideSchema.partial().parse(req.body);
+      const updatedSlide = await storage.updateSlide(id, slideData);
+
+      if (!updatedSlide) {
+        return res.status(404).json({ message: "Slide not found" });
+      }
+
+      return res.json(updatedSlide);
+    } catch (error) {
+      if (error instanceof ZodError) {
+        return res.status(400).json({ message: fromZodError(error).toString() });
+      }
+      return res.status(500).json({ message: "خطا در به‌روزرسانی اسلاید" });
+    }
+  });
+
+  app.delete("/api/slides/:id", async (req, res) => {
+    const id = parseInt(req.params.id);
+
+    if (isNaN(id)) {
+      return res.status(400).json({ message: "Invalid slide ID" });
+    }
+
+    const deleted = await storage.deleteSlide(id);
+
+    if (!deleted) {
+      return res.status(404).json({ message: "Slide not found" });
+    }
+
+    return res.json({ message: "Slide deleted successfully" });
+  });
+
   const server = createServer(app);
   return server;
 }
