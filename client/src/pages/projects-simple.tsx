@@ -7,13 +7,24 @@ export default function Projects() {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState("all");
   
-  const { data: projects = [], isLoading } = useQuery({
+  interface Project {
+    id: number;
+    title: string;
+    description?: string;
+    type?: string;
+    dueDate?: string;
+    thumbnailUrl?: string;
+    pages?: number;
+    isLocked?: boolean;
+  }
+
+  const { data: projects = [], isLoading } = useQuery<Project[]>({
     queryKey: ['/api/projects'],
   });
 
   const filteredProjects = projects.filter((project: Project) => {
     const matchesSearch = project.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         project.description.toLowerCase().includes(searchTerm.toLowerCase());
+                         (project.description || '').toLowerCase().includes(searchTerm.toLowerCase());
     
     if (activeTab === "all") return matchesSearch;
     return matchesSearch && project.type === activeTab;
@@ -103,11 +114,11 @@ export default function Projects() {
               key={project.id}
               id={project.id}
               title={project.title}
-              description={project.description}
+              description={project.description || ''}
               thumbnailUrl={project.thumbnailUrl || ''}
               type={project.type as "project" | "magazine"}
-              dueDate={project.dueDate}
-              pages={project.pages}
+              dueDate={project.dueDate || ''}
+              pages={project.pages || 0}
               isLocked={project.isLocked || false}
             />
           ))

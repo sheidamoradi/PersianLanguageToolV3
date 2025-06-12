@@ -11,8 +11,18 @@ import {
   Award
 } from "lucide-react";
 
+interface User {
+  id?: number;
+  username?: string;
+  email?: string;
+  name?: string;
+  role?: string;
+  progress?: number;
+  membershipType?: string;
+}
+
 export default function Profile() {
-  const { data: user = {}, isLoading } = useQuery({
+  const { data: user = {} as User, isLoading } = useQuery<User>({
     queryKey: ['/api/user'],
   });
 

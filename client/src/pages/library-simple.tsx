@@ -21,7 +21,32 @@ export default function Library() {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [sortBy, setSortBy] = useState("newest");
 
-  const { data: documents = [], isLoading } = useQuery({
+  interface Document {
+    id: number;
+    title: string;
+    author?: string;
+    fileType?: string;
+    fileName?: string;
+    publishedAt?: Date;
+    content?: string;
+    excerpt?: string;
+    featuredImageUrl?: string;
+    fileUrl?: string;
+    fileSize?: number;
+    totalPages?: number;
+    categoryId?: number;
+    status?: string;
+    allowDownload?: boolean;
+    downloadCount?: number;
+    viewCount?: number;
+    isFeatured?: boolean;
+    createdAt?: Date;
+    updatedAt?: Date;
+    slug?: string;
+    lastUpdated?: string;
+  }
+
+  const { data: documents = [], isLoading } = useQuery<Document[]>({
     queryKey: ['/api/documents'],
   });
 
