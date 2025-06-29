@@ -103,6 +103,12 @@ The application supports multiple deployment strategies:
 ```
 Changelog:
 - June 29, 2025. Initial setup
+- June 29, 2025. Applied new color theme from reference design:
+  * Light green background for hero slider
+  * Purple, orange, and green colored circles for quick access
+  * Monochromatic gray icons throughout the interface
+  * Added "دسترسی سریع" section at bottom with colored icons
+  * Updated CSS variables for consistent color palette
 ```
 
 ## User Preferences

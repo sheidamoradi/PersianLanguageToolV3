@@ -53,12 +53,12 @@ export default function HomePage() {
         </div>
 
         <div className="text-center">
-          <div className="w-16 h-16 mx-auto mb-2 bg-gray-100 rounded-full flex items-center justify-center shadow-lg border">
-            <svg className="w-8 h-8 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="w-16 h-16 mx-auto mb-2 rounded-full flex items-center justify-center shadow-lg" style={{backgroundColor: 'hsl(140, 50%, 92%)'}}>
+            <svg className="w-8 h-8" style={{color: 'hsl(140, 60%, 50%)'}} fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
           </div>
-          <p className="text-xs text-gray-700 font-medium">کتابچه</p>
+          <p className="text-xs text-gray-700 font-medium">فصلنامه رویش سبز</p>
         </div>
 
         <div className="text-center">
@@ -333,6 +333,49 @@ export default function HomePage() {
             <span className="ml-2">◀</span>
             مشاهده همه
           </button>
+        </div>
+      </div>
+
+      {/* Quick Access Bottom Section */}
+      <div className="bg-gray-50 rounded-xl p-4 mt-6">
+        <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center">
+          <svg className="w-5 h-5 ml-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+          </svg>
+          دسترسی سریع
+        </h3>
+        
+        <div className="grid grid-cols-3 gap-4">
+          <div className="bg-white rounded-lg p-3 text-center shadow-sm">
+            <div className="w-12 h-12 mx-auto mb-2 rounded-full flex items-center justify-center" style={{backgroundColor: 'hsl(270, 60%, 95%)'}}>
+              <svg className="w-6 h-6" style={{color: 'hsl(270, 70%, 60%)'}} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+              </svg>
+            </div>
+            <h4 className="font-medium text-gray-800 text-sm mb-1">کتابخانه</h4>
+            <p className="text-xs text-gray-500">مطالعه مقالات و راهنماها</p>
+          </div>
+          
+          <div className="bg-white rounded-lg p-3 text-center shadow-sm">
+            <div className="w-12 h-12 mx-auto mb-2 rounded-full flex items-center justify-center" style={{backgroundColor: 'hsl(25, 100%, 92%)'}}>
+              <svg className="w-6 h-6" style={{color: 'hsl(25, 85%, 65%)'}} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
+              </svg>
+            </div>
+            <h4 className="font-medium text-gray-800 text-sm mb-1">ویدیوهای آموزشی</h4>
+            <p className="text-xs text-gray-500">مشاهده کانال اینستاگرام پیستاط</p>
+          </div>
+          
+          <div className="bg-white rounded-lg p-3 text-center shadow-sm">
+            <div className="w-12 h-12 mx-auto mb-2 rounded-full flex items-center justify-center" style={{backgroundColor: 'hsl(140, 50%, 92%)'}}>
+              <svg className="w-6 h-6" style={{color: 'hsl(140, 60%, 50%)'}} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+              </svg>
+            </div>
+            <h4 className="font-medium text-gray-800 text-sm mb-1">فصلنامه رویش سبز</h4>
+            <p className="text-xs text-gray-500">مطالعه آخرین شماره فصلنامه</p>
+          </div>
         </div>
       </div>
 
