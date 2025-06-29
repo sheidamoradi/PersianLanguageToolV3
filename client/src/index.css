@@ -13,16 +13,25 @@
 --card-foreground: 210 40% 15%;
 --border: 210 20% 88%; /* #E5E7EB - حاشیه ملایم */
 --input: 210 20% 88%;
---primary: 142 76% 36%; /* #059669 - سبز اصلی */
+--primary: 118 54% 40%; /* سبز اصلی پیستاط */
 --primary-foreground: 0 0% 100%;
 --secondary: 142 40% 95%; /* #ECFDF5 - سبز بسیار روشن */
 --secondary-foreground: 142 76% 25%;
---accent: 142 76% 36%;
+--accent: 118 54% 40%;
 --accent-foreground: 0 0% 100%;
 --destructive: 0 84% 60%;
 --destructive-foreground: 60 9% 98%;
---ring: 142 76% 36%;
+--ring: 118 54% 40%;
 --radius: 0.75rem;
+
+/* Custom colors from reference design */
+--green-light-bg: 118 45% 90%; /* خلفیه سبز روشن برای slider */
+--purple-light: 270 60% 95%; /* بنفش روشن */
+--purple-primary: 270 70% 60%; /* بنفش اصلی */
+--orange-light: 25 100% 92%; /* نارنجی روشن */
+--orange-primary: 25 85% 65%; /* نارنجی اصلی */
+--green-accent-light: 140 50% 92%; /* سبز تکمیلی روشن */
+--green-accent: 140 60% 50%; /* سبز تکمیلی */
   }
   .dark {
       --background: 240 10% 3.9%;
