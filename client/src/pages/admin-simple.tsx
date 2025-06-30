@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 
 interface AdminStats {
   totalCourses: number;
@@ -7,9 +7,150 @@ interface AdminStats {
   totalMedia: number;
 }
 
+interface SlideItem {
+  id: number;
+  title: string;
+  description: string;
+  imageUrl?: string;
+  imageFile?: File;
+  buttonText?: string;
+  buttonUrl?: string;
+  textPosition: 'center' | 'left' | 'right';
+  textColor: string;
+  overlayColor: string;
+  overlayOpacity: number;
+  isActive: boolean;
+  order: number;
+}
+
 export default function AdminSimple() {
   const [activeSection, setActiveSection] = useState('dashboard');
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  
+  // Slider management states
+  const [slides, setSlides] = useState<SlideItem[]>([
+    {
+      id: 1,
+      title: 'به مرکز پیستاط خوش آمدید',
+      description: 'بهترین دوره‌های آموزشی در حوزه کشاورزی',
+      imageUrl: '',
+      buttonText: 'مشاهده دوره‌ها',
+      buttonUrl: '/courses',
+      textPosition: 'center',
+      textColor: '#1F2937',
+      overlayColor: '#10B981',
+      overlayOpacity: 20,
+      isActive: true,
+      order: 1
+    }
+  ]);
+  const [showSlideForm, setShowSlideForm] = useState(false);
+  const [editingSlide, setEditingSlide] = useState<SlideItem | null>(null);
+  const [slideFormData, setSlideFormData] = useState({
+    title: '',
+    description: '',
+    imageUrl: '',
+    buttonText: '',
+    buttonUrl: '',
+    textPosition: 'center' as 'center' | 'left' | 'right',
+    textColor: '#1F2937',
+    overlayColor: '#10B981',
+    overlayOpacity: 20,
+    isActive: true,
+    order: 1
+  });
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Slider management functions
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setSlideFormData(prev => ({
+          ...prev,
+          imageUrl: e.target?.result as string
+        }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const resetSlideForm = () => {
+    setSlideFormData({
+      title: '',
+      description: '',
+      buttonText: '',
+      buttonUrl: '',
+      textPosition: 'center',
+      textColor: '#1F2937',
+      overlayColor: '#10B981',
+      overlayOpacity: 20,
+      isActive: true,
+      order: slides.length + 1
+    });
+    setEditingSlide(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const handleSaveSlide = () => {
+    if (!slideFormData.title.trim()) {
+      alert('لطفاً عنوان اسلاید را وارد کنید');
+      return;
+    }
+
+    if (editingSlide) {
+      // Update existing slide
+      setSlides(prev => prev.map(slide => 
+        slide.id === editingSlide.id 
+          ? { ...slide, ...slideFormData }
+          : slide
+      ));
+    } else {
+      // Add new slide
+      const newSlide: SlideItem = {
+        id: Date.now(),
+        ...slideFormData
+      };
+      setSlides(prev => [...prev, newSlide]);
+    }
+
+    setShowSlideForm(false);
+    resetSlideForm();
+  };
+
+  const handleEditSlide = (slide: SlideItem) => {
+    setEditingSlide(slide);
+    setSlideFormData({
+      title: slide.title,
+      description: slide.description,
+      buttonText: slide.buttonText || '',
+      buttonUrl: slide.buttonUrl || '',
+      textPosition: slide.textPosition,
+      textColor: slide.textColor,
+      overlayColor: slide.overlayColor,
+      overlayOpacity: slide.overlayOpacity,
+      isActive: slide.isActive,
+      order: slide.order
+    });
+    setShowSlideForm(true);
+  };
+
+  const handleDeleteSlide = (id: number) => {
+    if (confirm('آیا از حذف این اسلاید اطمینان دارید؟')) {
+      setSlides(prev => prev.filter(slide => slide.id !== id));
+    }
+  };
+
+  const handleToggleSlideStatus = (id: number) => {
+    setSlides(prev => prev.map(slide => 
+      slide.id === id 
+        ? { ...slide, isActive: !slide.isActive }
+        : slide
+    ));
+  };
   
   // Sample stats
   const stats: AdminStats = {
@@ -209,11 +350,365 @@ export default function AdminSimple() {
     </div>
   );
 
+  const renderSlider = () => (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">مدیریت اسلایدر</h1>
+          <p className="text-gray-600 mt-1">اسلایدهای صفحه اصلی را مدیریت کنید</p>
+        </div>
+        <button 
+          onClick={() => {
+            setShowSlideForm(true);
+            resetSlideForm();
+          }}
+          className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2"
+        >
+          <span>+</span>
+          افزودن اسلاید جدید
+        </button>
+      </div>
+
+      {/* Slide Form */}
+      {showSlideForm && (
+        <div className="bg-white rounded-lg border shadow-sm">
+          <div className="p-6 border-b">
+            <h2 className="text-xl font-semibold">
+              {editingSlide ? 'ویرایش اسلاید' : 'افزودن اسلاید جدید'}
+            </h2>
+          </div>
+          
+          <div className="p-6 space-y-6">
+            {/* Image Upload Section */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                تصویر پس‌زمینه
+              </label>
+              <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors">
+                {slideFormData.imageUrl ? (
+                  <div className="space-y-4">
+                    <img 
+                      src={slideFormData.imageUrl} 
+                      alt="پیش‌نمایش" 
+                      className="max-h-48 mx-auto rounded-lg shadow-md"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setSlideFormData(prev => ({ ...prev, imageUrl: '' }))}
+                      className="text-red-600 hover:text-red-700 text-sm"
+                    >
+                      حذف تصویر
+                    </button>
+                  </div>
+                ) : (
+                  <div>
+                    <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                    </svg>
+                    <p className="mt-2 text-sm text-gray-600">
+                      کلیک کنید یا تصویر را بکشید و رها کنید
+                    </p>
+                    <p className="text-xs text-gray-500">PNG, JPG, GIF تا 10MB</p>
+                  </div>
+                )}
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  className="hidden"
+                />
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="mt-2 bg-white border border-gray-300 rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                >
+                  انتخاب فایل
+                </button>
+              </div>
+            </div>
+
+            {/* Text Content */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  عنوان اسلاید
+                </label>
+                <input
+                  type="text"
+                  value={slideFormData.title}
+                  onChange={(e) => setSlideFormData(prev => ({ ...prev, title: e.target.value }))}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-green-500 focus:border-green-500"
+                  placeholder="عنوان اسلاید را وارد کنید"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  موقعیت متن
+                </label>
+                <select
+                  value={slideFormData.textPosition}
+                  onChange={(e) => setSlideFormData(prev => ({ ...prev, textPosition: e.target.value as any }))}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-green-500 focus:border-green-500"
+                >
+                  <option value="center">وسط</option>
+                  <option value="right">راست</option>
+                  <option value="left">چپ</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                توضیحات
+              </label>
+              <textarea
+                value={slideFormData.description}
+                onChange={(e) => setSlideFormData(prev => ({ ...prev, description: e.target.value }))}
+                rows={3}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-green-500 focus:border-green-500"
+                placeholder="توضیحات اسلاید را وارد کنید"
+              />
+            </div>
+
+            {/* Button Settings */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  متن دکمه
+                </label>
+                <input
+                  type="text"
+                  value={slideFormData.buttonText}
+                  onChange={(e) => setSlideFormData(prev => ({ ...prev, buttonText: e.target.value }))}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-green-500 focus:border-green-500"
+                  placeholder="متن دکمه (اختیاری)"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  لینک دکمه
+                </label>
+                <input
+                  type="text"
+                  value={slideFormData.buttonUrl}
+                  onChange={(e) => setSlideFormData(prev => ({ ...prev, buttonUrl: e.target.value }))}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-green-500 focus:border-green-500"
+                  placeholder="آدرس لینک (اختیاری)"
+                />
+              </div>
+            </div>
+
+            {/* Style Settings */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  رنگ متن
+                </label>
+                <input
+                  type="color"
+                  value={slideFormData.textColor}
+                  onChange={(e) => setSlideFormData(prev => ({ ...prev, textColor: e.target.value }))}
+                  className="w-full h-10 rounded-md border border-gray-300"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  رنگ پوشش
+                </label>
+                <input
+                  type="color"
+                  value={slideFormData.overlayColor}
+                  onChange={(e) => setSlideFormData(prev => ({ ...prev, overlayColor: e.target.value }))}
+                  className="w-full h-10 rounded-md border border-gray-300"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  شفافیت پوشش ({slideFormData.overlayOpacity}%)
+                </label>
+                <input
+                  type="range"
+                  min="0"
+                  max="100"
+                  value={slideFormData.overlayOpacity}
+                  onChange={(e) => setSlideFormData(prev => ({ ...prev, overlayOpacity: parseInt(e.target.value) }))}
+                  className="w-full"
+                />
+              </div>
+            </div>
+
+            {/* Preview Section */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                پیش‌نمایش
+              </label>
+              <div 
+                className="relative rounded-lg overflow-hidden h-48 flex items-center justify-center"
+                style={{
+                  backgroundImage: slideFormData.imageUrl ? `url(${slideFormData.imageUrl})` : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center'
+                }}
+              >
+                <div 
+                  className="absolute inset-0"
+                  style={{
+                    backgroundColor: slideFormData.overlayColor,
+                    opacity: slideFormData.overlayOpacity / 100
+                  }}
+                />
+                <div className={`relative z-10 text-${slideFormData.textPosition} p-6`}>
+                  <h3 
+                    className="text-xl font-bold mb-2"
+                    style={{ color: slideFormData.textColor }}
+                  >
+                    {slideFormData.title || 'عنوان اسلاید'}
+                  </h3>
+                  <p 
+                    className="text-sm mb-4"
+                    style={{ color: slideFormData.textColor }}
+                  >
+                    {slideFormData.description || 'توضیحات اسلاید'}
+                  </p>
+                  {slideFormData.buttonText && (
+                    <button 
+                      className="px-4 py-2 bg-white text-gray-800 rounded-lg text-sm"
+                    >
+                      {slideFormData.buttonText}
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Form Actions */}
+            <div className="flex items-center justify-between pt-4 border-t">
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  id="isActive"
+                  checked={slideFormData.isActive}
+                  onChange={(e) => setSlideFormData(prev => ({ ...prev, isActive: e.target.checked }))}
+                  className="rounded border-gray-300 text-green-600 focus:ring-green-500"
+                />
+                <label htmlFor="isActive" className="mr-2 text-sm text-gray-700">
+                  اسلاید فعال باشد
+                </label>
+              </div>
+
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => setShowSlideForm(false)}
+                  className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50"
+                >
+                  لغو
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSaveSlide}
+                  className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
+                >
+                  {editingSlide ? 'بروزرسانی' : 'ذخیره'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Slides List */}
+      <div className="bg-white rounded-lg border shadow-sm">
+        <div className="p-6 border-b">
+          <h2 className="text-xl font-semibold">اسلایدهای موجود</h2>
+        </div>
+        
+        <div className="p-6">
+          {slides.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {slides.map(slide => (
+                <div key={slide.id} className="border rounded-lg overflow-hidden">
+                  <div 
+                    className="h-32 bg-cover bg-center relative"
+                    style={{
+                      backgroundImage: slide.imageUrl ? `url(${slide.imageUrl})` : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+                    }}
+                  >
+                    <div 
+                      className="absolute inset-0"
+                      style={{
+                        backgroundColor: slide.overlayColor,
+                        opacity: slide.overlayOpacity / 100
+                      }}
+                    />
+                    <div className="absolute top-2 left-2">
+                      <span className={`px-2 py-1 text-xs rounded-full ${
+                        slide.isActive ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'
+                      }`}>
+                        {slide.isActive ? 'فعال' : 'غیرفعال'}
+                      </span>
+                    </div>
+                  </div>
+                  
+                  <div className="p-4">
+                    <h3 className="font-medium mb-1">{slide.title}</h3>
+                    <p className="text-sm text-gray-600 mb-3 line-clamp-2">{slide.description}</p>
+                    
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs text-gray-500">ترتیب: {slide.order}</span>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => handleToggleSlideStatus(slide.id)}
+                          className={`p-1 rounded ${
+                            slide.isActive ? 'text-orange-600 hover:bg-orange-50' : 'text-green-600 hover:bg-green-50'
+                          }`}
+                          title={slide.isActive ? 'غیرفعال کردن' : 'فعال کردن'}
+                        >
+                          {slide.isActive ? '⏸️' : '▶️'}
+                        </button>
+                        <button
+                          onClick={() => handleEditSlide(slide)}
+                          className="p-1 text-blue-600 hover:bg-blue-50 rounded"
+                          title="ویرایش"
+                        >
+                          ✏️
+                        </button>
+                        <button
+                          onClick={() => handleDeleteSlide(slide.id)}
+                          className="p-1 text-red-600 hover:bg-red-50 rounded"
+                          title="حذف"
+                        >
+                          🗑️
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <div className="mx-auto h-12 w-12 text-gray-400 mb-4">🎞️</div>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">هیچ اسلایدی یافت نشد</h3>
+              <p className="text-gray-600">برای شروع، اسلاید جدیدی اضافه کنید</p>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+
   const renderContent = () => {
     switch (activeSection) {
       case 'dashboard': return renderDashboard();
       case 'appearance': return renderAppearance();
       case 'media': return renderMedia();
+      case 'slider': return renderSlider();
       case 'posts': 
         return (
           <div className="space-y-6">
