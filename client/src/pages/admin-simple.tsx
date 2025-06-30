@@ -285,9 +285,9 @@ function CoursesTab() {
                       <td className="py-2">
                         <div className="flex items-center gap-1">
                           <Shield className="h-4 w-4 text-gray-500" />
-                          {course.allowDownload === false && <Download className="h-3 w-3 text-red-500" title="دانلود غیرفعال" />}
-                          {course.allowScreenshot === false && <Eye className="h-3 w-3 text-red-500" title="اسکرین‌شات غیرفعال" />}
-                          {course.allowCopy === false && <Copy className="h-3 w-3 text-red-500" title="کپی غیرفعال" />}
+                          {course.allowDownload === false && <Download className="h-3 w-3 text-red-500" />}
+                          {course.allowScreenshot === false && <Eye className="h-3 w-3 text-red-500" />}
+                          {course.allowCopy === false && <Copy className="h-3 w-3 text-red-500" />}
                         </div>
                       </td>
                       <td className="py-2">
@@ -539,8 +539,8 @@ function SlidesTab() {
       imageUrl: slide.imageUrl || '',
       buttonText: slide.buttonText || '',
       buttonUrl: slide.buttonUrl || '',
-      isActive: slide.isActive,
-      order: slide.order,
+      isActive: slide.isActive ?? true,
+      order: slide.order ?? 0,
       gradientFrom: slide.gradientFrom || 'blue-500',
       gradientTo: slide.gradientTo || 'purple-600',
       iconName: slide.iconName || 'GraduationCap'
@@ -787,7 +787,7 @@ function MagazinesTab() {
                 <p className="text-sm text-gray-600 mb-2">{magazine.description}</p>
                 <div className="flex items-center justify-between text-xs text-gray-500">
                   <span>شماره {magazine.issueNumber}</span>
-                  <span>{new Date(magazine.publishDate).toLocaleDateString('fa-IR')}</span>
+                  <span>{magazine.publishDate ? new Date(magazine.publishDate).toLocaleDateString('fa-IR') : 'تاریخ نامشخص'}</span>
                 </div>
                 <div className="flex gap-2 mt-3">
                   <button className="flex-1 py-1 px-2 bg-blue-100 text-blue-800 rounded text-xs hover:bg-blue-200 transition-colors">

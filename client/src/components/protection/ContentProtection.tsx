@@ -213,9 +213,8 @@ export default function ContentProtection({
         userSelect: allowCopy ? 'auto' : 'none',
         WebkitUserSelect: allowCopy ? 'auto' : 'none',
         MozUserSelect: allowCopy ? 'auto' : 'none',
-        msUserSelect: allowCopy ? 'auto' : 'none',
         ...containerStyle
-      }}
+      } as React.CSSProperties}
     >
       {watermarkText && (
         <div className="absolute inset-0 pointer-events-none z-10 overflow-hidden">

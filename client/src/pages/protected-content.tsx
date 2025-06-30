@@ -47,7 +47,7 @@ export default function ProtectedContentDemo() {
 
   const handleDownload = () => {
     const fileName = selectedContent === 'course' ? 'course-materials.zip' :
-                    selectedContent === 'document' ? currentContent.fileName || 'document.pdf' :
+                    selectedContent === 'document' ? 'planting-guide.pdf' :
                     'workshop-video.mp4';
     
     downloadFile(`/downloads/${fileName}`, fileName);
@@ -207,7 +207,7 @@ export default function ProtectedContentDemo() {
                 <div className="p-6 border-b">
                   <h2 className="text-xl font-semibold text-gray-900">{currentContent.title}</h2>
                   {selectedContent === 'course' && (
-                    <p className="text-gray-600 mt-1">{currentContent.description}</p>
+                    <p className="text-gray-600 mt-1">{'description' in currentContent ? currentContent.description : ''}</p>
                   )}
                 </div>
 
