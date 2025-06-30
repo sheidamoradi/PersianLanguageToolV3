@@ -548,6 +548,87 @@ export async function registerRoutes(app: Express): Promise<Server> {
     return res.json({ message: "Slide deleted successfully" });
   });
 
+  // Protection Control Endpoints
+  app.patch("/api/courses/:id/protection", async (req, res) => {
+    const id = parseInt(req.params.id);
+    
+    if (isNaN(id)) {
+      return res.status(400).json({ message: "Invalid course ID" });
+    }
+
+    try {
+      const updatedCourse = await storage.updateCourseProtection(id, req.body);
+      
+      if (!updatedCourse) {
+        return res.status(404).json({ message: "Course not found" });
+      }
+
+      return res.json(updatedCourse);
+    } catch (error) {
+      return res.status(500).json({ message: "خطا در به‌روزرسانی تنظیمات حفاظت" });
+    }
+  });
+
+  app.patch("/api/projects/:id/protection", async (req, res) => {
+    const id = parseInt(req.params.id);
+    
+    if (isNaN(id)) {
+      return res.status(400).json({ message: "Invalid project ID" });
+    }
+
+    try {
+      const updatedProject = await storage.updateProjectProtection(id, req.body);
+      
+      if (!updatedProject) {
+        return res.status(404).json({ message: "Project not found" });
+      }
+
+      return res.json(updatedProject);
+    } catch (error) {
+      return res.status(500).json({ message: "خطا در به‌روزرسانی تنظیمات حفاظت" });
+    }
+  });
+
+  app.patch("/api/documents/:id/protection", async (req, res) => {
+    const id = parseInt(req.params.id);
+    
+    if (isNaN(id)) {
+      return res.status(400).json({ message: "Invalid document ID" });
+    }
+
+    try {
+      const updatedDocument = await storage.updateDocumentProtection(id, req.body);
+      
+      if (!updatedDocument) {
+        return res.status(404).json({ message: "Document not found" });
+      }
+
+      return res.json(updatedDocument);
+    } catch (error) {
+      return res.status(500).json({ message: "خطا در به‌روزرسانی تنظیمات حفاظت" });
+    }
+  });
+
+  app.patch("/api/magazines/:id/protection", async (req, res) => {
+    const id = parseInt(req.params.id);
+    
+    if (isNaN(id)) {
+      return res.status(400).json({ message: "Invalid magazine ID" });
+    }
+
+    try {
+      const updatedMagazine = await storage.updateMagazineProtection(id, req.body);
+      
+      if (!updatedMagazine) {
+        return res.status(404).json({ message: "Magazine not found" });
+      }
+
+      return res.json(updatedMagazine);
+    } catch (error) {
+      return res.status(500).json({ message: "خطا در به‌روزرسانی تنظیمات حفاظت" });
+    }
+  });
+
   const server = createServer(app);
   return server;
 }

@@ -131,6 +131,12 @@ export interface IStorage {
   createSlide(slide: InsertSlide): Promise<Slide>;
   updateSlide(id: number, slide: Partial<InsertSlide>): Promise<Slide | undefined>;
   deleteSlide(id: number): Promise<boolean>;
+
+  // Protection control methods
+  updateCourseProtection(id: number, protection: any): Promise<Course | undefined>;
+  updateProjectProtection(id: number, protection: any): Promise<Project | undefined>;
+  updateDocumentProtection(id: number, protection: any): Promise<Document | undefined>;
+  updateMagazineProtection(id: number, protection: any): Promise<Magazine | undefined>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -753,6 +759,43 @@ export class DatabaseStorage implements IStorage {
     
     // Premium and VIP users can download
     return user.subscriptionStatus === 'premium' || user.subscriptionStatus === 'vip';
+  }
+
+  // Protection control methods
+  async updateCourseProtection(id: number, protection: any): Promise<Course | undefined> {
+    const [updatedCourse] = await db
+      .update(courses)
+      .set(protection)
+      .where(eq(courses.id, id))
+      .returning();
+    return updatedCourse;
+  }
+
+  async updateProjectProtection(id: number, protection: any): Promise<Project | undefined> {
+    const [updatedProject] = await db
+      .update(projects)
+      .set(protection)
+      .where(eq(projects.id, id))
+      .returning();
+    return updatedProject;
+  }
+
+  async updateDocumentProtection(id: number, protection: any): Promise<Document | undefined> {
+    const [updatedDocument] = await db
+      .update(documents)
+      .set(protection)
+      .where(eq(documents.id, id))
+      .returning();
+    return updatedDocument;
+  }
+
+  async updateMagazineProtection(id: number, protection: any): Promise<Magazine | undefined> {
+    const [updatedMagazine] = await db
+      .update(magazines)
+      .set(protection)
+      .where(eq(magazines.id, id))
+      .returning();
+    return updatedMagazine;
   }
 }
 

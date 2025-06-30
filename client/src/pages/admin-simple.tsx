@@ -873,6 +873,20 @@ function MagazinesTab() {
     queryKey: ['/api/magazines'],
   });
 
+  const queryClient = useQueryClient();
+
+  const updateMagazineProtectionMutation = useMutation({
+    mutationFn: async ({ magazineId, protectionField, value }: { magazineId: number, protectionField: string, value: boolean }) => {
+      return await apiRequest(`/api/magazines/${magazineId}/protection`, {
+        method: 'PATCH',
+        body: JSON.stringify({ [protectionField]: value })
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/magazines'] });
+    },
+  });
+
   if (isLoading) {
     return <div className="text-center py-8">در حال بارگذاری...</div>;
   }
@@ -899,11 +913,30 @@ function MagazinesTab() {
                 </div>
                 <h3 className="font-medium mb-1">{magazine.title}</h3>
                 <p className="text-sm text-gray-600 mb-2">{magazine.description}</p>
-                <div className="flex items-center justify-between text-xs text-gray-500">
+                <div className="flex items-center justify-between text-xs text-gray-500 mb-3">
                   <span>شماره {magazine.issueNumber}</span>
                   <span>{magazine.publishDate ? new Date(magazine.publishDate).toLocaleDateString('fa-IR') : 'تاریخ نامشخص'}</span>
                 </div>
-                <div className="flex gap-2 mt-3">
+                
+                {/* Protection Controls */}
+                <div className="flex flex-wrap items-center gap-2 text-xs mb-3 border-t pt-2">
+                  <label className="flex items-center gap-1 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={!magazine.allowDownload}
+                      onChange={(e) => updateMagazineProtectionMutation.mutate({
+                        magazineId: magazine.id,
+                        protectionField: 'allowDownload',
+                        value: !e.target.checked
+                      })}
+                      className="w-3 h-3"
+                    />
+                    <Download className="h-3 w-3 text-red-500" />
+                    <span className="text-gray-600">قفل</span>
+                  </label>
+                </div>
+                
+                <div className="flex gap-2">
                   <button className="flex-1 py-1 px-2 bg-blue-100 text-blue-800 rounded text-xs hover:bg-blue-200 transition-colors">
                     مشاهده
                   </button>
