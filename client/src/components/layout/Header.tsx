@@ -1,6 +1,7 @@
 import { Link, useLocation } from "wouter";
 import { User, Menu, X, Bell, Search } from "lucide-react";
 import { useState } from "react";
+import logoImage from "@assets/logo.png";
 
 export default function Header() {
   const [location] = useLocation();
@@ -33,29 +34,11 @@ export default function Header() {
             className="flex items-center cursor-pointer"
           >
             <div className="flex items-center">
-              <svg width="48" height="48" viewBox="0 0 200 200" className="hover:opacity-80 transition-opacity">
-                {/* Main dark green leaf */}
-                <path d="M45 70 C45 45, 65 25, 90 25 C100 25, 108 30, 113 38 C118 30, 126 25, 136 25 C161 25, 181 45, 181 70 C181 95, 161 115, 136 115 C126 115, 118 110, 113 102 C108 110, 100 115, 90 115 C65 115, 45 95, 45 70 Z" 
-                      fill="#578057"/>
-                {/* Light green accent leaf */}
-                <path d="M120 65 C120 50, 130 40, 145 40 C155 40, 163 45, 168 53 C173 45, 181 40, 191 40 C206 40, 216 50, 216 65 C216 80, 206 90, 191 90 C181 90, 173 85, 168 77 C163 85, 155 90, 145 90 C130 90, 120 80, 120 65 Z" 
-                      fill="#9CB891"/>
-                {/* Text "Pistat" */}
-                <text x="100" y="140" 
-                      textAnchor="middle" 
-                      fontFamily="Arial, sans-serif" 
-                      fontSize="16" 
-                      fontWeight="bold" 
-                      fill="#6B7280">Pistat</text>
-                {/* Green underline */}
-                <line x1="65" y1="150" x2="135" y2="150" stroke="#9CB891" strokeWidth="2"/>
-                {/* Persian text "پیستاط" */}
-                <text x="100" y="170" 
-                      textAnchor="middle" 
-                      fontFamily="Arial, sans-serif" 
-                      fontSize="14" 
-                      fill="#6B7280">پیستاط</text>
-              </svg>
+              <img 
+                src={logoImage} 
+                alt="پیستاط" 
+                className="h-12 w-auto hover:opacity-80 transition-opacity"
+              />
             </div>
           </div>
         </div>
