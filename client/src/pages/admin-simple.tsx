@@ -2,13 +2,12 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { type Course, type Project, type Document, type MediaContent, type Magazine, type Article, type ArticleContent, type Slide, type Workshop, type WorkshopSection } from "@shared/schema";
-import { Calendar, Edit, Eye, File, Folder, Image, Lock, LockOpen, MoreHorizontal, Plus, RefreshCw, Trash, Upload, Video, Save, X, Copy, Search, Filter, Bold, Italic, Type, List, ListOrdered, Quote, Undo, Redo, AlignLeft, AlignCenter, AlignRight, Link as LinkIcon, Image as ImageIcon, Tag, Shield, Download } from "lucide-react";
+import { Calendar, Edit, Eye, File, Folder, Image, Lock, LockOpen, MoreHorizontal, Plus, RefreshCw, Trash, Upload, Video, Save, Copy, Search, Filter, Bold, Italic, Type, List, ListOrdered, Quote, Undo, Redo, AlignLeft, AlignCenter, AlignRight, Link as LinkIcon, Image as ImageIcon, Tag, Shield, Download } from "lucide-react";
 import RichTextEditor from '../components/editor/RichTextEditor';
 import ProtectionSettings from '../components/admin/ProtectionSettings';
 
 export default function AdminPage() {
   const [activeTab, setActiveTab] = useState("courses");
-  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const menuItems = [
     { id: "courses", label: "دوره‌ها", icon: Video },
@@ -22,28 +21,11 @@ export default function AdminPage() {
 
   return (
     <div className="h-screen bg-gray-50 flex overflow-hidden" dir="rtl">
-      {/* Sidebar Overlay */}
-      {sidebarOpen && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
 
       {/* Sidebar */}
-      <div className={`
-        fixed inset-y-0 right-0 z-50 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out
-        lg:translate-x-0 lg:static lg:inset-0
-        ${sidebarOpen ? 'translate-x-0' : 'translate-x-full'}
-      `}>
-        <div className="flex items-center justify-between p-4 border-b bg-blue-600 text-white">
+      <div className="w-64 bg-white shadow-lg h-full flex-shrink-0">
+        <div className="p-4 border-b bg-blue-600 text-white">
           <h2 className="text-xl font-bold">پنل مدیریت</h2>
-          <button
-            onClick={() => setSidebarOpen(false)}
-            className="lg:hidden p-2 text-white hover:bg-blue-700 rounded"
-          >
-            <X className="h-6 w-6" />
-          </button>
         </div>
         
         <div className="p-4 h-full overflow-y-auto">
@@ -51,10 +33,7 @@ export default function AdminPage() {
             {menuItems.map((item) => (
               <button
                 key={item.id}
-                onClick={() => {
-                  setActiveTab(item.id);
-                  setSidebarOpen(false);
-                }}
+                onClick={() => setActiveTab(item.id)}
                 className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-right transition-colors ${
                   activeTab === item.id
                     ? 'bg-blue-100 text-blue-800 font-medium'
@@ -70,25 +49,11 @@ export default function AdminPage() {
       </div>
 
       {/* Main content */}
-      <div className="flex-1 lg:mr-64 flex flex-col h-full">
-        {/* Mobile header */}
-        <div className="bg-white shadow-sm border-b lg:hidden flex-shrink-0">
-          <div className="flex items-center justify-between p-4">
-            <h1 className="text-lg font-semibold text-gray-900">پنل مدیریت</h1>
-            <button
-              onClick={() => setSidebarOpen(true)}
-              className="p-2 text-gray-600 hover:text-gray-900"
-            >
-              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
-            </button>
-          </div>
-        </div>
+      <div className="flex-1 flex flex-col h-full">
 
         {/* Page content */}
         <main className="flex-1 p-6 overflow-hidden">
-          <div className="mb-6 hidden lg:block flex-shrink-0">
+          <div className="mb-6 flex-shrink-0">
             <h1 className="text-3xl font-bold text-gray-900 mb-2">
               {menuItems.find(item => item.id === activeTab)?.label || 'پنل مدیریت'}
             </h1>
