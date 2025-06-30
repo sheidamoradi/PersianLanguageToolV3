@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Upload, Save, Eye, Settings, Users, FileText, Image, BarChart3, Home, X, Plus, Edit, Trash2, Copy, Calendar, Tag, Search, Filter } from 'lucide-react';
-import { RichTextEditor } from '../components/editor/RichTextEditor';
+import RichTextEditor from '../components/editor/RichTextEditor';
 
 export default function AdminPanel() {
   const [activeSection, setActiveSection] = useState('posts');
