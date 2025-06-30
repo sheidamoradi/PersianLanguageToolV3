@@ -1,4 +1,6 @@
 import { useState, useRef } from "react";
+import { Users, FileText, Settings, BarChart3, Calendar, Image, Palette, Newspaper, Monitor, Volume2, Video, BookOpen, Menu, X, Search, Filter, Eye, EyeOff, Edit, Trash2, Plus, Save, Clock, Globe, Lock, Tag, Hash } from "lucide-react";
+import RichTextEditor from '../components/editor/RichTextEditor';
 
 interface AdminStats {
   totalCourses: number;
@@ -21,6 +23,47 @@ interface SlideItem {
   overlayOpacity: number;
   isActive: boolean;
   order: number;
+}
+
+interface PostItem {
+  id: number;
+  title: string;
+  slug: string;
+  content: string;
+  excerpt: string;
+  authorId: number;
+  authorName: string;
+  status: 'draft' | 'published' | 'scheduled';
+  visibility: 'public' | 'private' | 'password';
+  featuredImage?: string;
+  categories: string[];
+  tags: string[];
+  publishedAt?: string;
+  scheduledAt?: string;
+  viewCount: number;
+  likesCount: number;
+  seoTitle?: string;
+  seoDescription?: string;
+  allowComments: boolean;
+  isPinned: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface MediaItem {
+  id: number;
+  filename: string;
+  originalName: string;
+  mimeType: string;
+  fileSize: number;
+  width?: number;
+  height?: number;
+  url: string;
+  altText?: string;
+  caption?: string;
+  description?: string;
+  uploadedBy: number;
+  uploadedAt: string;
 }
 
 export default function AdminSimple() {
@@ -46,6 +89,30 @@ export default function AdminSimple() {
   ]);
   const [showSlideForm, setShowSlideForm] = useState(false);
   const [editingSlide, setEditingSlide] = useState<SlideItem | null>(null);
+
+  // Posts management states
+  const [posts, setPosts] = useState<PostItem[]>([]);
+  const [showPostForm, setShowPostForm] = useState(false);
+  const [editingPost, setEditingPost] = useState<PostItem | null>(null);
+  const [showMediaLibrary, setShowMediaLibrary] = useState(false);
+  const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
+  const [postFormData, setPostFormData] = useState({
+    title: '',
+    slug: '',
+    content: '',
+    excerpt: '',
+    status: 'draft' as 'draft' | 'published' | 'scheduled',
+    visibility: 'public' as 'public' | 'private' | 'password',
+    featuredImage: '',
+    categories: [] as string[],
+    tags: [] as string[],
+    publishedAt: '',
+    scheduledAt: '',
+    seoTitle: '',
+    seoDescription: '',
+    allowComments: true,
+    isPinned: false
+  });
   const [slideFormData, setSlideFormData] = useState({
     title: '',
     description: '',
