@@ -8,6 +8,7 @@ import LibraryPage from './pages/library-simple';
 import ProfilePage from './pages/profile-simple';
 import AdminPage from './pages/admin';
 import AdminSimple from './pages/admin-simple';
+import ProtectedContentDemo from './pages/protected-content';
 import Header from './components/layout/Header';
 
 const queryClient = new QueryClient({
@@ -66,6 +67,7 @@ function App() {
       case 'library': return <LibraryPage />;
       case 'profile': return <ProfilePage />;
       case 'admin': return <AdminSimple />;
+      case 'protected': return <ProtectedContentDemo />;
       default: return <HomePage />;
     }
   };
@@ -123,6 +125,13 @@ function App() {
                   icon="⚙️"
                   label="مدیریت"
                   isActive={activeTab === 'admin'}
+                  onClick={setActiveTab}
+                />
+                <NavButton
+                  id="protected"
+                  icon="🛡️"
+                  label="حفاظت"
+                  isActive={activeTab === 'protected'}
                   onClick={setActiveTab}
                 />
               </div>

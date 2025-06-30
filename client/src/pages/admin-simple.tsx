@@ -2,8 +2,9 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { type Course, type Project, type Document, type MediaContent, type Magazine, type Article, type ArticleContent, type Slide, type Workshop, type WorkshopSection } from "@shared/schema";
-import { Calendar, Edit, Eye, File, Folder, Image, Lock, LockOpen, MoreHorizontal, Plus, RefreshCw, Trash, Upload, Video, Save, X, Copy, Search, Filter, Bold, Italic, Type, List, ListOrdered, Quote, Undo, Redo, AlignLeft, AlignCenter, AlignRight, Link as LinkIcon, Image as ImageIcon, Tag } from "lucide-react";
+import { Calendar, Edit, Eye, File, Folder, Image, Lock, LockOpen, MoreHorizontal, Plus, RefreshCw, Trash, Upload, Video, Save, X, Copy, Search, Filter, Bold, Italic, Type, List, ListOrdered, Quote, Undo, Redo, AlignLeft, AlignCenter, AlignRight, Link as LinkIcon, Image as ImageIcon, Tag, Shield, Download } from "lucide-react";
 import RichTextEditor from '../components/editor/RichTextEditor';
+import ProtectionSettings from '../components/admin/ProtectionSettings';
 
 export default function AdminPage() {
   const [activeTab, setActiveTab] = useState("courses");
@@ -111,9 +112,35 @@ export default function AdminPage() {
 }
 
 function CoursesTab() {
+  const [showForm, setShowForm] = useState(false);
+  const [editingCourse, setEditingCourse] = useState<any>(null);
+  const [courseFormData, setCourseFormData] = useState({
+    title: '',
+    description: '',
+    thumbnailUrl: '',
+    category: '',
+    level: '',
+    accessLevel: 'free',
+    price: 0,
+    // Protection settings
+    allowDownload: true,
+    allowScreenshot: true,
+    allowCopy: true,
+    allowPrint: true,
+    watermarkText: '',
+    protectionLevel: 'none' as 'none' | 'basic' | 'strict'
+  });
+
   const { data: courses, isLoading } = useQuery<Course[]>({
     queryKey: ['/api/courses'],
   });
+
+  const handleProtectionChange = (settings: any) => {
+    setCourseFormData(prev => ({
+      ...prev,
+      ...settings
+    }));
+  };
 
   if (isLoading) {
     return (
@@ -131,62 +158,169 @@ function CoursesTab() {
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-md">
-      <div className="p-6 border-b">
-        <div className="flex items-center justify-between">
-          <h2 className="text-xl font-semibold">دوره‌های آموزشی</h2>
-          <button className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors flex items-center gap-2">
-            <Plus className="h-4 w-4" />
-            افزودن دوره جدید
-          </button>
+    <div className="space-y-6">
+      {/* Course Form */}
+      {showForm && (
+        <div className="bg-white rounded-lg border shadow-sm">
+          <div className="p-6 border-b">
+            <div className="flex items-center justify-between">
+              <h2 className="text-xl font-semibold text-gray-900">
+                {editingCourse ? 'ویرایش دوره' : 'افزودن دوره جدید'}
+              </h2>
+              <button
+                onClick={() => setShowForm(false)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <X className="h-6 w-6" />
+              </button>
+            </div>
+          </div>
+
+          <div className="p-6 space-y-6">
+            {/* Basic Info */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  عنوان دوره *
+                </label>
+                <input
+                  type="text"
+                  value={courseFormData.title}
+                  onChange={(e) => setCourseFormData({...courseFormData, title: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="عنوان دوره آموزشی..."
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  دسته‌بندی
+                </label>
+                <select
+                  value={courseFormData.category}
+                  onChange={(e) => setCourseFormData({...courseFormData, category: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                  <option value="">انتخاب دسته‌بندی</option>
+                  <option value="کاشت">کاشت</option>
+                  <option value="داشت">داشت</option>
+                  <option value="برداشت">برداشت</option>
+                  <option value="ابزار">ابزار و تجهیزات</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                توضیحات
+              </label>
+              <textarea
+                value={courseFormData.description}
+                onChange={(e) => setCourseFormData({...courseFormData, description: e.target.value})}
+                rows={3}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="توضیحات دوره..."
+              />
+            </div>
+
+            {/* Protection Settings */}
+            <ProtectionSettings
+              allowDownload={courseFormData.allowDownload}
+              allowScreenshot={courseFormData.allowScreenshot}
+              allowCopy={courseFormData.allowCopy}
+              allowPrint={courseFormData.allowPrint}
+              watermarkText={courseFormData.watermarkText}
+              protectionLevel={courseFormData.protectionLevel}
+              onChange={handleProtectionChange}
+            />
+
+            {/* Action Buttons */}
+            <div className="flex justify-end gap-3 pt-6 border-t">
+              <button
+                onClick={() => setShowForm(false)}
+                className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                انصراف
+              </button>
+              <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2">
+                <Save className="h-4 w-4" />
+                {editingCourse ? 'به‌روزرسانی' : 'ایجاد دوره'}
+              </button>
+            </div>
+          </div>
         </div>
-      </div>
-      
-      <div className="p-6">
-        {courses && courses.length > 0 ? (
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b">
-                  <th className="text-right py-2">عنوان</th>
-                  <th className="text-right py-2">وضعیت</th>
-                  <th className="text-right py-2">عملیات</th>
-                </tr>
-              </thead>
-              <tbody>
-                {courses.map(course => (
-                  <tr key={course.id} className="border-b">
-                    <td className="py-2">{course.title}</td>
-                    <td className="py-2">
-                      <span className="px-2 py-1 bg-green-100 text-green-800 rounded text-sm">
-                        فعال
-                      </span>
-                    </td>
-                    <td className="py-2">
-                      <div className="flex gap-2">
-                        <button className="p-1 hover:bg-gray-100 rounded">
-                          <Eye className="h-4 w-4" />
-                        </button>
-                        <button className="p-1 hover:bg-gray-100 rounded">
-                          <Edit className="h-4 w-4" />
-                        </button>
-                        <button className="p-1 hover:bg-gray-100 rounded text-red-500">
-                          <Trash className="h-4 w-4" />
-                        </button>
-                      </div>
-                    </td>
+      )}
+
+      {/* Courses List */}
+      <div className="bg-white rounded-lg shadow-md">
+        <div className="p-6 border-b">
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-semibold">دوره‌های آموزشی</h2>
+            <button 
+              onClick={() => setShowForm(true)}
+              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors flex items-center gap-2"
+            >
+              <Plus className="h-4 w-4" />
+              افزودن دوره جدید
+            </button>
+          </div>
+        </div>
+        
+        <div className="p-6">
+          {courses && courses.length > 0 ? (
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b">
+                    <th className="text-right py-2">عنوان</th>
+                    <th className="text-right py-2">حفاظت</th>
+                    <th className="text-right py-2">وضعیت</th>
+                    <th className="text-right py-2">عملیات</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        ) : (
-          <div className="text-center py-12">
-            <Video className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">هیچ دوره‌ای یافت نشد</h3>
-            <p className="text-gray-600">برای شروع، دوره جدیدی اضافه کنید</p>
-          </div>
-        )}
+                </thead>
+                <tbody>
+                  {courses.map(course => (
+                    <tr key={course.id} className="border-b">
+                      <td className="py-2">{course.title}</td>
+                      <td className="py-2">
+                        <div className="flex items-center gap-1">
+                          <Shield className="h-4 w-4 text-gray-500" />
+                          {course.allowDownload === false && <Download className="h-3 w-3 text-red-500" title="دانلود غیرفعال" />}
+                          {course.allowScreenshot === false && <Eye className="h-3 w-3 text-red-500" title="اسکرین‌شات غیرفعال" />}
+                          {course.allowCopy === false && <Copy className="h-3 w-3 text-red-500" title="کپی غیرفعال" />}
+                        </div>
+                      </td>
+                      <td className="py-2">
+                        <span className="px-2 py-1 bg-green-100 text-green-800 rounded text-sm">
+                          فعال
+                        </span>
+                      </td>
+                      <td className="py-2">
+                        <div className="flex gap-2">
+                          <button className="p-1 hover:bg-gray-100 rounded">
+                            <Eye className="h-4 w-4" />
+                          </button>
+                          <button className="p-1 hover:bg-gray-100 rounded">
+                            <Edit className="h-4 w-4" />
+                          </button>
+                          <button className="p-1 hover:bg-gray-100 rounded text-red-500">
+                            <Trash className="h-4 w-4" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <Video className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-gray-900 mb-2">هیچ دوره‌ای یافت نشد</h3>
+              <p className="text-gray-600">برای شروع، دوره جدیدی اضافه کنید</p>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
