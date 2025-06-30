@@ -29,7 +29,7 @@ interface RichTextEditorProps {
   onImageInsert?: () => void;
 }
 
-export default function RichTextEditor({ content, onChange, onImageInsert }: RichTextEditorProps) {
+export function RichTextEditor({ content, onChange, onImageInsert }: RichTextEditorProps) {
   const editor = useEditor({
     extensions: [
       StarterKit,
