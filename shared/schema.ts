@@ -166,6 +166,13 @@ export const magazines = pgTable("magazines", {
   isActive: boolean("is_active").default(true),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
+  // Content Protection Settings
+  allowDownload: boolean("allow_download").default(true),
+  allowScreenshot: boolean("allow_screenshot").default(true),
+  allowCopy: boolean("allow_copy").default(true),
+  allowPrint: boolean("allow_print").default(true),
+  watermarkText: text("watermark_text"),
+  protectionLevel: text("protection_level").default("none"), // none, basic, strict
 });
 
 export const articles = pgTable("articles", {
