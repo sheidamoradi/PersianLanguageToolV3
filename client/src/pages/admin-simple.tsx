@@ -102,6 +102,20 @@ function CoursesTab() {
     queryKey: ['/api/courses'],
   });
 
+  const queryClient = useQueryClient();
+
+  const updateProtectionMutation = useMutation({
+    mutationFn: async ({ courseId, protectionField, value }: { courseId: number, protectionField: string, value: boolean }) => {
+      return await apiRequest(`/api/courses/${courseId}/protection`, {
+        method: 'PATCH',
+        body: JSON.stringify({ [protectionField]: value })
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/courses'] });
+    },
+  });
+
   const handleProtectionChange = (settings: any) => {
     setCourseFormData(prev => ({
       ...prev,
@@ -250,11 +264,35 @@ function CoursesTab() {
                     <tr key={course.id} className="border-b">
                       <td className="py-2">{course.title}</td>
                       <td className="py-2">
-                        <div className="flex items-center gap-1">
-                          <Shield className="h-4 w-4 text-gray-500" />
-                          {course.allowDownload === false && <Download className="h-3 w-3 text-red-500" />}
-                          {course.allowScreenshot === false && <Eye className="h-3 w-3 text-red-500" />}
-                          {course.allowCopy === false && <Copy className="h-3 w-3 text-red-500" />}
+                        <div className="flex items-center gap-2">
+                          <label className="flex items-center gap-1 cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={!course.allowDownload}
+                              onChange={(e) => updateProtectionMutation.mutate({
+                                courseId: course.id,
+                                protectionField: 'allowDownload',
+                                value: !e.target.checked
+                              })}
+                              className="w-4 h-4"
+                            />
+                            <Download className="h-3 w-3 text-red-500" />
+                            <span className="text-xs text-gray-600">قفل دانلود</span>
+                          </label>
+                          <label className="flex items-center gap-1 cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={!course.allowScreenshot}
+                              onChange={(e) => updateProtectionMutation.mutate({
+                                courseId: course.id,
+                                protectionField: 'allowScreenshot',
+                                value: !e.target.checked
+                              })}
+                              className="w-4 h-4"
+                            />
+                            <Eye className="h-3 w-3 text-red-500" />
+                            <span className="text-xs text-gray-600">قفل اسکرین‌شات</span>
+                          </label>
                         </div>
                       </td>
                       <td className="py-2">
@@ -298,6 +336,20 @@ function ProjectsTab() {
     queryKey: ['/api/projects'],
   });
 
+  const queryClient = useQueryClient();
+
+  const updateProjectProtectionMutation = useMutation({
+    mutationFn: async ({ projectId, protectionField, value }: { projectId: number, protectionField: string, value: boolean }) => {
+      return await apiRequest(`/api/projects/${projectId}/protection`, {
+        method: 'PATCH',
+        body: JSON.stringify({ [protectionField]: value })
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/projects'] });
+    },
+  });
+
   if (isLoading) {
     return <div className="text-center py-8">در حال بارگذاری...</div>;
   }
@@ -324,6 +376,39 @@ function ProjectsTab() {
                   <span className="text-sm text-gray-500">سطح {project.difficulty}</span>
                 </div>
                 <p className="text-sm text-gray-600 mb-3">{project.description}</p>
+                
+                {/* Protection Controls */}
+                <div className="flex items-center gap-3 mb-3 text-xs">
+                  <label className="flex items-center gap-1 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={!project.allowDownload}
+                      onChange={(e) => updateProjectProtectionMutation.mutate({
+                        projectId: project.id,
+                        protectionField: 'allowDownload',
+                        value: !e.target.checked
+                      })}
+                      className="w-3 h-3"
+                    />
+                    <Download className="h-3 w-3 text-red-500" />
+                    <span className="text-gray-600">قفل دانلود</span>
+                  </label>
+                  <label className="flex items-center gap-1 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={!project.allowCopy}
+                      onChange={(e) => updateProjectProtectionMutation.mutate({
+                        projectId: project.id,
+                        protectionField: 'allowCopy',
+                        value: !e.target.checked
+                      })}
+                      className="w-3 h-3"
+                    />
+                    <Copy className="h-3 w-3 text-red-500" />
+                    <span className="text-gray-600">قفل کپی</span>
+                  </label>
+                </div>
+
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-gray-500">{project.estimatedHours} ساعت</span>
                   <div className="flex gap-2">
@@ -358,6 +443,20 @@ function DocumentsTab() {
     queryKey: ['/api/documents'],
   });
 
+  const queryClient = useQueryClient();
+
+  const updateDocumentProtectionMutation = useMutation({
+    mutationFn: async ({ documentId, protectionField, value }: { documentId: number, protectionField: string, value: boolean }) => {
+      return await apiRequest(`/api/documents/${documentId}/protection`, {
+        method: 'PATCH',
+        body: JSON.stringify({ [protectionField]: value })
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/documents'] });
+    },
+  });
+
   if (isLoading) {
     return <div className="text-center py-8">در حال بارگذاری...</div>;
   }
@@ -378,24 +477,72 @@ function DocumentsTab() {
         {documents && documents.length > 0 ? (
           <div className="space-y-4">
             {documents.map(doc => (
-              <div key={doc.id} className="flex items-center justify-between p-4 border rounded-lg">
-                <div className="flex items-center gap-3">
-                  <File className="h-8 w-8 text-blue-600" />
-                  <div>
-                    <h3 className="font-medium">{doc.title}</h3>
-                    <p className="text-sm text-gray-600">{doc.excerpt}</p>
+              <div key={doc.id} className="p-4 border rounded-lg">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-3">
+                    <File className="h-8 w-8 text-blue-600" />
+                    <div>
+                      <h3 className="font-medium">{doc.title}</h3>
+                      <p className="text-sm text-gray-600">{doc.excerpt}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button className="p-2 hover:bg-gray-100 rounded">
+                      <Eye className="h-4 w-4" />
+                    </button>
+                    <button className="p-2 hover:bg-gray-100 rounded">
+                      <Edit className="h-4 w-4" />
+                    </button>
+                    <button className="p-2 hover:bg-gray-100 rounded text-red-500">
+                      <Trash className="h-4 w-4" />
+                    </button>
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <button className="p-2 hover:bg-gray-100 rounded">
-                    <Eye className="h-4 w-4" />
-                  </button>
-                  <button className="p-2 hover:bg-gray-100 rounded">
-                    <Edit className="h-4 w-4" />
-                  </button>
-                  <button className="p-2 hover:bg-gray-100 rounded text-red-500">
-                    <Trash className="h-4 w-4" />
-                  </button>
+                
+                {/* Protection Controls */}
+                <div className="flex items-center gap-4 text-xs border-t pt-3">
+                  <label className="flex items-center gap-1 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={!doc.allowDownload}
+                      onChange={(e) => updateDocumentProtectionMutation.mutate({
+                        documentId: doc.id,
+                        protectionField: 'allowDownload',
+                        value: !e.target.checked
+                      })}
+                      className="w-3 h-3"
+                    />
+                    <Download className="h-3 w-3 text-red-500" />
+                    <span className="text-gray-600">قفل دانلود</span>
+                  </label>
+                  <label className="flex items-center gap-1 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={!doc.allowCopy}
+                      onChange={(e) => updateDocumentProtectionMutation.mutate({
+                        documentId: doc.id,
+                        protectionField: 'allowCopy',
+                        value: !e.target.checked
+                      })}
+                      className="w-3 h-3"
+                    />
+                    <Copy className="h-3 w-3 text-red-500" />
+                    <span className="text-gray-600">قفل کپی</span>
+                  </label>
+                  <label className="flex items-center gap-1 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={!doc.allowPrint}
+                      onChange={(e) => updateDocumentProtectionMutation.mutate({
+                        documentId: doc.id,
+                        protectionField: 'allowPrint',
+                        value: !e.target.checked
+                      })}
+                      className="w-3 h-3"
+                    />
+                    <Shield className="h-3 w-3 text-red-500" />
+                    <span className="text-gray-600">قفل چاپ</span>
+                  </label>
                 </div>
               </div>
             ))}
