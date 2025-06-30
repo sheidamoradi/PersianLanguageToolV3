@@ -21,7 +21,7 @@ export default function AdminPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 flex" dir="rtl">
+    <div className="h-screen bg-gray-50 flex overflow-hidden" dir="rtl">
       {/* Sidebar Overlay */}
       {sidebarOpen && (
         <div
@@ -46,7 +46,7 @@ export default function AdminPage() {
           </button>
         </div>
         
-        <div className="p-4">
+        <div className="p-4 h-full overflow-y-auto">
           <nav className="space-y-2">
             {menuItems.map((item) => (
               <button
@@ -70,9 +70,9 @@ export default function AdminPage() {
       </div>
 
       {/* Main content */}
-      <div className="flex-1 lg:mr-64">
+      <div className="flex-1 lg:mr-64 flex flex-col h-full">
         {/* Mobile header */}
-        <div className="bg-white shadow-sm border-b lg:hidden">
+        <div className="bg-white shadow-sm border-b lg:hidden flex-shrink-0">
           <div className="flex items-center justify-between p-4">
             <h1 className="text-lg font-semibold text-gray-900">پنل مدیریت</h1>
             <button
@@ -87,8 +87,8 @@ export default function AdminPage() {
         </div>
 
         {/* Page content */}
-        <main className="p-6">
-          <div className="mb-6 hidden lg:block">
+        <main className="flex-1 p-6 overflow-hidden">
+          <div className="mb-6 hidden lg:block flex-shrink-0">
             <h1 className="text-3xl font-bold text-gray-900 mb-2">
               {menuItems.find(item => item.id === activeTab)?.label || 'پنل مدیریت'}
             </h1>
@@ -96,14 +96,16 @@ export default function AdminPage() {
           </div>
 
           {/* Content */}
-          <div className="space-y-6">
-            {activeTab === "courses" && <CoursesTab />}
-            {activeTab === "projects" && <ProjectsTab />}
-            {activeTab === "documents" && <DocumentsTab />}
-            {activeTab === "slides" && <SlidesTab />}
-            {activeTab === "magazines" && <MagazinesTab />}
-            {activeTab === "posts" && <PostsTab />}
-            {activeTab === "users" && <UsersTab />}
+          <div className="h-full overflow-y-auto">
+            <div className="space-y-6 pb-6">
+              {activeTab === "courses" && <CoursesTab />}
+              {activeTab === "projects" && <ProjectsTab />}
+              {activeTab === "documents" && <DocumentsTab />}
+              {activeTab === "slides" && <SlidesTab />}
+              {activeTab === "magazines" && <MagazinesTab />}
+              {activeTab === "posts" && <PostsTab />}
+              {activeTab === "users" && <UsersTab />}
+            </div>
           </div>
         </main>
       </div>
