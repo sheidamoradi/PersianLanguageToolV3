@@ -175,6 +175,49 @@ export const articleContents = pgTable("article_contents", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+// مدل‌های نوشته‌ها (مشابه وردپرس)
+export const posts = pgTable("posts", {
+  id: serial("id").primaryKey(),
+  title: text("title").notNull(),
+  slug: text("slug").notNull().unique(),
+  content: text("content").notNull(), // HTML content
+  excerpt: text("excerpt"), // خلاصه نوشته
+  authorId: integer("author_id").notNull(),
+  authorName: text("author_name").notNull(),
+  status: text("status").notNull().default("draft"), // draft, published, scheduled
+  visibility: text("visibility").default("public"), // public, private, password
+  featuredImage: text("featured_image"),
+  categories: text("categories").array(), // دسته‌بندی‌ها
+  tags: text("tags").array(), // برچسب‌ها
+  publishedAt: timestamp("published_at"),
+  scheduledAt: timestamp("scheduled_at"), // برای نوشته‌های زمان‌بندی شده
+  viewCount: integer("view_count").default(0),
+  likesCount: integer("likes_count").default(0),
+  seoTitle: text("seo_title"),
+  seoDescription: text("seo_description"),
+  allowComments: boolean("allow_comments").default(true),
+  isPinned: boolean("is_pinned").default(false),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// جدول رسانه برای کتابخانه رسانه مثل وردپرس
+export const mediaLibrary = pgTable("media_library", {
+  id: serial("id").primaryKey(),
+  filename: text("filename").notNull(),
+  originalName: text("original_name").notNull(),
+  mimeType: text("mime_type").notNull(),
+  fileSize: integer("file_size").notNull(), // اندازه فایل به بایت
+  width: integer("width"), // برای تصاویر
+  height: integer("height"), // برای تصاویر
+  url: text("url").notNull(),
+  altText: text("alt_text"), // متن جایگزین برای تصاویر
+  caption: text("caption"),
+  description: text("description"),
+  uploadedBy: integer("uploaded_by").notNull(),
+  uploadedAt: timestamp("uploaded_at").defaultNow(),
+});
+
 // مدل‌های داده‌ برای کارگاه‌های آموزشی
 export const workshops = pgTable("workshops", {
   id: serial("id").primaryKey(),
@@ -252,6 +295,8 @@ export const insertArticleContentSchema = createInsertSchema(articleContents).om
 export const insertWorkshopSchema = createInsertSchema(workshops).omit({ id: true, createdAt: true, updatedAt: true });
 export const insertWorkshopSectionSchema = createInsertSchema(workshopSections).omit({ id: true, createdAt: true, updatedAt: true });
 export const insertWorkshopContentSchema = createInsertSchema(workshopContents).omit({ id: true, createdAt: true });
+export const insertPostSchema = createInsertSchema(posts).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertMediaLibrarySchema = createInsertSchema(mediaLibrary).omit({ id: true, uploadedAt: true });
 
 // Types
 export type InsertUser = z.infer<typeof insertUserSchema>;
@@ -298,6 +343,12 @@ export type WorkshopSection = typeof workshopSections.$inferSelect;
 
 export type InsertWorkshopContent = z.infer<typeof insertWorkshopContentSchema>;
 export type WorkshopContent = typeof workshopContents.$inferSelect;
+
+export type InsertPost = z.infer<typeof insertPostSchema>;
+export type Post = typeof posts.$inferSelect;
+
+export type InsertMediaLibrary = z.infer<typeof insertMediaLibrarySchema>;
+export type MediaLibrary = typeof mediaLibrary.$inferSelect;
 
 export const insertSlideSchema = createInsertSchema(slides).omit({ id: true, createdAt: true, updatedAt: true });
 
