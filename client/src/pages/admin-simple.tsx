@@ -80,6 +80,7 @@ export default function AdminSimple() {
     setSlideFormData({
       title: '',
       description: '',
+      imageUrl: '',
       buttonText: '',
       buttonUrl: '',
       textPosition: 'center',
@@ -126,6 +127,7 @@ export default function AdminSimple() {
     setSlideFormData({
       title: slide.title,
       description: slide.description,
+      imageUrl: slide.imageUrl || '',
       buttonText: slide.buttonText || '',
       buttonUrl: slide.buttonUrl || '',
       textPosition: slide.textPosition,
