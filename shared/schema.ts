@@ -41,6 +41,13 @@ export const courses = pgTable("courses", {
   accessLevel: text("access_level").default("free"), // free, premium, vip
   price: integer("price").default(0), // price in tomans
   isLocked: boolean("is_locked").default(false),
+  // Content Protection Settings
+  allowDownload: boolean("allow_download").default(true),
+  allowScreenshot: boolean("allow_screenshot").default(true),
+  allowCopy: boolean("allow_copy").default(true),
+  allowPrint: boolean("allow_print").default(true),
+  watermarkText: text("watermark_text"),
+  protectionLevel: text("protection_level").default("none"), // none, basic, strict
 });
 
 export const modules = pgTable("modules", {
@@ -64,6 +71,15 @@ export const projects = pgTable("projects", {
   pages: integer("pages"),
   contentUrl: text("content_url"),
   isLocked: boolean("is_locked").default(false),
+  difficulty: text("difficulty"),
+  estimatedHours: integer("estimated_hours"),
+  // Content Protection Settings
+  allowDownload: boolean("allow_download").default(true),
+  allowScreenshot: boolean("allow_screenshot").default(true),
+  allowCopy: boolean("allow_copy").default(true),
+  allowPrint: boolean("allow_print").default(true),
+  watermarkText: text("watermark_text"),
+  protectionLevel: text("protection_level").default("none"), // none, basic, strict
 });
 
 export const documentCategories = pgTable("document_categories", {
@@ -108,6 +124,12 @@ export const documents = pgTable("documents", {
   publishedAt: timestamp("published_at"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
+  // Enhanced Content Protection Settings
+  allowScreenshot: boolean("allow_screenshot").default(true),
+  allowCopy: boolean("allow_copy").default(true),
+  allowPrint: boolean("allow_print").default(true),
+  watermarkText: text("watermark_text"),
+  protectionLevel: text("protection_level").default("none"), // none, basic, strict
 });
 
 export const documentTagRelations = pgTable("document_tag_relations", {
@@ -235,6 +257,13 @@ export const workshops = pgTable("workshops", {
   registrationOpen: boolean("registration_open").default(true),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
+  // Content Protection Settings
+  allowDownload: boolean("allow_download").default(true),
+  allowScreenshot: boolean("allow_screenshot").default(true),
+  allowCopy: boolean("allow_copy").default(true),
+  allowPrint: boolean("allow_print").default(true),
+  watermarkText: text("watermark_text"),
+  protectionLevel: text("protection_level").default("none"), // none, basic, strict
 });
 
 export const workshopSections = pgTable("workshop_sections", {
