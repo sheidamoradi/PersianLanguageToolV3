@@ -7,52 +7,104 @@ import RichTextEditor from '../components/editor/RichTextEditor';
 
 export default function AdminPage() {
   const [activeTab, setActiveTab] = useState("courses");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const menuItems = [
+    { id: "courses", label: "دوره‌ها", icon: Video },
+    { id: "projects", label: "پروژه‌ها", icon: Folder },
+    { id: "documents", label: "اسناد", icon: File },
+    { id: "slides", label: "اسلایدها", icon: Image },
+    { id: "magazines", label: "مجله‌ها", icon: Calendar },
+    { id: "posts", label: "نوشته‌ها", icon: Type },
+    { id: "users", label: "کاربران", icon: Lock }
+  ];
 
   return (
-    <div dir="rtl" className="container mx-auto py-6 pb-20">
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">پنل مدیریت</h1>
-        <p className="text-gray-600">مدیریت محتوا و تنظیمات سایت</p>
+    <div className="min-h-screen bg-gray-50 flex" dir="rtl">
+      {/* Sidebar Overlay */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
+      {/* Sidebar */}
+      <div className={`
+        fixed inset-y-0 right-0 z-50 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out
+        lg:translate-x-0 lg:static lg:inset-0
+        ${sidebarOpen ? 'translate-x-0' : 'translate-x-full'}
+      `}>
+        <div className="flex items-center justify-between p-4 border-b bg-blue-600 text-white">
+          <h2 className="text-xl font-bold">پنل مدیریت</h2>
+          <button
+            onClick={() => setSidebarOpen(false)}
+            className="lg:hidden p-2 text-white hover:bg-blue-700 rounded"
+          >
+            <X className="h-6 w-6" />
+          </button>
+        </div>
+        
+        <div className="p-4">
+          <nav className="space-y-2">
+            {menuItems.map((item) => (
+              <button
+                key={item.id}
+                onClick={() => {
+                  setActiveTab(item.id);
+                  setSidebarOpen(false);
+                }}
+                className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-right transition-colors ${
+                  activeTab === item.id
+                    ? 'bg-blue-100 text-blue-800 font-medium'
+                    : 'text-gray-700 hover:bg-gray-100'
+                }`}
+              >
+                <item.icon className="h-5 w-5" />
+                {item.label}
+              </button>
+            ))}
+          </nav>
+        </div>
       </div>
 
-      {/* Tab Navigation */}
-      <div className="flex gap-2 mb-6 border-b overflow-x-auto">
-        {[
-          { id: "courses", label: "دوره‌ها", icon: Video },
-          { id: "projects", label: "پروژه‌ها", icon: Folder },
-          { id: "documents", label: "اسناد", icon: File },
-          { id: "slides", label: "اسلایدها", icon: Image },
-          { id: "magazines", label: "مجله‌ها", icon: Calendar },
-          { id: "posts", label: "نوشته‌ها", icon: Type },
-          { id: "users", label: "کاربران", icon: Lock }
-        ].map(tab => {
-          const IconComponent = tab.icon;
-          return (
+      {/* Main content */}
+      <div className="flex-1 lg:mr-64">
+        {/* Mobile header */}
+        <div className="bg-white shadow-sm border-b lg:hidden">
+          <div className="flex items-center justify-between p-4">
+            <h1 className="text-lg font-semibold text-gray-900">پنل مدیریت</h1>
             <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2 px-4 py-2 border-b-2 transition-colors whitespace-nowrap ${
-                activeTab === tab.id 
-                  ? 'border-blue-500 text-blue-600 font-medium' 
-                  : 'border-transparent text-gray-600 hover:text-gray-800'
-              }`}
+              onClick={() => setSidebarOpen(true)}
+              className="p-2 text-gray-600 hover:text-gray-900"
             >
-              <IconComponent className="h-4 w-4" />
-              {tab.label}
+              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
             </button>
-          );
-        })}
-      </div>
+          </div>
+        </div>
 
-      {/* Content */}
-      <div className="space-y-6">
-        {activeTab === "courses" && <CoursesTab />}
-        {activeTab === "projects" && <ProjectsTab />}
-        {activeTab === "documents" && <DocumentsTab />}
-        {activeTab === "slides" && <SlidesTab />}
-        {activeTab === "magazines" && <MagazinesTab />}
-        {activeTab === "posts" && <PostsTab />}
-        {activeTab === "users" && <UsersTab />}
+        {/* Page content */}
+        <main className="p-6">
+          <div className="mb-6 hidden lg:block">
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              {menuItems.find(item => item.id === activeTab)?.label || 'پنل مدیریت'}
+            </h1>
+            <p className="text-gray-600">مدیریت محتوا و تنظیمات سایت</p>
+          </div>
+
+          {/* Content */}
+          <div className="space-y-6">
+            {activeTab === "courses" && <CoursesTab />}
+            {activeTab === "projects" && <ProjectsTab />}
+            {activeTab === "documents" && <DocumentsTab />}
+            {activeTab === "slides" && <SlidesTab />}
+            {activeTab === "magazines" && <MagazinesTab />}
+            {activeTab === "posts" && <PostsTab />}
+            {activeTab === "users" && <UsersTab />}
+          </div>
+        </main>
       </div>
     </div>
   );
