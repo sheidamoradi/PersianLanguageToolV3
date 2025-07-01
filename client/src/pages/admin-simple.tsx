@@ -1368,23 +1368,33 @@ function MediaTab() {
     { id: 4, name: 'background-pattern.svg', url: '/api/uploads/background-pattern.svg', type: 'image', size: '45 KB', date: '1403/10/12' },
   ];
 
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (files) {
       setIsUploading(true);
-      // Simulate upload process
-      setTimeout(() => {
-        const newFiles = Array.from(files).map((file, index) => ({
-          id: Date.now() + index,
-          name: file.name,
-          url: URL.createObjectURL(file),
-          type: file.type.startsWith('image/') ? 'image' : 'document',
-          size: `${(file.size / 1024).toFixed(0)} KB`,
-          date: new Date().toLocaleDateString('fa-IR')
-        }));
-        setUploadedFiles(prev => [...prev, ...newFiles]);
+      
+      try {
+        const formData = new FormData();
+        Array.from(files).forEach(file => {
+          formData.append('files', file);
+        });
+
+        const response = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          setUploadedFiles(prev => [...prev, ...result.files]);
+        } else {
+          console.error('Upload failed');
+        }
+      } catch (error) {
+        console.error('Upload error:', error);
+      } finally {
         setIsUploading(false);
-      }, 2000);
+      }
     }
   };
 
