@@ -34,6 +34,7 @@ export default function AdminPage() {
             {menuItems.map((item) => (
               <button
                 key={item.id}
+                data-tab={item.id}
                 onClick={() => setActiveTab(item.id)}
                 className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-right transition-colors ${
                   activeTab === item.id
@@ -825,13 +826,32 @@ function SlidesTab() {
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 آدرس تصویر
               </label>
-              <input
-                type="url"
-                value={formData.imageUrl}
-                onChange={(e) => setFormData({...formData, imageUrl: e.target.value})}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="https://example.com/image.jpg"
-              />
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={formData.imageUrl}
+                  onChange={(e) => setFormData({...formData, imageUrl: e.target.value})}
+                  className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="/uploads/image.jpg یا https://example.com/image.jpg"
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    const mediaTab = document.querySelector('[data-tab="media"]') as HTMLElement;
+                    if (mediaTab) {
+                      mediaTab.click();
+                    }
+                  }}
+                  className="px-3 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors flex items-center gap-1 whitespace-nowrap"
+                  title="باز کردن کتابخانه رسانه"
+                >
+                  <Upload className="h-4 w-4" />
+                  رسانه
+                </button>
+              </div>
+              <p className="text-xs text-gray-500 mt-1">
+                می‌توانید از کتابخانه رسانه تصویر انتخاب کرده و لینک آن را کپی کنید
+              </p>
             </div>
 
             <div className="flex items-center gap-3">
