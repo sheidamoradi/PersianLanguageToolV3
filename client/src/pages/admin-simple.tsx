@@ -2,54 +2,76 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { type Course, type Project, type Document, type MediaContent, type Magazine, type Article, type ArticleContent, type Slide, type Workshop, type WorkshopSection } from "@shared/schema";
-import { Calendar, Edit, Eye, File, Folder, Image, Lock, LockOpen, MoreHorizontal, Plus, RefreshCw, Trash, Upload, Video } from "lucide-react";
+import { Calendar, Edit, Eye, File, Folder, Image, Lock, LockOpen, MoreHorizontal, Plus, RefreshCw, Trash, Upload, Video, Copy, X } from "lucide-react";
 
 export default function AdminPage() {
   const [activeTab, setActiveTab] = useState("courses");
 
   return (
-    <div dir="rtl" className="container mx-auto py-6 pb-20">
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">پنل مدیریت</h1>
-        <p className="text-gray-600">مدیریت محتوا و تنظیمات سایت</p>
-      </div>
+    <div dir="rtl" className="min-h-screen bg-gray-50">
+      <div className="flex">
+        {/* Sidebar */}
+        <div className="w-64 bg-white shadow-sm border-l min-h-screen">
+          <div className="p-6 border-b">
+            <h1 className="text-xl font-bold text-gray-900">پنل مدیریت</h1>
+            <p className="text-sm text-gray-600 mt-1">مدیریت محتوا و تنظیمات</p>
+          </div>
+          
+          <nav className="p-4">
+            <div className="space-y-1">
+              {[
+                { id: "courses", label: "دوره‌ها", icon: Video },
+                { id: "projects", label: "پروژه‌ها", icon: Folder },
+                { id: "documents", label: "اسناد", icon: File },
+                { id: "slides", label: "اسلایدها", icon: Image },
+                { id: "magazines", label: "مجله‌ها", icon: Calendar },
+                { id: "media", label: "کتابخانه رسانه", icon: Upload },
+                { id: "users", label: "کاربران", icon: Lock }
+              ].map(tab => {
+                const IconComponent = tab.icon;
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`w-full flex items-center gap-3 px-3 py-2 rounded-md text-right transition-colors ${
+                      activeTab === tab.id 
+                        ? 'bg-blue-50 text-blue-700 font-medium' 
+                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                    }`}
+                  >
+                    <IconComponent className="h-4 w-4" />
+                    {tab.label}
+                  </button>
+                );
+              })}
+            </div>
+          </nav>
+        </div>
 
-      {/* Tab Navigation */}
-      <div className="flex gap-2 mb-6 border-b overflow-x-auto">
-        {[
-          { id: "courses", label: "دوره‌ها", icon: Video },
-          { id: "projects", label: "پروژه‌ها", icon: Folder },
-          { id: "documents", label: "اسناد", icon: File },
-          { id: "slides", label: "اسلایدها", icon: Image },
-          { id: "magazines", label: "مجله‌ها", icon: Calendar },
-          { id: "users", label: "کاربران", icon: Lock }
-        ].map(tab => {
-          const IconComponent = tab.icon;
-          return (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2 px-4 py-2 border-b-2 transition-colors whitespace-nowrap ${
-                activeTab === tab.id 
-                  ? 'border-blue-500 text-blue-600 font-medium' 
-                  : 'border-transparent text-gray-600 hover:text-gray-800'
-              }`}
-            >
-              <IconComponent className="h-4 w-4" />
-              {tab.label}
-            </button>
-          );
-        })}
-      </div>
+        {/* Main Content */}
+        <div className="flex-1 p-6">
+          <div className="mb-6">
+            <h2 className="text-2xl font-bold text-gray-900">
+              {activeTab === "courses" && "دوره‌های آموزشی"}
+              {activeTab === "projects" && "پروژه‌ها"}
+              {activeTab === "documents" && "اسناد"}
+              {activeTab === "slides" && "اسلایدهای صفحه اصلی"}
+              {activeTab === "magazines" && "مجله‌ها"}
+              {activeTab === "media" && "کتابخانه رسانه"}
+              {activeTab === "users" && "مدیریت کاربران"}
+            </h2>
+          </div>
 
-      {/* Content */}
-      <div className="space-y-6">
-        {activeTab === "courses" && <CoursesTab />}
-        {activeTab === "projects" && <ProjectsTab />}
-        {activeTab === "documents" && <DocumentsTab />}
-        {activeTab === "slides" && <SlidesTab />}
-        {activeTab === "magazines" && <MagazinesTab />}
-        {activeTab === "users" && <UsersTab />}
+          <div className="space-y-6">
+            {activeTab === "courses" && <CoursesTab />}
+            {activeTab === "projects" && <ProjectsTab />}
+            {activeTab === "documents" && <DocumentsTab />}
+            {activeTab === "slides" && <SlidesTab />}
+            {activeTab === "magazines" && <MagazinesTab />}
+            {activeTab === "media" && <MediaTab />}
+            {activeTab === "users" && <UsersTab />}
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -915,6 +937,188 @@ function UsersTab() {
             )}
           </div>
         </>
+      )}
+    </div>
+  );
+}
+
+function MediaTab() {
+  const [uploadedFiles, setUploadedFiles] = useState([
+    { id: 1, name: 'course-cover.jpg', url: '/uploads/course-cover.jpg', type: 'image', size: '245 KB', uploadedAt: '1403/10/15' },
+    { id: 2, name: 'slider-bg.png', url: '/uploads/slider-bg.png', type: 'image', size: '512 KB', uploadedAt: '1403/10/14' },
+    { id: 3, name: 'document-sample.pdf', url: '/uploads/document-sample.pdf', type: 'document', size: '1.2 MB', uploadedAt: '1403/10/13' },
+  ]);
+  const [isUploading, setIsUploading] = useState(false);
+  const [showCopyDialog, setShowCopyDialog] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<any>(null);
+
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (files) {
+      setIsUploading(true);
+      
+      try {
+        const formData = new FormData();
+        Array.from(files).forEach(file => {
+          formData.append('files', file);
+        });
+
+        const response = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          const newFiles = result.files.map((file: any, index: number) => ({
+            id: uploadedFiles.length + index + 1,
+            name: file.filename,
+            url: file.url,
+            type: file.originalname.includes('.pdf') ? 'document' : 'image',
+            size: (file.size / 1024).toFixed(0) + ' KB',
+            uploadedAt: new Date().toLocaleDateString('fa-IR')
+          }));
+          setUploadedFiles(prev => [...prev, ...newFiles]);
+        } else {
+          console.error('Upload failed');
+        }
+      } catch (error) {
+        console.error('Upload error:', error);
+      } finally {
+        setIsUploading(false);
+      }
+    }
+  };
+
+  const copyToClipboard = (url: string) => {
+    navigator.clipboard.writeText(url);
+  };
+
+  const deleteFile = (fileId: number) => {
+    setUploadedFiles(prev => prev.filter(f => f.id !== fileId));
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="bg-white rounded-lg shadow-md">
+        <div className="p-6 border-b">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-lg font-semibold">کتابخانه رسانه</h3>
+              <p className="text-sm text-gray-600 mt-1">مدیریت تصاویر و فایل‌های سایت</p>
+            </div>
+            <div className="flex items-center gap-3">
+              <label className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors cursor-pointer flex items-center gap-2">
+                <Upload className="h-4 w-4" />
+                {isUploading ? 'در حال آپلود...' : 'آپلود فایل'}
+                <input
+                  type="file"
+                  multiple
+                  accept="image/*,application/pdf"
+                  onChange={handleFileUpload}
+                  className="hidden"
+                />
+              </label>
+            </div>
+          </div>
+        </div>
+        
+        <div className="p-6">
+          {uploadedFiles && uploadedFiles.length > 0 ? (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
+              {uploadedFiles.map(file => (
+                <div key={file.id} className="border rounded-lg p-3 hover:shadow-md transition-shadow">
+                  <div className="aspect-square bg-gray-100 rounded-lg mb-3 flex items-center justify-center overflow-hidden">
+                    {file.type === 'image' ? (
+                      <img 
+                        src={file.url} 
+                        alt={file.name}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.currentTarget.style.display = 'none';
+                          e.currentTarget.nextElementSibling!.classList.remove('hidden');
+                        }}
+                      />
+                    ) : (
+                      <File className="h-8 w-8 text-gray-400" />
+                    )}
+                  </div>
+                  <div className="space-y-1">
+                    <h4 className="text-xs font-medium truncate" title={file.name}>{file.name}</h4>
+                    <p className="text-xs text-gray-500">{file.size}</p>
+                    <div className="flex items-center gap-1">
+                      <button
+                        onClick={() => {
+                          setSelectedFile(file);
+                          setShowCopyDialog(true);
+                        }}
+                        className="flex-1 px-2 py-1 text-xs bg-blue-50 text-blue-600 rounded hover:bg-blue-100 transition-colors"
+                      >
+                        کپی لینک
+                      </button>
+                      <button 
+                        onClick={() => deleteFile(file.id)}
+                        className="p-1 text-red-500 hover:bg-red-50 rounded"
+                      >
+                        <Trash className="h-3 w-3" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <Upload className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-gray-900 mb-2">هیچ فایلی آپلود نشده</h3>
+              <p className="text-gray-600">برای شروع، فایل‌های خود را آپلود کنید</p>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Copy Link Dialog */}
+      {showCopyDialog && selectedFile && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-96 max-w-full mx-4">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold">کپی لینک فایل</h3>
+              <button 
+                onClick={() => setShowCopyDialog(false)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <X className="h-6 w-6" />
+              </button>
+            </div>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  لینک فایل:
+                </label>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={selectedFile.url}
+                    readOnly
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-sm"
+                  />
+                  <button
+                    onClick={() => copyToClipboard(selectedFile.url)}
+                    className="px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors flex items-center gap-1"
+                  >
+                    <Copy className="h-4 w-4" />
+                    کپی
+                  </button>
+                </div>
+              </div>
+              
+              <div className="text-xs text-gray-500">
+                <p>از این لینک برای اضافه کردن تصویر به اسلایدها، نوشته‌ها یا هر جای دیگری استفاده کنید.</p>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
