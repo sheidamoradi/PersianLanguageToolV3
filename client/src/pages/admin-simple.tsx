@@ -421,7 +421,6 @@ function SlidesTab() {
                     value={formData.title}
                     onChange={(e) => setFormData({...formData, title: e.target.value})}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    required
                   />
                 </div>
                 
@@ -434,7 +433,6 @@ function SlidesTab() {
                     value={formData.buttonText}
                     onChange={(e) => setFormData({...formData, buttonText: e.target.value})}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    required
                   />
                 </div>
               </div>
@@ -448,7 +446,6 @@ function SlidesTab() {
                   onChange={(e) => setFormData({...formData, description: e.target.value})}
                   rows={3}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  required
                 />
               </div>
 
@@ -463,7 +460,6 @@ function SlidesTab() {
                     onChange={(e) => setFormData({...formData, buttonUrl: e.target.value})}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="/courses"
-                    required
                   />
                 </div>
 
