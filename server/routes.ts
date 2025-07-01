@@ -18,6 +18,7 @@ import {
   insertDocumentTagSchema,
   insertMediaContentSchema,
   insertMagazineSchema,
+  insertQuickAccessItemSchema,
   insertArticleSchema,
   insertArticleContentSchema,
   insertWorkshopSchema,
@@ -613,6 +614,65 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
 
     return res.json({ message: "Slide deleted successfully" });
+  });
+
+  // Quick Access Items API
+  app.get("/api/quick-access", async (req, res) => {
+    const items = await storage.getQuickAccessItems();
+    res.json(items);
+  });
+
+  app.post("/api/quick-access", async (req, res) => {
+    try {
+      const itemData = insertQuickAccessItemSchema.parse(req.body);
+      const item = await storage.createQuickAccessItem(itemData);
+      return res.status(201).json(item);
+    } catch (error) {
+      if (error instanceof ZodError) {
+        return res.status(400).json({ message: fromZodError(error).toString() });
+      }
+      return res.status(500).json({ message: "خطا در ایجاد آیتم دسترسی سریع" });
+    }
+  });
+
+  app.put("/api/quick-access/:id", async (req, res) => {
+    const id = parseInt(req.params.id);
+
+    if (isNaN(id)) {
+      return res.status(400).json({ message: "Invalid item ID" });
+    }
+
+    try {
+      const itemData = insertQuickAccessItemSchema.parse(req.body);
+      const item = await storage.updateQuickAccessItem(id, itemData);
+      
+      if (!item) {
+        return res.status(404).json({ message: "Item not found" });
+      }
+
+      return res.json(item);
+    } catch (error) {
+      if (error instanceof ZodError) {
+        return res.status(400).json({ message: fromZodError(error).toString() });
+      }
+      return res.status(500).json({ message: "خطا در به‌روزرسانی آیتم دسترسی سریع" });
+    }
+  });
+
+  app.delete("/api/quick-access/:id", async (req, res) => {
+    const id = parseInt(req.params.id);
+
+    if (isNaN(id)) {
+      return res.status(400).json({ message: "Invalid item ID" });
+    }
+
+    const deleted = await storage.deleteQuickAccessItem(id);
+
+    if (!deleted) {
+      return res.status(404).json({ message: "Item not found" });
+    }
+
+    return res.json({ message: "Quick access item deleted successfully" });
   });
 
   // Protection Control Endpoints

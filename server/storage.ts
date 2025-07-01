@@ -14,6 +14,7 @@ import {
   workshops, type Workshop, type InsertWorkshop,
   workshopContents, type WorkshopContent, type InsertWorkshopContent,
   slides, type Slide, type InsertSlide,
+  quickAccessItems, type QuickAccessItem, type InsertQuickAccessItem,
   userCourseAccess, type UserCourseAccess, type InsertUserCourseAccess
 } from "@shared/schema";
 import { db } from "./db";

@@ -319,6 +319,23 @@ export const slides = pgTable("slides", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+// Quick Access Menu Items
+export const quickAccessItems = pgTable("quick_access_items", {
+  id: serial("id").primaryKey(),
+  title: text("title").notNull(),
+  iconUrl: text("icon_url"), // URL to custom icon/image
+  iconSvg: text("icon_svg"), // SVG code for icon
+  iconType: text("icon_type").notNull().default("svg"), // "svg", "image", or "lucide"
+  iconName: text("icon_name"), // Lucide icon name if using lucide
+  backgroundColor: text("background_color").default("hsl(270, 60%, 95%)"),
+  iconColor: text("icon_color").default("hsl(270, 70%, 60%)"),
+  linkUrl: text("link_url"),
+  isActive: boolean("is_active").default(true),
+  order: integer("order").default(0),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 // Insert Schemas
 export const insertUserSchema = createInsertSchema(users).omit({ id: true });
 export const insertCourseSchema = createInsertSchema(courses).omit({ id: true });
@@ -391,10 +408,15 @@ export type InsertMediaLibrary = z.infer<typeof insertMediaLibrarySchema>;
 export type MediaLibrary = typeof mediaLibrary.$inferSelect;
 
 export const insertSlideSchema = createInsertSchema(slides).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertQuickAccessItemSchema = createInsertSchema(quickAccessItems).omit({ id: true, createdAt: true, updatedAt: true });
 
 // Slide Types
 export type InsertSlide = z.infer<typeof insertSlideSchema>;
 export type Slide = typeof slides.$inferSelect;
+
+// Quick Access Types
+export type InsertQuickAccessItem = z.infer<typeof insertQuickAccessItemSchema>;
+export type QuickAccessItem = typeof quickAccessItems.$inferSelect;
 
 // User Course Access Table
 export const userCourseAccess = pgTable("user_course_access", {
