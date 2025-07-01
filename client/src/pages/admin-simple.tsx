@@ -281,6 +281,10 @@ function SlidesTab() {
     imageUrl: '',
     buttonText: '',
     buttonUrl: '',
+    secondButtonText: '',
+    secondButtonUrl: '',
+    showButtons: true,
+    showIcon: true,
     isActive: true,
     order: 0,
     gradientFrom: '',
@@ -341,6 +345,10 @@ function SlidesTab() {
       imageUrl: '',
       buttonText: '',
       buttonUrl: '',
+      secondButtonText: '',
+      secondButtonUrl: '',
+      showButtons: true,
+      showIcon: true,
       isActive: true,
       order: 0,
       gradientFrom: '',
@@ -355,8 +363,12 @@ function SlidesTab() {
       title: slide.title,
       description: slide.description,
       imageUrl: slide.imageUrl || '',
-      buttonText: slide.buttonText,
-      buttonUrl: slide.buttonUrl,
+      buttonText: slide.buttonText || '',
+      buttonUrl: slide.buttonUrl || '',
+      secondButtonText: (slide as any).secondButtonText || '',
+      secondButtonUrl: (slide as any).secondButtonUrl || '',
+      showButtons: (slide as any).showButtons !== false,
+      showIcon: (slide as any).showIcon !== false,
       isActive: slide.isActive || true,
       order: slide.order || 0,
       gradientFrom: slide.gradientFrom || '',
@@ -452,7 +464,7 @@ function SlidesTab() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    لینک دکمه
+                    لینک دکمه اول
                   </label>
                   <input
                     type="text"
@@ -465,6 +477,34 @@ function SlidesTab() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
+                    متن دکمه دوم (اختیاری)
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.secondButtonText}
+                    onChange={(e) => setFormData({...formData, secondButtonText: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="درباره ما"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    لینک دکمه دوم (اختیاری)
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.secondButtonUrl}
+                    onChange={(e) => setFormData({...formData, secondButtonUrl: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="/about"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
                     URL تصویر (اختیاری)
                   </label>
                   <input
@@ -472,10 +512,10 @@ function SlidesTab() {
                     value={formData.imageUrl}
                     onChange={(e) => setFormData({...formData, imageUrl: e.target.value})}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="مثال: /uploads/image.jpg (لینک را از کتابخانه رسانه کپی کنید)"
+                    placeholder="مثال: /uploads/image.jpg"
                   />
                   <p className="text-xs text-gray-500 mt-1">
-                    برای آپلود تصویر، به تب "کتابخانه رسانه" بروید و لینک فایل را کپی کنید
+                    لینک را از کتابخانه رسانه کپی کنید
                   </p>
                 </div>
               </div>
@@ -544,7 +584,7 @@ function SlidesTab() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     ترتیب نمایش
@@ -561,15 +601,41 @@ function SlidesTab() {
                 <div className="flex items-center">
                   <input
                     type="checkbox"
-                    id="isActive"
-                    checked={formData.isActive}
-                    onChange={(e) => setFormData({...formData, isActive: e.target.checked})}
+                    id="showButtons"
+                    checked={formData.showButtons}
+                    onChange={(e) => setFormData({...formData, showButtons: e.target.checked})}
                     className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                   />
-                  <label htmlFor="isActive" className="mr-2 text-sm font-medium text-gray-700">
-                    اسلاید فعال باشد
+                  <label htmlFor="showButtons" className="mr-2 text-sm font-medium text-gray-700">
+                    نمایش دکمه‌ها
                   </label>
                 </div>
+
+                <div className="flex items-center">
+                  <input
+                    type="checkbox"
+                    id="showIcon"
+                    checked={formData.showIcon}
+                    onChange={(e) => setFormData({...formData, showIcon: e.target.checked})}
+                    className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                  />
+                  <label htmlFor="showIcon" className="mr-2 text-sm font-medium text-gray-700">
+                    نمایش آیکون
+                  </label>
+                </div>
+              </div>
+
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  id="isActive"
+                  checked={formData.isActive}
+                  onChange={(e) => setFormData({...formData, isActive: e.target.checked})}
+                  className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                />
+                <label htmlFor="isActive" className="mr-2 text-sm font-medium text-gray-700">
+                  اسلاید فعال باشد
+                </label>
               </div>
 
               <div className="flex gap-3">

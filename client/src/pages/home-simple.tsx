@@ -41,25 +41,47 @@ export default function HomePage() {
             {currentSlideData?.description || "بهترین دوره‌های آموزشی در حوزه کشاورزی"}
           </p>
           
-          <div className="flex gap-4 justify-center mb-6">
-            <button className="bg-white text-gray-700 px-4 py-2 rounded-lg border hover:bg-gray-50">
-              درباره ما
-            </button>
-            <button className="text-white px-4 py-2 rounded-lg hover:opacity-90 flex items-center gap-2" style={{backgroundColor: 'hsl(118, 54%, 40%)'}}>
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-              </svg>
-              مشاهده دوره‌ها
-            </button>
-          </div>
-
-          <div className="w-24 h-24 mx-auto bg-white rounded-full flex items-center justify-center shadow-lg">
-            <div className="w-16 h-16 rounded-full flex items-center justify-center" style={{backgroundColor: 'hsl(118, 54%, 40%)'}}>
-              <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5z" />
-              </svg>
+          {/* Buttons - conditional rendering */}
+          {(currentSlideData ? (currentSlideData as any).showButtons !== false : true) && (
+            <div className="flex gap-4 justify-center mb-6">
+              {currentSlideData?.buttonText && currentSlideData?.buttonUrl ? (
+                <button className="text-white px-4 py-2 rounded-lg hover:opacity-90 flex items-center gap-2" style={{backgroundColor: 'hsl(118, 54%, 40%)'}}>
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                  </svg>
+                  {currentSlideData.buttonText}
+                </button>
+              ) : (
+                <button className="text-white px-4 py-2 rounded-lg hover:opacity-90 flex items-center gap-2" style={{backgroundColor: 'hsl(118, 54%, 40%)'}}>
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                  </svg>
+                  مشاهده دوره‌ها
+                </button>
+              )}
+              
+              {(currentSlideData as any)?.secondButtonText && (currentSlideData as any)?.secondButtonUrl ? (
+                <button className="bg-white text-gray-700 px-4 py-2 rounded-lg border hover:bg-gray-50">
+                  {(currentSlideData as any).secondButtonText}
+                </button>
+              ) : !currentSlideData ? (
+                <button className="bg-white text-gray-700 px-4 py-2 rounded-lg border hover:bg-gray-50">
+                  درباره ما
+                </button>
+              ) : null}
             </div>
-          </div>
+          )}
+
+          {/* Icon - conditional rendering */}
+          {currentSlideData && (currentSlideData as any).showIcon !== false && (
+            <div className="w-24 h-24 mx-auto bg-white rounded-full flex items-center justify-center shadow-lg">
+              <div className="w-16 h-16 rounded-full flex items-center justify-center" style={{backgroundColor: 'hsl(118, 54%, 40%)'}}>
+                <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5z" />
+                </svg>
+              </div>
+            </div>
+          )}
         </div>
 
         {activeSlides.length > 1 && (
