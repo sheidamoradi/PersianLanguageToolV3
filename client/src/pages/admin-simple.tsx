@@ -69,6 +69,7 @@ export default function AdminPage() {
             {activeTab === "projects" && <ProjectsTab />}
             {activeTab === "documents" && <DocumentsTab />}
             {activeTab === "slides" && <SlidesTab />}
+            {activeTab === "quickaccess" && <QuickAccessTab />}
             {activeTab === "magazines" && <MagazinesTab />}
             {activeTab === "media" && <MediaTab />}
             {activeTab === "users" && <UsersTab />}
@@ -1193,6 +1194,260 @@ function MediaTab() {
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+function QuickAccessTab() {
+  const [showForm, setShowForm] = useState(false);
+  const [editingItem, setEditingItem] = useState<any>(null);
+  
+  const { data: quickAccessItems, isLoading } = useQuery<any[]>({
+    queryKey: ['/api/quick-access'],
+  });
+
+  const createMutation = useMutation({
+    mutationFn: (data: any) => 
+      fetch('/api/quick-access', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      }).then(res => res.json()),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/quick-access'] });
+      setShowForm(false);
+      setEditingItem(null);
+    },
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: ({ id, data }: { id: number; data: any }) => 
+      fetch(`/api/quick-access/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      }).then(res => res.json()),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/quick-access'] });
+      setShowForm(false);
+      setEditingItem(null);
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: number) => 
+      fetch(`/api/quick-access/${id}`, {
+        method: 'DELETE'
+      }).then(res => res.json()),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/quick-access'] });
+    },
+  });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const formData = new FormData(e.target as HTMLFormElement);
+    const data = {
+      icon: formData.get('icon') as string,
+      title: formData.get('title') as string,
+      description: formData.get('description') as string,
+      link: formData.get('link') as string,
+      order: parseInt(formData.get('order') as string) || 0,
+      isActive: formData.get('isActive') === 'on',
+    };
+
+    if (editingItem) {
+      updateMutation.mutate({ id: editingItem.id, data });
+    } else {
+      createMutation.mutate(data);
+    }
+  };
+
+  if (isLoading) {
+    return <div className="text-center py-8">در حال بارگذاری...</div>;
+  }
+
+  return (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h3 className="text-lg font-semibold">آیتم‌های دسترسی سریع</h3>
+        <button
+          onClick={() => {
+            setShowForm(true);
+            setEditingItem(null);
+          }}
+          className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 flex items-center gap-2"
+        >
+          <Plus className="h-4 w-4" />
+          آیتم جدید
+        </button>
+      </div>
+
+      {showForm && (
+        <div className="bg-white p-6 rounded-lg border">
+          <div className="flex justify-between items-center mb-4">
+            <h4 className="text-md font-semibold">
+              {editingItem ? 'ویرایش آیتم' : 'افزودن آیتم جدید'}
+            </h4>
+            <button
+              onClick={() => {
+                setShowForm(false);
+                setEditingItem(null);
+              }}
+              className="text-gray-500 hover:text-gray-700"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium mb-1">آیکون</label>
+                <input
+                  name="icon"
+                  type="text"
+                  defaultValue={editingItem?.icon || ''}
+                  placeholder="مثال: /uploads/icon.png"
+                  className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-1">عنوان</label>
+                <input
+                  name="title"
+                  type="text"
+                  defaultValue={editingItem?.title || ''}
+                  placeholder="عنوان آیتم"
+                  required
+                  className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-1">توضیحات</label>
+              <textarea
+                name="description"
+                defaultValue={editingItem?.description || ''}
+                placeholder="توضیحات آیتم"
+                rows={2}
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium mb-1">لینک</label>
+                <input
+                  name="link"
+                  type="text"
+                  defaultValue={editingItem?.link || ''}
+                  placeholder="مثال: /courses یا https://example.com"
+                  className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-1">ترتیب</label>
+                <input
+                  name="order"
+                  type="number"
+                  defaultValue={editingItem?.order || ''}
+                  placeholder="0"
+                  className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <input
+                name="isActive"
+                type="checkbox"
+                defaultChecked={editingItem?.isActive ?? true}
+                className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
+              />
+              <label className="text-sm">فعال</label>
+            </div>
+
+            <div className="flex gap-2 justify-end">
+              <button
+                type="button"
+                onClick={() => {
+                  setShowForm(false);
+                  setEditingItem(null);
+                }}
+                className="px-4 py-2 text-gray-600 border rounded-md hover:bg-gray-50"
+              >
+                انصراف
+              </button>
+              <button
+                type="submit"
+                disabled={createMutation.isPending || updateMutation.isPending}
+                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
+              >
+                {createMutation.isPending || updateMutation.isPending ? 'در حال ذخیره...' : 'ذخیره'}
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
+
+      <div className="bg-white rounded-lg border">
+        <div className="p-4 border-b">
+          <h4 className="font-semibold">آیتم‌های موجود</h4>
+        </div>
+        <div className="divide-y">
+          {quickAccessItems?.map((item: any) => (
+            <div key={item.id} className="p-4 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                {item.icon && (
+                  <img
+                    src={item.icon}
+                    alt={item.title}
+                    className="w-8 h-8 object-cover rounded"
+                  />
+                )}
+                <div>
+                  <h5 className="font-medium">{item.title}</h5>
+                  {item.description && (
+                    <p className="text-sm text-gray-600">{item.description}</p>
+                  )}
+                  {item.link && (
+                    <p className="text-xs text-blue-600">{item.link}</p>
+                  )}
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-gray-500">ترتیب: {item.order}</span>
+                <div className={`w-2 h-2 rounded-full ${item.isActive ? 'bg-green-500' : 'bg-gray-300'}`} />
+                <button
+                  onClick={() => {
+                    setEditingItem(item);
+                    setShowForm(true);
+                  }}
+                  className="text-blue-600 hover:text-blue-800"
+                >
+                  <Edit className="h-4 w-4" />
+                </button>
+                <button
+                  onClick={() => deleteMutation.mutate(item.id)}
+                  disabled={deleteMutation.isPending}
+                  className="text-red-600 hover:text-red-800 disabled:opacity-50"
+                >
+                  <Trash className="h-4 w-4" />
+                </button>
+              </div>
+            </div>
+          ))}
+          {(!quickAccessItems || quickAccessItems.length === 0) && (
+            <div className="p-8 text-center text-gray-500">
+              هیچ آیتمی یافت نشد. اولین آیتم را اضافه کنید.
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }

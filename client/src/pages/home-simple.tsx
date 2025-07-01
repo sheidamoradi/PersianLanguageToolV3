@@ -7,6 +7,10 @@ export default function HomePage() {
     queryKey: ['/api/slides'],
   });
 
+  const { data: quickAccessItems } = useQuery({
+    queryKey: ['/api/quick-access'],
+  });
+
   const [currentSlide, setCurrentSlide] = useState(0);
   
   const activeSlides = slides?.filter(slide => slide.isActive) || [];
