@@ -1314,11 +1314,11 @@ function QuickAccessTab() {
                   />
                   <button
                     type="button"
-                    onClick={() => setActiveTab('media')}
+                    onClick={() => window.open('/admin-simple#media', '_blank')}
                     className="px-3 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors flex items-center gap-1"
                   >
                     <Upload className="h-4 w-4" />
-                    انتخاب
+                    رسانه
                   </button>
                 </div>
               </div>
