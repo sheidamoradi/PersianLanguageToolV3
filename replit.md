@@ -109,6 +109,14 @@ Changelog:
   * Monochromatic gray icons throughout the interface
   * Added "دسترسی سریع" section at bottom with colored icons
   * Updated CSS variables for consistent color palette
+- July 1, 2025. Implemented complete file upload system:
+  * Added multer package for real file uploads
+  * Created /api/upload endpoint supporting images and PDFs (10MB limit)
+  * Files stored in public/uploads with unique naming
+  * Static file serving from /uploads route
+  * WordPress-like media library interface
+  * Fixed slide form to accept relative URLs from media library
+  * Added helper button to quickly access media library from slide form
 ```
 
 ## User Preferences
