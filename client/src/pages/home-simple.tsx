@@ -22,7 +22,7 @@ export default function HomePage() {
 
   return (
     <div className="space-y-6 rtl">
-      <div className="rounded-2xl text-center relative overflow-hidden" style={{backgroundColor: currentSlideData?.imageUrl ? 'transparent' : 'hsl(118, 45%, 90%)'}}>
+      <div className="rounded-2xl text-center relative overflow-hidden min-h-[400px] flex items-center" style={{backgroundColor: currentSlideData?.imageUrl ? 'transparent' : 'hsl(118, 45%, 90%)'}}>
         {currentSlideData?.imageUrl && (
           <>
             <div 
@@ -33,7 +33,7 @@ export default function HomePage() {
           </>
         )}
         
-        <div className="relative z-10 p-8">
+        <div className="relative z-10 p-8 w-full">
           <h1 className={`text-2xl font-bold mb-2 ${currentSlideData?.imageUrl ? 'text-white' : 'text-gray-800'}`}>
             {currentSlideData?.title || "به مرکز پیستاط خوش آمدید"}
           </h1>
