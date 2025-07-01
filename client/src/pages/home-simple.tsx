@@ -135,12 +135,12 @@ export default function HomePage() {
                 }
               }}
             >
-              <div className="w-16 h-16 mx-auto mb-2 rounded-full flex items-center justify-center shadow-lg bg-gray-100 border">
+              <div className="w-16 h-16 mx-auto mb-2 rounded-full flex items-center justify-center shadow-lg bg-gray-100 border overflow-hidden">
                 {item.iconUrl ? (
                   <img 
                     src={item.iconUrl} 
                     alt={item.title}
-                    className="w-8 h-8 object-cover rounded"
+                    className="w-full h-full object-cover"
                   />
                 ) : (
                   <svg className="w-8 h-8 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
