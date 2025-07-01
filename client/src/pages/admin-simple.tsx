@@ -15,6 +15,7 @@ export default function AdminPage() {
     { id: "documents", label: "اسناد", icon: File },
     { id: "slides", label: "اسلایدها", icon: Image },
     { id: "magazines", label: "مجله‌ها", icon: Calendar },
+    { id: "media", label: "کتابخانه رسانه", icon: Upload },
     { id: "posts", label: "نوشته‌ها", icon: Type },
     { id: "users", label: "کاربران", icon: Lock }
   ];
@@ -68,6 +69,7 @@ export default function AdminPage() {
               {activeTab === "documents" && <DocumentsTab />}
               {activeTab === "slides" && <SlidesTab />}
               {activeTab === "magazines" && <MagazinesTab />}
+              {activeTab === "media" && <MediaTab />}
               {activeTab === "posts" && <PostsTab />}
               {activeTab === "users" && <UsersTab />}
             </div>
@@ -1348,6 +1350,187 @@ function PostsTab() {
           </table>
         </div>
       </div>
+    </div>
+  );
+}
+
+function MediaTab() {
+  const [uploadedFiles, setUploadedFiles] = useState<any[]>([]);
+  const [isUploading, setIsUploading] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<any>(null);
+  const [showCopyDialog, setShowCopyDialog] = useState(false);
+
+  // Mock data for demonstration
+  const mediaFiles = [
+    { id: 1, name: 'slider-image-1.jpg', url: '/api/uploads/slider-image-1.jpg', type: 'image', size: '245 KB', date: '1403/10/15' },
+    { id: 2, name: 'course-thumbnail.png', url: '/api/uploads/course-thumbnail.png', type: 'image', size: '189 KB', date: '1403/10/14' },
+    { id: 3, name: 'document-cover.pdf', url: '/api/uploads/document-cover.pdf', type: 'document', size: '1.2 MB', date: '1403/10/13' },
+    { id: 4, name: 'background-pattern.svg', url: '/api/uploads/background-pattern.svg', type: 'image', size: '45 KB', date: '1403/10/12' },
+  ];
+
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (files) {
+      setIsUploading(true);
+      // Simulate upload process
+      setTimeout(() => {
+        const newFiles = Array.from(files).map((file, index) => ({
+          id: Date.now() + index,
+          name: file.name,
+          url: URL.createObjectURL(file),
+          type: file.type.startsWith('image/') ? 'image' : 'document',
+          size: `${(file.size / 1024).toFixed(0)} KB`,
+          date: new Date().toLocaleDateString('fa-IR')
+        }));
+        setUploadedFiles(prev => [...prev, ...newFiles]);
+        setIsUploading(false);
+      }, 2000);
+    }
+  };
+
+  const copyToClipboard = (url: string) => {
+    navigator.clipboard.writeText(url);
+    setSelectedFile(null);
+    setShowCopyDialog(false);
+    // Show toast notification here
+  };
+
+  const allFiles = [...mediaFiles, ...uploadedFiles];
+
+  return (
+    <div className="space-y-6">
+      {/* Upload Section */}
+      <div className="bg-white rounded-lg shadow-md">
+        <div className="p-6 border-b">
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-semibold">کتابخانه رسانه</h2>
+            <label className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors cursor-pointer flex items-center gap-2">
+              <Upload className="h-4 w-4" />
+              آپلود فایل جدید
+              <input
+                type="file"
+                multiple
+                accept="image/*,application/pdf"
+                onChange={handleFileUpload}
+                className="hidden"
+              />
+            </label>
+          </div>
+        </div>
+
+        {isUploading && (
+          <div className="p-6 border-b bg-blue-50">
+            <div className="flex items-center gap-3">
+              <RefreshCw className="h-5 w-5 animate-spin text-blue-600" />
+              <span className="text-blue-800">در حال آپلود فایل‌ها...</span>
+            </div>
+          </div>
+        )}
+
+        {/* Files Grid */}
+        <div className="p-6">
+          {allFiles.length > 0 ? (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {allFiles.map(file => (
+                <div key={file.id} className="border rounded-lg p-4 hover:shadow-md transition-shadow">
+                  <div className="aspect-square bg-gray-100 rounded-lg mb-3 flex items-center justify-center">
+                    {file.type === 'image' ? (
+                      <img 
+                        src={file.url} 
+                        alt={file.name}
+                        className="w-full h-full object-cover rounded-lg"
+                        onError={(e) => {
+                          e.currentTarget.style.display = 'none';
+                          e.currentTarget.nextElementSibling!.classList.remove('hidden');
+                        }}
+                      />
+                    ) : null}
+                    <div className={`flex flex-col items-center text-gray-400 ${file.type === 'image' ? 'hidden' : ''}`}>
+                      <File className="h-12 w-12 mb-2" />
+                      <span className="text-xs">{file.type === 'document' ? 'PDF' : 'فایل'}</span>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <h3 className="font-medium text-sm truncate" title={file.name}>
+                      {file.name}
+                    </h3>
+                    <div className="flex items-center justify-between text-xs text-gray-500">
+                      <span>{file.size}</span>
+                      <span>{file.date}</span>
+                    </div>
+                    
+                    <div className="flex gap-1">
+                      <button
+                        onClick={() => {
+                          setSelectedFile(file);
+                          setShowCopyDialog(true);
+                        }}
+                        className="flex-1 px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded hover:bg-blue-200 transition-colors"
+                      >
+                        کپی لینک
+                      </button>
+                      <button className="p-1 text-red-500 hover:bg-red-50 rounded">
+                        <Trash className="h-3 w-3" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <Upload className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-gray-900 mb-2">هیچ فایلی آپلود نشده</h3>
+              <p className="text-gray-600">برای شروع، فایل‌های خود را آپلود کنید</p>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Copy Link Dialog */}
+      {showCopyDialog && selectedFile && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-96 max-w-full mx-4">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold">کپی لینک فایل</h3>
+              <button 
+                onClick={() => setShowCopyDialog(false)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <X className="h-6 w-6" />
+              </button>
+            </div>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  لینک فایل:
+                </label>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={selectedFile.url}
+                    readOnly
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-sm"
+                  />
+                  <button
+                    onClick={() => copyToClipboard(selectedFile.url)}
+                    className="px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors flex items-center gap-1"
+                  >
+                    <Copy className="h-4 w-4" />
+                    کپی
+                  </button>
+                </div>
+              </div>
+              
+              <div className="text-xs text-gray-500">
+                <p>از این لینک برای اضافه کردن تصویر به اسلایدها، نوشته‌ها یا هر جای دیگری استفاده کنید.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
