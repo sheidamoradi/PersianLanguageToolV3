@@ -1248,7 +1248,7 @@ function QuickAccessTab() {
     e.preventDefault();
     const formData = new FormData(e.target as HTMLFormElement);
     const data = {
-      icon: formData.get('icon') as string,
+      iconUrl: formData.get('icon') as string,
       title: formData.get('title') as string,
       description: formData.get('description') as string,
       link: formData.get('link') as string,
@@ -1304,13 +1304,23 @@ function QuickAccessTab() {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium mb-1">آیکون</label>
-                <input
-                  name="icon"
-                  type="text"
-                  defaultValue={editingItem?.icon || ''}
-                  placeholder="مثال: /uploads/icon.png"
-                  className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
+                <div className="flex gap-2">
+                  <input
+                    name="icon"
+                    type="text"
+                    defaultValue={editingItem?.iconUrl || ''}
+                    placeholder="مثال: /uploads/icon.png"
+                    className="flex-1 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('media')}
+                    className="px-3 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors flex items-center gap-1"
+                  >
+                    <Upload className="h-4 w-4" />
+                    انتخاب
+                  </button>
+                </div>
               </div>
 
               <div>
@@ -1402,9 +1412,9 @@ function QuickAccessTab() {
           {quickAccessItems && quickAccessItems.map((item: any) => (
             <div key={item.id} className="p-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
-                {item.icon && (
+                {item.iconUrl && (
                   <img
-                    src={item.icon}
+                    src={item.iconUrl}
                     alt={item.title}
                     className="w-8 h-8 object-cover rounded"
                   />

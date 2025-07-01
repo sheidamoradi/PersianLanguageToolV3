@@ -136,9 +136,9 @@ export default function HomePage() {
               }}
             >
               <div className="w-16 h-16 mx-auto mb-2 rounded-full flex items-center justify-center shadow-lg bg-gray-100 border">
-                {item.icon ? (
+                {item.iconUrl ? (
                   <img 
-                    src={item.icon} 
+                    src={item.iconUrl} 
                     alt={item.title}
                     className="w-8 h-8 object-cover rounded"
                   />
