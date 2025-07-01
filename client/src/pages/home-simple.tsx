@@ -124,7 +124,7 @@ export default function HomePage() {
       </div>
 
       <div className="grid grid-cols-4 gap-4 px-4">
-        {quickAccessItems && quickAccessItems.filter((item: any) => item.isActive).slice(0, 4).map((item: any) => (
+        {quickAccessItems?.filter((item: any) => item.isActive).slice(0, 4).map((item: any) => (
           <div key={item.id} className="text-center">
             <a 
               href={item.link || '#'} 
@@ -154,7 +154,7 @@ export default function HomePage() {
         ))}
         
         {/* Fallback items if no quick access items exist */}
-        {(!quickAccessItems || quickAccessItems.filter((item: any) => item.isActive).length === 0) && (
+        {(!quickAccessItems || quickAccessItems?.filter((item: any) => item.isActive).length === 0) && (
           <>
             <div className="text-center">
               <div className="w-16 h-16 mx-auto mb-2 rounded-full flex items-center justify-center shadow-lg" style={{backgroundColor: 'hsl(270, 60%, 95%)'}}>
