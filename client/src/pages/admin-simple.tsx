@@ -472,12 +472,15 @@ function SlidesTab() {
                     URL تصویر (اختیاری)
                   </label>
                   <input
-                    type="url"
+                    type="text"
                     value={formData.imageUrl}
                     onChange={(e) => setFormData({...formData, imageUrl: e.target.value})}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="https://example.com/image.jpg"
+                    placeholder="مثال: /uploads/image.jpg (لینک را از کتابخانه رسانه کپی کنید)"
                   />
+                  <p className="text-xs text-gray-500 mt-1">
+                    برای آپلود تصویر، به تب "کتابخانه رسانه" بروید و لینک فایل را کپی کنید
+                  </p>
                 </div>
               </div>
 
@@ -970,7 +973,6 @@ function MediaTab() {
 
         if (response.ok) {
           const result = await response.json();
-          console.log('Upload result:', result); // برای debug
           const newFiles = result.files.map((file: any, index: number) => ({
             id: uploadedFiles.length + index + 1,
             name: file.name,
