@@ -22,19 +22,22 @@ export default function HomePage() {
 
   return (
     <div className="space-y-6 rtl">
-      <div className="rounded-2xl text-center relative overflow-hidden" style={{backgroundColor: 'hsl(118, 45%, 90%)'}}>
+      <div className="rounded-2xl text-center relative overflow-hidden" style={{backgroundColor: currentSlideData?.imageUrl ? 'transparent' : 'hsl(118, 45%, 90%)'}}>
         {currentSlideData?.imageUrl && (
-          <div 
-            className="absolute inset-0 bg-cover bg-center opacity-30"
-            style={{backgroundImage: `url(${currentSlideData.imageUrl})`}}
-          />
+          <>
+            <div 
+              className="absolute inset-0 bg-cover bg-center"
+              style={{backgroundImage: `url(${currentSlideData.imageUrl})`}}
+            />
+            <div className="absolute inset-0 bg-black bg-opacity-40"></div>
+          </>
         )}
         
         <div className="relative z-10 p-8">
-          <h1 className="text-2xl font-bold text-gray-800 mb-2">
+          <h1 className={`text-2xl font-bold mb-2 ${currentSlideData?.imageUrl ? 'text-white' : 'text-gray-800'}`}>
             {currentSlideData?.title || "به مرکز پیستاط خوش آمدید"}
           </h1>
-          <p className="text-gray-600 mb-6">
+          <p className={`mb-6 ${currentSlideData?.imageUrl ? 'text-gray-100' : 'text-gray-600'}`}>
             {currentSlideData?.description || "بهترین دوره‌های آموزشی در حوزه کشاورزی"}
           </p>
           
