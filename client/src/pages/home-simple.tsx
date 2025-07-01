@@ -1,14 +1,96 @@
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { type Slide } from "@shared/schema";
+
 export default function HomePage() {
+  const { data: slides, isLoading } = useQuery<Slide[]>({
+    queryKey: ['/api/slides'],
+  });
+
+  const [currentSlide, setCurrentSlide] = useState(0);
+  
+  // Filter active slides and sort by order
+  const activeSlides = slides?.filter(slide => slide.isActive)?.sort((a, b) => a.order - b.order) || [];
+  const currentSlideData = activeSlides[currentSlide];
+
+  const nextSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % activeSlides.length);
+  };
+
+  const prevSlide = () => {
+    setCurrentSlide((prev) => (prev - 1 + activeSlides.length) % activeSlides.length);
+  };
+
   return (
     <div className="space-y-6 rtl">
       {/* Hero Slider */}
       <div className="rounded-2xl p-8 text-center relative" style={{backgroundColor: 'hsl(118, 45%, 90%)'}}>
-        <h1 className="text-2xl font-bold text-gray-800 mb-2">
-          به مرکز پیستاط خوش آمدید
-        </h1>
-        <p className="text-gray-600 mb-6">
-          بهترین دوره‌های آموزشی در حوزه کشاورزی
-        </p>
+        {isLoading ? (
+          <div className="animate-pulse">
+            <div className="h-8 bg-gray-200 rounded mb-4 mx-auto w-3/4"></div>
+            <div className="h-4 bg-gray-200 rounded mb-6 mx-auto w-1/2"></div>
+          </div>
+        ) : activeSlides.length > 0 && currentSlideData ? (
+          <>
+            <h1 className="text-2xl font-bold text-gray-800 mb-2">
+              {currentSlideData.title}
+            </h1>
+            <p className="text-gray-600 mb-6">
+              {currentSlideData.description}
+            </p>
+            
+            {/* Slide Navigation */}
+            {activeSlides.length > 1 && (
+              <div className="absolute top-1/2 transform -translate-y-1/2 left-4">
+                <button 
+                  onClick={prevSlide}
+                  className="bg-white bg-opacity-70 hover:bg-opacity-100 rounded-full p-2 transition-all"
+                >
+                  <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                </button>
+              </div>
+            )}
+            
+            {activeSlides.length > 1 && (
+              <div className="absolute top-1/2 transform -translate-y-1/2 right-4">
+                <button 
+                  onClick={nextSlide}
+                  className="bg-white bg-opacity-70 hover:bg-opacity-100 rounded-full p-2 transition-all"
+                >
+                  <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              </div>
+            )}
+            
+            {/* Slide Indicators */}
+            {activeSlides.length > 1 && (
+              <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
+                {activeSlides.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentSlide(index)}
+                    className={`w-2 h-2 rounded-full transition-all ${
+                      index === currentSlide ? 'bg-gray-700' : 'bg-gray-400'
+                    }`}
+                  />
+                ))}
+              </div>
+            )}
+          </>
+        ) : (
+          <>
+            <h1 className="text-2xl font-bold text-gray-800 mb-2">
+              به مرکز پیستاط خوش آمدید
+            </h1>
+            <p className="text-gray-600 mb-6">
+              بهترین دوره‌های آموزشی در حوزه کشاورزی
+            </p>
+          </>
+        )}
         
         <div className="flex gap-4 justify-center mb-6">
           <button className="bg-white text-gray-700 px-4 py-2 rounded-lg border hover:bg-gray-50">
