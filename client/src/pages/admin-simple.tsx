@@ -1399,7 +1399,7 @@ function QuickAccessTab() {
           <h4 className="font-semibold">آیتم‌های موجود</h4>
         </div>
         <div className="divide-y">
-          {quickAccessItems?.map((item: any) => (
+          {quickAccessItems && quickAccessItems.map((item: any) => (
             <div key={item.id} className="p-4 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 {item.icon && (
@@ -1441,7 +1441,7 @@ function QuickAccessTab() {
               </div>
             </div>
           ))}
-          {(!quickAccessItems || quickAccessItems.length === 0) && (
+          {(!quickAccessItems || quickAccessItems?.length === 0) && (
             <div className="p-8 text-center text-gray-500">
               هیچ آیتمی یافت نشد. اولین آیتم را اضافه کنید.
             </div>
