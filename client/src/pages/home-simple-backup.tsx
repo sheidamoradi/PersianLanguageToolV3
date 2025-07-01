@@ -3,13 +3,14 @@ import { useQuery } from "@tanstack/react-query";
 import { type Slide } from "@shared/schema";
 
 export default function HomePage() {
-  const { data: slides } = useQuery<Slide[]>({
+  const { data: slides, isLoading } = useQuery<Slide[]>({
     queryKey: ['/api/slides'],
   });
 
   const [currentSlide, setCurrentSlide] = useState(0);
   
-  const activeSlides = slides?.filter(slide => slide.isActive) || [];
+  // Filter active slides and sort by order
+  const activeSlides = slides?.filter(slide => slide.isActive)?.sort((a, b) => (a.order || 0) - (b.order || 0)) || [];
   const currentSlideData = activeSlides[currentSlide];
 
   const nextSlide = () => {
@@ -22,8 +23,10 @@ export default function HomePage() {
 
   return (
     <div className="space-y-6 rtl">
+      {/* Hero Slider */}
       <div className="rounded-2xl text-center relative overflow-hidden" style={{backgroundColor: 'hsl(118, 45%, 90%)'}}>
-        {currentSlideData?.imageUrl && (
+        {/* Background Image */}
+        {activeSlides.length > 0 && currentSlideData?.imageUrl && (
           <div 
             className="absolute inset-0 bg-cover bg-center opacity-30"
             style={{backgroundImage: `url(${currentSlideData.imageUrl})`}}
@@ -31,12 +34,30 @@ export default function HomePage() {
         )}
         
         <div className="relative z-10 p-8">
-          <h1 className="text-2xl font-bold text-gray-800 mb-2">
-            {currentSlideData?.title || "به مرکز پیستاط خوش آمدید"}
-          </h1>
-          <p className="text-gray-600 mb-6">
-            {currentSlideData?.description || "بهترین دوره‌های آموزشی در حوزه کشاورزی"}
-          </p>
+          {isLoading ? (
+            <div className="animate-pulse">
+              <div className="h-8 bg-gray-200 rounded mb-4 mx-auto w-3/4"></div>
+              <div className="h-4 bg-gray-200 rounded mb-6 mx-auto w-1/2"></div>
+            </div>
+          ) : activeSlides.length > 0 && currentSlideData ? (
+            <>
+              <h1 className="text-2xl font-bold text-gray-800 mb-2">
+                {currentSlideData.title}
+              </h1>
+              <p className="text-gray-600 mb-6">
+                {currentSlideData.description}
+              </p>
+            </>
+          ) : (
+            <>
+              <h1 className="text-2xl font-bold text-gray-800 mb-2">
+                به مرکز پیستاط خوش آمدید
+              </h1>
+              <p className="text-gray-600 mb-6">
+                بهترین دوره‌های آموزشی در حوزه کشاورزی
+              </p>
+            </>
+          )}
           
           <div className="flex gap-4 justify-center mb-6">
             <button className="bg-white text-gray-700 px-4 py-2 rounded-lg border hover:bg-gray-50">
@@ -54,31 +75,38 @@ export default function HomePage() {
             <div className="w-16 h-16 rounded-full flex items-center justify-center" style={{backgroundColor: 'hsl(118, 54%, 40%)'}}>
               <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
               </svg>
             </div>
           </div>
         </div>
 
+        {/* Slide Navigation */}
         {activeSlides.length > 1 && (
           <>
-            <button 
-              onClick={prevSlide}
-              className="absolute top-1/2 left-4 transform -translate-y-1/2 bg-white bg-opacity-70 hover:bg-opacity-100 rounded-full p-2 transition-all z-20"
-            >
-              <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
-            </button>
+            <div className="absolute top-1/2 transform -translate-y-1/2 left-4">
+              <button 
+                onClick={prevSlide}
+                className="bg-white bg-opacity-70 hover:bg-opacity-100 rounded-full p-2 transition-all z-20"
+              >
+                <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+            </div>
             
-            <button 
-              onClick={nextSlide}
-              className="absolute top-1/2 right-4 transform -translate-y-1/2 bg-white bg-opacity-70 hover:bg-opacity-100 rounded-full p-2 transition-all z-20"
-            >
-              <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </button>
+            <div className="absolute top-1/2 transform -translate-y-1/2 right-4">
+              <button 
+                onClick={nextSlide}
+                className="bg-white bg-opacity-70 hover:bg-opacity-100 rounded-full p-2 transition-all z-20"
+              >
+                <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            </div>
             
+            {/* Slide Indicators */}
             <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2 z-20">
               {activeSlides.map((_, index) => (
                 <button
@@ -94,6 +122,7 @@ export default function HomePage() {
         )}
       </div>
 
+      {/* Quick Access Section - Circular Icons */}
       <div className="grid grid-cols-4 gap-4 px-4">
         <div className="text-center">
           <div className="w-16 h-16 mx-auto mb-2 rounded-full flex items-center justify-center shadow-lg" style={{backgroundColor: 'hsl(270, 60%, 95%)'}}>
@@ -132,6 +161,7 @@ export default function HomePage() {
         </div>
       </div>
 
+      {/* Workshops Section */}
       <div>
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-xl font-bold text-gray-800 flex items-center">
