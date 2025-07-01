@@ -970,17 +970,18 @@ function MediaTab() {
 
         if (response.ok) {
           const result = await response.json();
+          console.log('Upload result:', result); // برای debug
           const newFiles = result.files.map((file: any, index: number) => ({
             id: uploadedFiles.length + index + 1,
-            name: file.filename,
+            name: file.name,
             url: file.url,
-            type: file.originalname.includes('.pdf') ? 'document' : 'image',
-            size: (file.size / 1024).toFixed(0) + ' KB',
+            type: file.type,
+            size: file.size,
             uploadedAt: new Date().toLocaleDateString('fa-IR')
           }));
           setUploadedFiles(prev => [...prev, ...newFiles]);
         } else {
-          console.error('Upload failed');
+          console.error('Upload failed:', response.statusText);
         }
       } catch (error) {
         console.error('Upload error:', error);
