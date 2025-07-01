@@ -442,11 +442,43 @@ function ProjectsTab() {
 }
 
 function DocumentsTab() {
+  const [showDocumentForm, setShowDocumentForm] = useState(false);
+  const [documentFormData, setDocumentFormData] = useState({
+    title: '',
+    slug: '',
+    excerpt: '',
+    content: '',
+    fileUrl: '',
+    author: '',
+    categoryId: 1,
+    isPublished: true,
+    isFeatured: false,
+    allowDownload: true,
+    allowCopy: true,
+    allowPrint: true,
+    protectionLevel: 'basic' as const,
+    watermarkText: ''
+  });
+
   const { data: documents, isLoading } = useQuery<Document[]>({
     queryKey: ['/api/documents'],
   });
 
   const queryClient = useQueryClient();
+
+  const createDocumentMutation = useMutation({
+    mutationFn: async (documentData: any) => {
+      return apiRequest('/api/documents', {
+        method: 'POST',
+        body: JSON.stringify(documentData),
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/documents'] });
+      setShowDocumentForm(false);
+      resetDocumentForm();
+    },
+  });
 
   const updateDocumentProtectionMutation = useMutation({
     mutationFn: async ({ documentId, protectionField, value }: { documentId: number, protectionField: string, value: boolean }) => {
@@ -460,104 +492,276 @@ function DocumentsTab() {
     },
   });
 
+  const resetDocumentForm = () => {
+    setDocumentFormData({
+      title: '',
+      slug: '',
+      excerpt: '',
+      content: '',
+      fileUrl: '',
+      author: '',
+      categoryId: 1,
+      isPublished: true,
+      isFeatured: false,
+      allowDownload: true,
+      allowCopy: true,
+      allowPrint: true,
+      protectionLevel: 'basic' as const,
+      watermarkText: ''
+    });
+  };
+
+  const handleDocumentSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    createDocumentMutation.mutate(documentFormData);
+  };
+
+  const generateSlug = (title: string) => {
+    return title
+      .toLowerCase()
+      .replace(/[^\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFFa-z0-9]/gi, '-')
+      .replace(/-+/g, '-')
+      .replace(/^-|-$/g, '');
+  };
+
   if (isLoading) {
     return <div className="text-center py-8">در حال بارگذاری...</div>;
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-md">
-      <div className="p-6 border-b">
-        <div className="flex items-center justify-between">
-          <h2 className="text-xl font-semibold">کتابخانه اسناد</h2>
-          <button className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors flex items-center gap-2">
-            <Plus className="h-4 w-4" />
-            افزودن سند جدید
-          </button>
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="bg-white rounded-lg shadow-md">
+        <div className="p-6 border-b">
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-semibold">کتابخانه اسناد</h2>
+            <button 
+              onClick={() => {
+                setShowDocumentForm(true);
+                resetDocumentForm();
+              }}
+              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors flex items-center gap-2"
+            >
+              <Plus className="h-4 w-4" />
+              افزودن سند جدید
+            </button>
+          </div>
         </div>
-      </div>
-      
-      <div className="p-6">
-        {documents && documents.length > 0 ? (
-          <div className="space-y-4">
-            {documents.map(doc => (
-              <div key={doc.id} className="p-4 border rounded-lg">
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center gap-3">
-                    <File className="h-8 w-8 text-blue-600" />
-                    <div>
-                      <h3 className="font-medium">{doc.title}</h3>
-                      <p className="text-sm text-gray-600">{doc.excerpt}</p>
+        
+        <div className="p-6">
+          {documents && documents.length > 0 ? (
+            <div className="space-y-4">
+              {documents.map(doc => (
+                <div key={doc.id} className="p-4 border rounded-lg">
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-3">
+                      <File className="h-8 w-8 text-blue-600" />
+                      <div>
+                        <h3 className="font-medium">{doc.title}</h3>
+                        <p className="text-sm text-gray-600">{doc.excerpt}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button className="p-2 hover:bg-gray-100 rounded">
+                        <Eye className="h-4 w-4" />
+                      </button>
+                      <button className="p-2 hover:bg-gray-100 rounded">
+                        <Edit className="h-4 w-4" />
+                      </button>
+                      <button className="p-2 hover:bg-gray-100 rounded text-red-500">
+                        <Trash className="h-4 w-4" />
+                      </button>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <button className="p-2 hover:bg-gray-100 rounded">
-                      <Eye className="h-4 w-4" />
-                    </button>
-                    <button className="p-2 hover:bg-gray-100 rounded">
-                      <Edit className="h-4 w-4" />
-                    </button>
-                    <button className="p-2 hover:bg-gray-100 rounded text-red-500">
-                      <Trash className="h-4 w-4" />
-                    </button>
+                  
+                  {/* Protection Controls */}
+                  <div className="flex items-center gap-4 text-xs border-t pt-3">
+                    <label className="flex items-center gap-1 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={!doc.allowDownload}
+                        onChange={(e) => updateDocumentProtectionMutation.mutate({
+                          documentId: doc.id,
+                          protectionField: 'allowDownload',
+                          value: !e.target.checked
+                        })}
+                        className="w-3 h-3"
+                      />
+                      <Download className="h-3 w-3 text-red-500" />
+                      <span className="text-gray-600">قفل دانلود</span>
+                    </label>
+                    <label className="flex items-center gap-1 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={!doc.allowCopy}
+                        onChange={(e) => updateDocumentProtectionMutation.mutate({
+                          documentId: doc.id,
+                          protectionField: 'allowCopy',
+                          value: !e.target.checked
+                        })}
+                        className="w-3 h-3"
+                      />
+                      <Copy className="h-3 w-3 text-red-500" />
+                      <span className="text-gray-600">قفل کپی</span>
+                    </label>
+                    <label className="flex items-center gap-1 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={!doc.allowPrint}
+                        onChange={(e) => updateDocumentProtectionMutation.mutate({
+                          documentId: doc.id,
+                          protectionField: 'allowPrint',
+                          value: !e.target.checked
+                        })}
+                        className="w-3 h-3"
+                      />
+                      <Shield className="h-3 w-3 text-red-500" />
+                      <span className="text-gray-600">قفل چاپ</span>
+                    </label>
                   </div>
                 </div>
-                
-                {/* Protection Controls */}
-                <div className="flex items-center gap-4 text-xs border-t pt-3">
-                  <label className="flex items-center gap-1 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={!doc.allowDownload}
-                      onChange={(e) => updateDocumentProtectionMutation.mutate({
-                        documentId: doc.id,
-                        protectionField: 'allowDownload',
-                        value: !e.target.checked
-                      })}
-                      className="w-3 h-3"
-                    />
-                    <Download className="h-3 w-3 text-red-500" />
-                    <span className="text-gray-600">قفل دانلود</span>
-                  </label>
-                  <label className="flex items-center gap-1 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={!doc.allowCopy}
-                      onChange={(e) => updateDocumentProtectionMutation.mutate({
-                        documentId: doc.id,
-                        protectionField: 'allowCopy',
-                        value: !e.target.checked
-                      })}
-                      className="w-3 h-3"
-                    />
-                    <Copy className="h-3 w-3 text-red-500" />
-                    <span className="text-gray-600">قفل کپی</span>
-                  </label>
-                  <label className="flex items-center gap-1 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={!doc.allowPrint}
-                      onChange={(e) => updateDocumentProtectionMutation.mutate({
-                        documentId: doc.id,
-                        protectionField: 'allowPrint',
-                        value: !e.target.checked
-                      })}
-                      className="w-3 h-3"
-                    />
-                    <Shield className="h-3 w-3 text-red-500" />
-                    <span className="text-gray-600">قفل چاپ</span>
-                  </label>
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-12">
-            <File className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">هیچ سندی یافت نشد</h3>
-            <p className="text-gray-600">برای شروع، سند جدیدی اضافه کنید</p>
-          </div>
-        )}
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <File className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-gray-900 mb-2">هیچ سندی یافت نشد</h3>
+              <p className="text-gray-600">برای شروع، سند جدیدی اضافه کنید</p>
+            </div>
+          )}
+        </div>
       </div>
+
+      {/* Document Form */}
+      {showDocumentForm && (
+        <div className="bg-white rounded-lg shadow-md">
+          <div className="p-6 border-b">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-semibold">افزودن سند جدید</h3>
+              <button 
+                onClick={() => setShowDocumentForm(false)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <X className="h-6 w-6" />
+              </button>
+            </div>
+          </div>
+          
+          <form onSubmit={handleDocumentSubmit} className="p-6 space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  عنوان *
+                </label>
+                <input
+                  type="text"
+                  value={documentFormData.title}
+                  onChange={(e) => {
+                    setDocumentFormData({
+                      ...documentFormData, 
+                      title: e.target.value,
+                      slug: generateSlug(e.target.value)
+                    });
+                  }}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  required
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  نویسنده
+                </label>
+                <input
+                  type="text"
+                  value={documentFormData.author}
+                  onChange={(e) => setDocumentFormData({...documentFormData, author: e.target.value})}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                خلاصه
+              </label>
+              <textarea
+                value={documentFormData.excerpt}
+                onChange={(e) => setDocumentFormData({...documentFormData, excerpt: e.target.value})}
+                rows={2}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                آدرس فایل
+              </label>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={documentFormData.fileUrl}
+                  onChange={(e) => setDocumentFormData({...documentFormData, fileUrl: e.target.value})}
+                  className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="/uploads/document.pdf"
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    const mediaTab = document.querySelector('[data-tab="media"]') as HTMLElement;
+                    if (mediaTab) {
+                      mediaTab.click();
+                    }
+                  }}
+                  className="px-3 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors flex items-center gap-1 whitespace-nowrap"
+                >
+                  <Upload className="h-4 w-4" />
+                  رسانه
+                </button>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-4">
+              <label className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={documentFormData.isPublished}
+                  onChange={(e) => setDocumentFormData({...documentFormData, isPublished: e.target.checked})}
+                  className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                />
+                منتشر شده
+              </label>
+              
+              <label className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={documentFormData.isFeatured}
+                  onChange={(e) => setDocumentFormData({...documentFormData, isFeatured: e.target.checked})}
+                  className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                />
+                ویژه
+              </label>
+            </div>
+
+            <div className="flex justify-end gap-3 pt-4 border-t">
+              <button
+                type="button"
+                onClick={() => setShowDocumentForm(false)}
+                className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors"
+              >
+                انصراف
+              </button>
+              <button
+                type="submit"
+                disabled={createDocumentMutation.isPending}
+                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50"
+              >
+                {createDocumentMutation.isPending ? 'در حال ذخیره...' : 'افزودن سند'}
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
     </div>
   );
 }
