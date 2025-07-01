@@ -283,9 +283,9 @@ function SlidesTab() {
     buttonUrl: '',
     isActive: true,
     order: 0,
-    gradientFrom: 'blue-500',
-    gradientTo: 'purple-600',
-    iconName: 'GraduationCap'
+    gradientFrom: '',
+    gradientTo: '',
+    iconName: ''
   });
 
   const { data: slides, isLoading } = useQuery<Slide[]>({
@@ -343,9 +343,9 @@ function SlidesTab() {
       buttonUrl: '',
       isActive: true,
       order: 0,
-      gradientFrom: 'blue-500',
-      gradientTo: 'purple-600',
-      iconName: 'GraduationCap'
+      gradientFrom: '',
+      gradientTo: '',
+      iconName: ''
     });
   };
 
@@ -359,9 +359,9 @@ function SlidesTab() {
       buttonUrl: slide.buttonUrl,
       isActive: slide.isActive || true,
       order: slide.order || 0,
-      gradientFrom: slide.gradientFrom || 'blue-500',
-      gradientTo: slide.gradientTo || 'purple-600',
-      iconName: slide.iconName || 'GraduationCap'
+      gradientFrom: slide.gradientFrom || '',
+      gradientTo: slide.gradientTo || '',
+      iconName: slide.iconName || ''
     });
     setShowForm(true);
   };
@@ -494,6 +494,7 @@ function SlidesTab() {
                     onChange={(e) => setFormData({...formData, gradientFrom: e.target.value})}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
+                    <option value="">بدون گرادیان</option>
                     <option value="blue-500">آبی</option>
                     <option value="green-500">سبز</option>
                     <option value="purple-500">بنفش</option>
@@ -513,6 +514,7 @@ function SlidesTab() {
                     onChange={(e) => setFormData({...formData, gradientTo: e.target.value})}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
+                    <option value="">بدون گرادیان</option>
                     <option value="purple-600">بنفش تیره</option>
                     <option value="blue-600">آبی تیره</option>
                     <option value="green-600">سبز تیره</option>
@@ -532,6 +534,7 @@ function SlidesTab() {
                     onChange={(e) => setFormData({...formData, iconName: e.target.value})}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
+                    <option value="">بدون آیکون</option>
                     <option value="GraduationCap">فارغ‌التحصیلی</option>
                     <option value="BookOpen">کتاب باز</option>
                     <option value="Rocket">موشک</option>
