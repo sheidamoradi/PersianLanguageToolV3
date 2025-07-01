@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { type Course, type Project, type Document, type MediaContent, type Magazine, type Article, type ArticleContent, type Slide, type Workshop, type WorkshopSection } from "@shared/schema";
-import { Calendar, Edit, Eye, File, Folder, Image, Lock, LockOpen, MoreHorizontal, Plus, RefreshCw, Trash, Upload, Video, Copy, X } from "lucide-react";
+import { Calendar, Edit, Eye, File, Folder, Image, Lock, LockOpen, MoreHorizontal, Plus, RefreshCw, Trash, Upload, Video, Copy, X, Zap } from "lucide-react";
 
 export default function AdminPage() {
   const [activeTab, setActiveTab] = useState("courses");
@@ -24,6 +24,7 @@ export default function AdminPage() {
                 { id: "projects", label: "پروژه‌ها", icon: Folder },
                 { id: "documents", label: "اسناد", icon: File },
                 { id: "slides", label: "اسلایدها", icon: Image },
+                { id: "quickaccess", label: "دسترسی سریع", icon: Zap },
                 { id: "magazines", label: "مجله‌ها", icon: Calendar },
                 { id: "media", label: "کتابخانه رسانه", icon: Upload },
                 { id: "users", label: "کاربران", icon: Lock }
@@ -56,6 +57,7 @@ export default function AdminPage() {
               {activeTab === "projects" && "پروژه‌ها"}
               {activeTab === "documents" && "اسناد"}
               {activeTab === "slides" && "اسلایدهای صفحه اصلی"}
+              {activeTab === "quickaccess" && "مدیریت منوی دسترسی سریع"}
               {activeTab === "magazines" && "مجله‌ها"}
               {activeTab === "media" && "کتابخانه رسانه"}
               {activeTab === "users" && "مدیریت کاربران"}

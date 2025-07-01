@@ -133,6 +133,14 @@ export interface IStorage {
   updateSlide(id: number, slide: Partial<InsertSlide>): Promise<Slide | undefined>;
   deleteSlide(id: number): Promise<boolean>;
 
+  // Quick Access Item methods
+  getQuickAccessItems(): Promise<QuickAccessItem[]>;
+  getActiveQuickAccessItems(): Promise<QuickAccessItem[]>;
+  getQuickAccessItem(id: number): Promise<QuickAccessItem | undefined>;
+  createQuickAccessItem(item: InsertQuickAccessItem): Promise<QuickAccessItem>;
+  updateQuickAccessItem(id: number, item: Partial<InsertQuickAccessItem>): Promise<QuickAccessItem | undefined>;
+  deleteQuickAccessItem(id: number): Promise<boolean>;
+
   // Protection control methods
   updateCourseProtection(id: number, protection: any): Promise<Course | undefined>;
   updateProjectProtection(id: number, protection: any): Promise<Project | undefined>;
@@ -482,6 +490,51 @@ export class DatabaseStorage implements IStorage {
 
   async deleteSlide(id: number): Promise<boolean> {
     const result = await db.delete(slides).where(eq(slides.id, id));
+    return (result.rowCount ?? 0) > 0;
+  }
+
+  // Quick Access Item methods
+  async getQuickAccessItems(): Promise<QuickAccessItem[]> {
+    return await db.select().from(quickAccessItems).orderBy(asc(quickAccessItems.order));
+  }
+
+  async getActiveQuickAccessItems(): Promise<QuickAccessItem[]> {
+    return await db.select().from(quickAccessItems)
+      .where(eq(quickAccessItems.isActive, true))
+      .orderBy(asc(quickAccessItems.order));
+  }
+
+  async getQuickAccessItem(id: number): Promise<QuickAccessItem | undefined> {
+    const [item] = await db.select().from(quickAccessItems).where(eq(quickAccessItems.id, id));
+    return item;
+  }
+
+  async createQuickAccessItem(item: InsertQuickAccessItem): Promise<QuickAccessItem> {
+    const [newItem] = await db
+      .insert(quickAccessItems)
+      .values({
+        ...item,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      })
+      .returning();
+    return newItem;
+  }
+
+  async updateQuickAccessItem(id: number, item: Partial<InsertQuickAccessItem>): Promise<QuickAccessItem | undefined> {
+    const [updatedItem] = await db
+      .update(quickAccessItems)
+      .set({
+        ...item,
+        updatedAt: new Date()
+      })
+      .where(eq(quickAccessItems.id, id))
+      .returning();
+    return updatedItem;
+  }
+
+  async deleteQuickAccessItem(id: number): Promise<boolean> {
+    const result = await db.delete(quickAccessItems).where(eq(quickAccessItems.id, id));
     return (result.rowCount ?? 0) > 0;
   }
 
