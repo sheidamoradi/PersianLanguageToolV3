@@ -72,6 +72,13 @@ export default function WorkshopsPage() {
         </p>
       </div>
 
+      {/* Debug Info */}
+      <div className="mb-4 p-4 bg-gray-100 rounded text-sm">
+        <p>تعداد کل کارگاه‌ها: {workshops?.length || 0}</p>
+        <p>تعداد فعال: {workshops?.filter((w: any) => w.isActive).length || 0}</p>
+        <p>داده‌ها: {JSON.stringify(workshops?.map(w => ({id: w.id, title: w.title, isActive: w.isActive})))}</p>
+      </div>
+
       {/* Workshops Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
         {workshops && workshops
