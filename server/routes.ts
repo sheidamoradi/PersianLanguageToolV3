@@ -536,6 +536,46 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.put("/api/workshops/:id", async (req, res) => {
+    const id = parseInt(req.params.id);
+
+    if (isNaN(id)) {
+      return res.status(400).json({ message: "Invalid workshop ID" });
+    }
+
+    try {
+      const workshopData = insertWorkshopSchema.partial().parse(req.body);
+      const updatedWorkshop = await storage.updateWorkshop(id, workshopData);
+
+      if (!updatedWorkshop) {
+        return res.status(404).json({ message: "Workshop not found" });
+      }
+
+      return res.json(updatedWorkshop);
+    } catch (error) {
+      if (error instanceof ZodError) {
+        return res.status(400).json({ message: fromZodError(error).toString() });
+      }
+      return res.status(500).json({ message: "خطا در به‌روزرسانی کارگاه" });
+    }
+  });
+
+  app.delete("/api/workshops/:id", async (req, res) => {
+    const id = parseInt(req.params.id);
+
+    if (isNaN(id)) {
+      return res.status(400).json({ message: "Invalid workshop ID" });
+    }
+
+    const deleted = await storage.deleteWorkshop(id);
+
+    if (!deleted) {
+      return res.status(404).json({ message: "Workshop not found" });
+    }
+
+    return res.json({ message: "Workshop deleted successfully" });
+  });
+
   // Slides API
   app.get("/api/slides", async (req, res) => {
     const slides = await storage.getSlides();
