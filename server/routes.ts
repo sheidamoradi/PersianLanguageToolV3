@@ -585,7 +585,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       return res.status(400).json({ message: "Invalid workshop ID" });
     }
 
-    const registrations = await storage.getWorkshopRegistrations(workshopId);
+    const registrations = await storage.getWorkshopRegistrationsByWorkshopId(workshopId);
     res.json(registrations);
   });
 
