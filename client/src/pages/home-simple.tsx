@@ -11,6 +11,10 @@ export default function HomePage() {
     queryKey: ['/api/quick-access'],
   });
 
+  const { data: workshops } = useQuery<any[]>({
+    queryKey: ['/api/workshops'],
+  });
+
   const [currentSlide, setCurrentSlide] = useState(0);
   
   const activeSlides = slides?.filter(slide => slide.isActive) || [];
@@ -204,35 +208,74 @@ export default function HomePage() {
         </div>
         
         <div className="grid grid-cols-3 gap-4 mb-4">
-          <div className="bg-white rounded-xl p-4 shadow-sm border">
-            <div className="w-full h-24 bg-gray-100 rounded-lg mb-3 flex items-center justify-center">
-              <svg className="w-10 h-10 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-              </svg>
+          {workshops && workshops
+            .filter((workshop: any) => workshop.isActive)
+            .slice(0, 3)
+            .map((workshop: any) => (
+            <div key={workshop.id} className="bg-white rounded-xl p-4 shadow-sm border">
+              <div className="w-full h-24 bg-gray-100 rounded-lg mb-3 flex items-center justify-center overflow-hidden">
+                {workshop.posterUrl ? (
+                  <img 
+                    src={workshop.posterUrl} 
+                    alt={workshop.title}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <svg className="w-10 h-10 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
+                  </svg>
+                )}
+              </div>
+              <h3 className="font-medium text-gray-800 text-sm mb-1" title={workshop.title}>
+                {workshop.title.length > 25 ? `${workshop.title.substring(0, 25)}...` : workshop.title}
+              </h3>
+              <p className="text-xs text-gray-500" title={workshop.description}>
+                {workshop.description ? 
+                  (workshop.description.length > 30 ? `${workshop.description.substring(0, 30)}...` : workshop.description) 
+                  : 'کارگاه آموزشی'}
+              </p>
+              {workshop.eventDate && (
+                <p className="text-xs text-blue-600 mt-1">📅 {workshop.eventDate}</p>
+              )}
             </div>
-            <h3 className="font-medium text-gray-800 text-sm mb-1">کشاورزی هوشمند</h3>
-            <p className="text-xs text-gray-500">یادگیری تکنیک‌های نوین</p>
-          </div>
+          ))}
           
-          <div className="bg-white rounded-xl p-4 shadow-sm border">
-            <div className="w-full h-24 bg-gray-100 rounded-lg mb-3 flex items-center justify-center">
-              <svg className="w-10 h-10 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-              </svg>
-            </div>
-            <h3 className="font-medium text-gray-800 text-sm mb-1">مدیریت مزرعه</h3>
-            <p className="text-xs text-gray-500">برنامه‌ریزی و نظارت</p>
-          </div>
-          
-          <div className="bg-white rounded-xl p-4 shadow-sm border">
-            <div className="w-full h-24 bg-gray-100 rounded-lg mb-3 flex items-center justify-center">
-              <svg className="w-10 h-10 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v12a4 4 0 004 4h4a2 2 0 002-2V5z" />
-              </svg>
-            </div>
-            <h3 className="font-medium text-gray-800 text-sm mb-1">کنترل آفات</h3>
-            <p className="text-xs text-gray-500">روش‌های طبیعی</p>
-          </div>
+          {/* Fallback when no workshops exist */}
+          {(!workshops || workshops.filter((w: any) => w.isActive).length === 0) && (
+            <>
+              <div className="bg-white rounded-xl p-4 shadow-sm border">
+                <div className="w-full h-24 bg-gray-100 rounded-lg mb-3 flex items-center justify-center">
+                  <svg className="w-10 h-10 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                  </svg>
+                </div>
+                <h3 className="font-medium text-gray-800 text-sm mb-1">کشاورزی هوشمند</h3>
+                <p className="text-xs text-gray-500">یادگیری تکنیک‌های نوین</p>
+              </div>
+              
+              <div className="bg-white rounded-xl p-4 shadow-sm border">
+                <div className="w-full h-24 bg-gray-100 rounded-lg mb-3 flex items-center justify-center">
+                  <svg className="w-10 h-10 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                  </svg>
+                </div>
+                <h3 className="font-medium text-gray-800 text-sm mb-1">مدیریت مزرعه</h3>
+                <p className="text-xs text-gray-500">برنامه‌ریزی و نظارت</p>
+              </div>
+              
+              <div className="bg-white rounded-xl p-4 shadow-sm border">
+                <div className="w-full h-24 bg-gray-100 rounded-lg mb-3 flex items-center justify-center">
+                  <svg className="w-10 h-10 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v12a4 4 0 004 4h4a2 2 0 002-2V5z" />
+                  </svg>
+                </div>
+                <h3 className="font-medium text-gray-800 text-sm mb-1">کنترل آفات</h3>
+                <p className="text-xs text-gray-500">روش‌های طبیعی</p>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </div>
