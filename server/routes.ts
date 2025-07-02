@@ -22,7 +22,8 @@ import {
   insertArticleSchema,
   insertArticleContentSchema,
   insertWorkshopSchema,
-  insertSlideSchema
+  insertSlideSchema,
+  insertWorkshopRegistrationSchema
 } from "@shared/schema";
 
 // Configure multer for file uploads
@@ -839,6 +840,52 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       return res.status(500).json({ message: "خطا در به‌روزرسانی تنظیمات حفاظت" });
     }
+  });
+
+  // Workshop Registrations API
+  app.get("/api/workshop-registrations", async (req, res) => {
+    const registrations = await storage.getWorkshopRegistrations();
+    res.json(registrations);
+  });
+
+  app.get("/api/workshop-registrations/workshop/:workshopId", async (req, res) => {
+    const workshopId = parseInt(req.params.workshopId);
+
+    if (isNaN(workshopId)) {
+      return res.status(400).json({ message: "Invalid workshop ID" });
+    }
+
+    const registrations = await storage.getWorkshopRegistrationsByWorkshopId(workshopId);
+    return res.json(registrations);
+  });
+
+  app.post("/api/workshop-registrations", async (req, res) => {
+    try {
+      const registrationData = insertWorkshopRegistrationSchema.parse(req.body);
+      const registration = await storage.createWorkshopRegistration(registrationData);
+      return res.status(201).json(registration);
+    } catch (error) {
+      if (error instanceof ZodError) {
+        return res.status(400).json({ message: fromZodError(error).toString() });
+      }
+      return res.status(500).json({ message: "خطا در ثبت‌نام کارگاه" });
+    }
+  });
+
+  app.delete("/api/workshop-registrations/:id", async (req, res) => {
+    const id = parseInt(req.params.id);
+
+    if (isNaN(id)) {
+      return res.status(400).json({ message: "Invalid registration ID" });
+    }
+
+    const deleted = await storage.deleteWorkshopRegistration(id);
+
+    if (!deleted) {
+      return res.status(404).json({ message: "Registration not found" });
+    }
+
+    return res.json({ message: "Registration deleted successfully" });
   });
 
   const server = createServer(app);

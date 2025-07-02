@@ -117,7 +117,8 @@ export interface IStorage {
   deleteWorkshopContent(id: number): Promise<boolean>;
 
   // Workshop registration methods
-  getWorkshopRegistrations(workshopId: number): Promise<WorkshopRegistration[]>;
+  getWorkshopRegistrations(): Promise<WorkshopRegistration[]>;
+  getWorkshopRegistrationsByWorkshopId(workshopId: number): Promise<WorkshopRegistration[]>;
   createWorkshopRegistration(registration: InsertWorkshopRegistration): Promise<WorkshopRegistration>;
   updateWorkshopRegistration(id: number, registration: Partial<InsertWorkshopRegistration>): Promise<WorkshopRegistration | undefined>;
   deleteWorkshopRegistration(id: number): Promise<boolean>;
@@ -860,8 +861,12 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Workshop registration methods
-  async getWorkshopRegistrations(workshopId: number): Promise<WorkshopRegistration[]> {
-    return await db.select().from(workshopRegistrations).where(eq(workshopRegistrations.workshopId, workshopId));
+  async getWorkshopRegistrations(): Promise<WorkshopRegistration[]> {
+    return await db.select().from(workshopRegistrations).orderBy(asc(workshopRegistrations.registrationDate));
+  }
+
+  async getWorkshopRegistrationsByWorkshopId(workshopId: number): Promise<WorkshopRegistration[]> {
+    return await db.select().from(workshopRegistrations).where(eq(workshopRegistrations.workshopId, workshopId)).orderBy(asc(workshopRegistrations.registrationDate));
   }
 
   async createWorkshopRegistration(registration: InsertWorkshopRegistration): Promise<WorkshopRegistration> {

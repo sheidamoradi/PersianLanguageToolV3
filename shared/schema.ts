@@ -434,6 +434,8 @@ export type InsertQuickAccessItem = z.infer<typeof insertQuickAccessItemSchema>;
 export type QuickAccessItem = typeof quickAccessItems.$inferSelect;
 
 // Workshop Registration Types
+export type InsertWorkshopRegistration = z.infer<typeof insertWorkshopRegistrationSchema>;
+export type WorkshopRegistration = typeof workshopRegistrations.$inferSelect;
 
 
 // User Course Access Table
