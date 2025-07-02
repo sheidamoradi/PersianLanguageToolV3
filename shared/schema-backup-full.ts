@@ -434,7 +434,9 @@ export type InsertQuickAccessItem = z.infer<typeof insertQuickAccessItemSchema>;
 export type QuickAccessItem = typeof quickAccessItems.$inferSelect;
 
 // Workshop Registration Types
-
+export const insertWorkshopRegistrationSchema = createInsertSchema(workshopRegistrations).omit({ id: true, registeredAt: true });
+export type InsertWorkshopRegistration = z.infer<typeof insertWorkshopRegistrationSchema>;
+export type WorkshopRegistration = typeof workshopRegistrations.$inferSelect;
 
 // User Course Access Table
 export const userCourseAccess = pgTable("user_course_access", {

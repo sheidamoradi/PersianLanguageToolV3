@@ -243,11 +243,18 @@ export default function HomePage() {
                   (workshop.description.length > 30 ? `${workshop.description.substring(0, 30)}...` : workshop.description) 
                   : 'کارگاه آموزشی'}
               </p>
-              {workshop.eventDate && (
-                <p className="text-xs text-blue-600 mt-1">📅 {workshop.eventDate}</p>
-              )}
-              <div className="mt-2 text-xs text-green-600 hover:text-green-700">
-                کلیک برای مشاهده جزئیات →
+              <div className="flex items-center justify-between mt-2">
+                {workshop.eventDate && (
+                  <p className="text-xs text-blue-600">📅 {workshop.eventDate}</p>
+                )}
+                {workshop.registrationOpen && (
+                  <div className="text-xs text-green-600 bg-green-50 px-2 py-1 rounded-full flex items-center">
+                    <svg className="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                    </svg>
+                    ثبت‌نام
+                  </div>
+                )}
               </div>
             </div>
           ))}
