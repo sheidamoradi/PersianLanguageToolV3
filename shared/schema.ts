@@ -298,6 +298,18 @@ export const workshopContents = pgTable("workshop_contents", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+// Workshop registrations table
+export const workshopRegistrations = pgTable("workshop_registrations", {
+  id: serial("id").primaryKey(),
+  workshopId: integer("workshop_id").notNull(),
+  userEmail: text("user_email").notNull(),
+  userName: text("user_name").notNull(),
+  userPhone: text("user_phone"),
+  status: text("status").notNull().default("pending"), // pending, confirmed, cancelled
+  registrationDate: timestamp("registration_date").defaultNow(),
+  notes: text("notes"),
+});
+
 // Slides table for homepage carousel
 export const slides = pgTable("slides", {
   id: serial("id").primaryKey(),
@@ -409,6 +421,7 @@ export type MediaLibrary = typeof mediaLibrary.$inferSelect;
 
 export const insertSlideSchema = createInsertSchema(slides).omit({ id: true, createdAt: true, updatedAt: true });
 export const insertQuickAccessItemSchema = createInsertSchema(quickAccessItems).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertWorkshopRegistrationSchema = createInsertSchema(workshopRegistrations).omit({ id: true, registrationDate: true });
 
 // Slide Types
 export type InsertSlide = z.infer<typeof insertSlideSchema>;
@@ -417,6 +430,10 @@ export type Slide = typeof slides.$inferSelect;
 // Quick Access Types
 export type InsertQuickAccessItem = z.infer<typeof insertQuickAccessItemSchema>;
 export type QuickAccessItem = typeof quickAccessItems.$inferSelect;
+
+// Workshop Registration Types
+export type InsertWorkshopRegistration = z.infer<typeof insertWorkshopRegistrationSchema>;
+export type WorkshopRegistration = typeof workshopRegistrations.$inferSelect;
 
 // User Course Access Table
 export const userCourseAccess = pgTable("user_course_access", {

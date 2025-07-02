@@ -13,6 +13,7 @@ import {
   articleContents, type ArticleContent, type InsertArticleContent,
   workshops, type Workshop, type InsertWorkshop,
   workshopContents, type WorkshopContent, type InsertWorkshopContent,
+  workshopRegistrations, type WorkshopRegistration, type InsertWorkshopRegistration,
   slides, type Slide, type InsertSlide,
   quickAccessItems, type QuickAccessItem, type InsertQuickAccessItem,
   userCourseAccess, type UserCourseAccess, type InsertUserCourseAccess
@@ -114,6 +115,12 @@ export interface IStorage {
   createWorkshopContent(content: InsertWorkshopContent): Promise<WorkshopContent>;
   updateWorkshopContent(id: number, content: Partial<InsertWorkshopContent>): Promise<WorkshopContent | undefined>;
   deleteWorkshopContent(id: number): Promise<boolean>;
+
+  // Workshop registration methods
+  getWorkshopRegistrations(workshopId: number): Promise<WorkshopRegistration[]>;
+  createWorkshopRegistration(registration: InsertWorkshopRegistration): Promise<WorkshopRegistration>;
+  updateWorkshopRegistration(id: number, registration: Partial<InsertWorkshopRegistration>): Promise<WorkshopRegistration | undefined>;
+  deleteWorkshopRegistration(id: number): Promise<boolean>;
 
   // User course access methods
   getUserCourseAccess(userId: number): Promise<UserCourseAccess[]>;
@@ -850,6 +857,36 @@ export class DatabaseStorage implements IStorage {
       .where(eq(magazines.id, id))
       .returning();
     return updatedMagazine;
+  }
+
+  // Workshop registration methods
+  async getWorkshopRegistrations(workshopId: number): Promise<WorkshopRegistration[]> {
+    return await db.select().from(workshopRegistrations).where(eq(workshopRegistrations.workshopId, workshopId));
+  }
+
+  async createWorkshopRegistration(registration: InsertWorkshopRegistration): Promise<WorkshopRegistration> {
+    const [newRegistration] = await db
+      .insert(workshopRegistrations)
+      .values({
+        ...registration,
+        registrationDate: new Date()
+      })
+      .returning();
+    return newRegistration;
+  }
+
+  async updateWorkshopRegistration(id: number, registration: Partial<InsertWorkshopRegistration>): Promise<WorkshopRegistration | undefined> {
+    const [updatedRegistration] = await db
+      .update(workshopRegistrations)
+      .set(registration)
+      .where(eq(workshopRegistrations.id, id))
+      .returning();
+    return updatedRegistration;
+  }
+
+  async deleteWorkshopRegistration(id: number): Promise<boolean> {
+    const result = await db.delete(workshopRegistrations).where(eq(workshopRegistrations.id, id));
+    return (result.rowCount ?? 0) > 0;
   }
 }
 
