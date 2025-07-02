@@ -23,6 +23,7 @@ export default function AdminPage() {
                 { id: "courses", label: "دوره‌ها", icon: Video },
                 { id: "projects", label: "پروژه‌ها", icon: Folder },
                 { id: "documents", label: "اسناد", icon: File },
+                { id: "workshops", label: "کارگاه‌ها", icon: RefreshCw },
                 { id: "slides", label: "اسلایدها", icon: Image },
                 { id: "quickaccess", label: "دسترسی سریع", icon: Zap },
                 { id: "magazines", label: "مجله‌ها", icon: Calendar },
@@ -56,6 +57,7 @@ export default function AdminPage() {
               {activeTab === "courses" && "دوره‌های آموزشی"}
               {activeTab === "projects" && "پروژه‌ها"}
               {activeTab === "documents" && "اسناد"}
+              {activeTab === "workshops" && "کارگاه‌های آموزشی"}
               {activeTab === "slides" && "اسلایدهای صفحه اصلی"}
               {activeTab === "quickaccess" && "مدیریت منوی دسترسی سریع"}
               {activeTab === "magazines" && "مجله‌ها"}
@@ -68,6 +70,7 @@ export default function AdminPage() {
             {activeTab === "courses" && <CoursesTab />}
             {activeTab === "projects" && <ProjectsTab />}
             {activeTab === "documents" && <DocumentsTab />}
+            {activeTab === "workshops" && <WorkshopsTab />}
             {activeTab === "slides" && <SlidesTab />}
             {activeTab === "quickaccess" && <QuickAccessTab />}
             {activeTab === "magazines" && <MagazinesTab />}
