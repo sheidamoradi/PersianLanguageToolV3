@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { queryClient, apiRequest } from "@/lib/queryClient";
-import { type Course, type Project, type Document, type MediaContent, type Magazine, type Article, type ArticleContent, type Slide, type Workshop, type WorkshopSection } from "@shared/schema";
+import { type Course, type Project, type Document, type MediaContent, type Magazine, type Article, type ArticleContent, type Slide, type Workshop, type WorkshopSection, type WorkshopRegistration } from "@shared/schema";
 import { Calendar, Edit, Eye, File, Folder, Image, Lock, LockOpen, MoreHorizontal, Plus, RefreshCw, Trash, Upload, Video } from "lucide-react";
+import WorkshopsTab from "@/components/admin/WorkshopsTab";
 
 export default function AdminPage() {
   const [activeTab, setActiveTab] = useState("courses");
@@ -22,6 +23,8 @@ export default function AdminPage() {
           { id: "documents", label: "اسناد", icon: File },
           { id: "slides", label: "اسلایدها", icon: Image },
           { id: "magazines", label: "مجله‌ها", icon: Calendar },
+          { id: "workshops", label: "کارگاه‌ها", icon: Calendar },
+          { id: "workshop-registrations", label: "ثبت‌نام کارگاه‌ها", icon: Edit },
           { id: "users", label: "کاربران", icon: Lock }
         ].map(tab => {
           const IconComponent = tab.icon;
@@ -49,6 +52,8 @@ export default function AdminPage() {
         {activeTab === "documents" && <DocumentsTab />}
         {activeTab === "slides" && <SlidesTab />}
         {activeTab === "magazines" && <MagazinesTab />}
+        {activeTab === "workshops" && <WorkshopsTab />}
+        {activeTab === "workshop-registrations" && <WorkshopRegistrationsTab />}
         {activeTab === "users" && <UsersTab />}
       </div>
     </div>
@@ -916,6 +921,117 @@ function UsersTab() {
           </div>
         </>
       )}
+    </div>
+  );
+}
+
+function WorkshopRegistrationsTab() {
+  const { data: registrations = [], isLoading } = useQuery<WorkshopRegistration[]>({
+    queryKey: ['/api/workshop-registrations']
+  });
+
+  const { data: workshops = [] } = useQuery<Workshop[]>({
+    queryKey: ['/api/workshops']
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: number) => 
+      fetch(`/api/workshop-registrations/${id}`, {
+        method: 'DELETE'
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/workshop-registrations'] });
+    },
+  });
+
+  if (isLoading) {
+    return <div className="text-center py-8">در حال بارگذاری...</div>;
+  }
+
+  const getWorkshopName = (workshopId: number) => {
+    const workshop = workshops.find(w => w.id === workshopId);
+    return workshop?.title || 'نامشخص';
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-bold text-gray-900">ثبت‌نام‌های کارگاه</h2>
+        <span className="text-sm text-gray-600">تعداد: {registrations.length}</span>
+      </div>
+
+      <div className="bg-white rounded-lg border overflow-hidden">
+        <div className="p-4 border-b bg-gray-50">
+          <h4 className="font-semibold">لیست ثبت‌نام‌ها</h4>
+        </div>
+        
+        {registrations.length === 0 ? (
+          <div className="p-8 text-center text-gray-500">
+            هنوز ثبت‌نامی انجام نشده است.
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">نام کارگاه</th>
+                  <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">نام کاربر</th>
+                  <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">ایمیل</th>
+                  <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">تلفن</th>
+                  <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">وضعیت</th>
+                  <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">تاریخ ثبت‌نام</th>
+                  <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">عملیات</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200">
+                {registrations.map((registration) => (
+                  <tr key={registration.id} className="hover:bg-gray-50">
+                    <td className="px-4 py-4 text-sm text-gray-900 font-medium">
+                      {getWorkshopName(registration.workshopId)}
+                    </td>
+                    <td className="px-4 py-4 text-sm text-gray-900">
+                      {registration.userName}
+                    </td>
+                    <td className="px-4 py-4 text-sm text-gray-900">
+                      {registration.userEmail}
+                    </td>
+                    <td className="px-4 py-4 text-sm text-gray-900">
+                      {registration.userPhone || '-'}
+                    </td>
+                    <td className="px-4 py-4 text-sm">
+                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                        registration.status === 'confirmed' 
+                          ? 'bg-green-100 text-green-800' 
+                          : registration.status === 'pending'
+                          ? 'bg-yellow-100 text-yellow-800'
+                          : 'bg-red-100 text-red-800'
+                      }`}>
+                        {registration.status === 'confirmed' ? 'تایید شده' : 
+                         registration.status === 'pending' ? 'در انتظار' : 'لغو شده'}
+                      </span>
+                    </td>
+                    <td className="px-4 py-4 text-sm text-gray-900">
+                      {registration.registrationDate 
+                        ? new Date(registration.registrationDate).toLocaleDateString('fa-IR')
+                        : '-'
+                      }
+                    </td>
+                    <td className="px-4 py-4 text-sm">
+                      <button
+                        onClick={() => deleteMutation.mutate(registration.id)}
+                        disabled={deleteMutation.isPending}
+                        className="text-red-600 hover:text-red-800 disabled:opacity-50"
+                      >
+                        <Trash className="h-4 w-4" />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
