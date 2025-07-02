@@ -212,7 +212,14 @@ export default function HomePage() {
             .filter((workshop: any) => workshop.isActive)
             .slice(0, 3)
             .map((workshop: any) => (
-            <div key={workshop.id} className="bg-white rounded-xl p-4 shadow-sm border">
+            <div 
+              key={workshop.id} 
+              className="bg-white rounded-xl p-4 shadow-sm border cursor-pointer hover:shadow-lg transition-shadow"
+              onClick={() => {
+                // Switch to workshops tab to show workshop details
+                window.parent.postMessage({ type: 'SWITCH_TAB', tab: 'workshops' }, '*');
+              }}
+            >
               <div className="w-full h-24 bg-gray-100 rounded-lg mb-3 flex items-center justify-center overflow-hidden">
                 {workshop.posterUrl ? (
                   <img 
@@ -239,6 +246,9 @@ export default function HomePage() {
               {workshop.eventDate && (
                 <p className="text-xs text-blue-600 mt-1">📅 {workshop.eventDate}</p>
               )}
+              <div className="mt-2 text-xs text-green-600 hover:text-green-700">
+                کلیک برای مشاهده جزئیات →
+              </div>
             </div>
           ))}
           

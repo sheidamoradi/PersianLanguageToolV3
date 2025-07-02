@@ -41,6 +41,8 @@ function App() {
     const handleMessage = (event: MessageEvent) => {
       if (event.data.type === 'OPEN_ADMIN') {
         setActiveTab('admin');
+      } else if (event.data.type === 'SWITCH_TAB') {
+        setActiveTab(event.data.tab);
       }
     };
 
