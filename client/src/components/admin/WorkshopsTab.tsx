@@ -7,8 +7,10 @@ export default function WorkshopsTab() {
   const [showForm, setShowForm] = useState(false);
   const [editingWorkshop, setEditingWorkshop] = useState<any>(null);
   
-  const { data: workshops, isLoading } = useQuery<any[]>({
+  const { data: workshops, isLoading, error, refetch } = useQuery<any[]>({
     queryKey: ['/api/workshops'],
+    staleTime: 0,
+    gcTime: 0
   });
 
   const createMutation = useMutation({
@@ -20,6 +22,7 @@ export default function WorkshopsTab() {
       }).then(res => res.json()),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/workshops'] });
+      refetch();
       setShowForm(false);
       setEditingWorkshop(null);
     },
