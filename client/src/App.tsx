@@ -4,6 +4,7 @@ import { Router } from 'wouter';
 import HomePage from './pages/home-simple';
 import CoursesPage from './pages/courses-simple';
 import ProjectsPage from './pages/projects-simple';
+import WorkshopsPage from './pages/workshops-simple';
 import LibraryPage from './pages/library-simple';
 import ProfilePage from './pages/profile-simple';
 import AdminPage from './pages/admin';
@@ -64,6 +65,7 @@ function App() {
       case 'home': return <HomePage />;
       case 'courses': return <CoursesPage />;
       case 'projects': return <ProjectsPage />;
+      case 'workshops': return <WorkshopsPage />;
       case 'library': return <LibraryPage />;
       case 'profile': return <ProfilePage />;
       case 'admin': return <AdminSimple />;
@@ -104,6 +106,13 @@ function App() {
                   icon="🚀"
                   label="پروژه‌ها"
                   isActive={activeTab === 'projects'}
+                  onClick={setActiveTab}
+                />
+                <NavButton
+                  id="workshops"
+                  icon="🎓"
+                  label="کارگاه‌ها"
+                  isActive={activeTab === 'workshops'}
                   onClick={setActiveTab}
                 />
                 <NavButton

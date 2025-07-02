@@ -576,6 +576,51 @@ export async function registerRoutes(app: Express): Promise<Server> {
     return res.json({ message: "Workshop deleted successfully" });
   });
 
+  // Workshop Registration API
+  app.get("/api/workshops/:id/registrations", async (req, res) => {
+    const workshopId = parseInt(req.params.id);
+
+    if (isNaN(workshopId)) {
+      return res.status(400).json({ message: "Invalid workshop ID" });
+    }
+
+    const registrations = await storage.getWorkshopRegistrations(workshopId);
+    res.json(registrations);
+  });
+
+  app.post("/api/workshops/:id/register", async (req, res) => {
+    const workshopId = parseInt(req.params.id);
+
+    if (isNaN(workshopId)) {
+      return res.status(400).json({ message: "Invalid workshop ID" });
+    }
+
+    // Check if workshop exists and registration is open
+    const workshop = await storage.getWorkshop(workshopId);
+    if (!workshop) {
+      return res.status(404).json({ message: "Workshop not found" });
+    }
+
+    if (!workshop.registrationOpen) {
+      return res.status(400).json({ message: "Registration is closed for this workshop" });
+    }
+
+    try {
+      const registrationData = {
+        workshopId,
+        userEmail: req.body.userEmail,
+        userName: req.body.userName,
+        userPhone: req.body.userPhone,
+        notes: req.body.notes
+      };
+
+      const registration = await storage.createWorkshopRegistration(registrationData);
+      return res.status(201).json(registration);
+    } catch (error) {
+      return res.status(500).json({ message: "خطا در ثبت‌نام کارگاه" });
+    }
+  });
+
   // Slides API
   app.get("/api/slides", async (req, res) => {
     const slides = await storage.getSlides();
