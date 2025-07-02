@@ -622,6 +622,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get all workshop registrations
+  app.get("/api/workshop-registrations", async (req, res) => {
+    try {
+      const registrations = await storage.getWorkshopRegistrations();
+      res.json(registrations);
+    } catch (error) {
+      console.error("Error fetching workshop registrations:", error);
+      res.status(500).json({ message: "خطا در دریافت ثبت‌نام‌های کارگاه" });
+    }
+  });
+
+  // Delete workshop registration
+  app.delete("/api/workshop-registrations/:id", async (req, res) => {
+    const id = parseInt(req.params.id);
+
+    if (isNaN(id)) {
+      return res.status(400).json({ message: "Invalid registration ID" });
+    }
+
+    try {
+      const deleted = await storage.deleteWorkshopRegistration(id);
+      if (!deleted) {
+        return res.status(404).json({ message: "Registration not found" });
+      }
+      res.json({ message: "Registration deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting workshop registration:", error);
+      res.status(500).json({ message: "خطا در حذف ثبت‌نام" });
+    }
+  });
+
   // Slides API
   app.get("/api/slides", async (req, res) => {
     const slides = await storage.getSlides();
