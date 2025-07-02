@@ -7,11 +7,11 @@ export default function WorkshopsTab() {
   const [showForm, setShowForm] = useState(false);
   const [editingWorkshop, setEditingWorkshop] = useState<any>(null);
   
-  const { data: workshops, isLoading, error, refetch } = useQuery<any[]>({
-    queryKey: ['/api/workshops'],
-    staleTime: 0,
-    gcTime: 0
+  const { data: workshops = [], isLoading, error, refetch } = useQuery<any[]>({
+    queryKey: ['/api/workshops']
   });
+  
+  console.log('Workshops data:', workshops, 'Loading:', isLoading, 'Error:', error);
 
   const createMutation = useMutation({
     mutationFn: (data: any) => 
@@ -37,6 +37,7 @@ export default function WorkshopsTab() {
       }).then(res => res.json()),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/workshops'] });
+      refetch();
       setShowForm(false);
       setEditingWorkshop(null);
     },
@@ -49,6 +50,7 @@ export default function WorkshopsTab() {
       }).then(res => res.json()),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/workshops'] });
+      refetch();
     },
   });
 
@@ -79,6 +81,20 @@ export default function WorkshopsTab() {
 
   if (isLoading) {
     return <div className="text-center py-8">در حال بارگذاری...</div>;
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-8 text-red-600">
+        خطا در بارگذاری کارگاه‌ها: {error.message}
+        <button 
+          onClick={() => refetch()} 
+          className="block mx-auto mt-2 px-4 py-2 bg-blue-600 text-white rounded"
+        >
+          تلاش مجدد
+        </button>
+      </div>
+    );
   }
 
   return (
