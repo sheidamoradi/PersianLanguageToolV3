@@ -7,9 +7,11 @@ export default function WorkshopsPage() {
   const [selectedWorkshop, setSelectedWorkshop] = useState<any>(null);
   const [showRegistrationForm, setShowRegistrationForm] = useState(false);
 
-  const { data: workshops, isLoading } = useQuery<any[]>({
+  const { data: workshops = [], isLoading, error } = useQuery<any[]>({
     queryKey: ['/api/workshops'],
   });
+  
+  console.log('Workshops page - data:', workshops, 'loading:', isLoading, 'error:', error);
 
   const registerMutation = useMutation({
     mutationFn: ({ workshopId, formData }: { workshopId: number; formData: any }) => 
@@ -168,6 +170,9 @@ export default function WorkshopsPage() {
           <p className="text-gray-600">
             برای اطلاع از کارگاه‌های آینده با ما در تماس باشید
           </p>
+          <div className="mt-4 text-sm text-gray-500">
+            تعداد کارگاه‌ها: {workshops?.length || 0} | فعال: {workshops?.filter((w: any) => w.isActive).length || 0}
+          </div>
         </div>
       )}
 
