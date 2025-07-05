@@ -6,7 +6,7 @@ import { Calendar, Edit, Eye, File, Folder, Image, Lock, LockOpen, MoreHorizonta
 import WorkshopsTab from "@/components/admin/WorkshopsTab";
 
 export default function AdminPage() {
-  const [activeTab, setActiveTab] = useState("courses");
+  const [activeTab, setActiveTab] = useState("workshop-registrations");
 
   const tabs = [
     { id: "courses", label: "دوره‌ها", icon: Video },
