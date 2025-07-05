@@ -16,7 +16,7 @@ export default function AdminPage() {
       </div>
 
       {/* Tab Navigation */}
-      <div className="flex gap-2 mb-6 border-b overflow-x-auto">
+      <div className="flex flex-wrap gap-2 mb-6 border-b overflow-x-auto">
         {[
           { id: "courses", label: "دوره‌ها", icon: Video },
           { id: "projects", label: "پروژه‌ها", icon: Folder },
@@ -32,7 +32,7 @@ export default function AdminPage() {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2 px-4 py-2 border-b-2 transition-colors whitespace-nowrap ${
+              className={`flex items-center gap-2 px-3 py-2 border-b-2 transition-colors whitespace-nowrap text-sm ${
                 activeTab === tab.id 
                   ? 'border-blue-500 text-blue-600 font-medium' 
                   : 'border-transparent text-gray-600 hover:text-gray-800'
