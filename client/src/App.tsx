@@ -70,7 +70,7 @@ function App() {
       case 'workshops': return <WorkshopsPage />;
       case 'library': return <LibraryPage />;
       case 'profile': return <ProfilePage />;
-      case 'admin': return <AdminSimple />;
+      case 'admin': return <AdminPage />;
       case 'protected': return <ProtectedContentDemo />;
       default: return <HomePage />;
     }
