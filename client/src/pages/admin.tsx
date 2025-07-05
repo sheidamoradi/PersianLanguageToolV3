@@ -71,9 +71,92 @@ export default function AdminPage() {
 }
 
 function WebinarsManagerTab() {
+  const [showCreateForm, setShowCreateForm] = useState(false);
+  const [editingWebinar, setEditingWebinar] = useState<any>(null);
+  const [createData, setCreateData] = useState({
+    title: '',
+    description: '',
+    instructor: '',
+    duration: '',
+    eventDate: '',
+    imageUrl: '',
+    level: 'beginner' as const,
+    category: '',
+    price: 0,
+    maxParticipants: 0
+  });
+
   const { data: webinars, isLoading } = useQuery<any[]>({
     queryKey: ['/api/webinars'],
   });
+
+  const createMutation = useMutation({
+    mutationFn: (data: any) => apiRequest('/api/webinars', {
+      method: 'POST',
+      body: JSON.stringify(data)
+    }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/webinars'] });
+      setShowCreateForm(false);
+      setCreateData({
+        title: '',
+        description: '',
+        instructor: '',
+        duration: '',
+        eventDate: '',
+        imageUrl: '',
+        level: 'beginner',
+        category: '',
+        price: 0,
+        maxParticipants: 0
+      });
+    }
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: ({ id, data }: { id: number; data: any }) => 
+      apiRequest(`/api/webinars/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify(data)
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/webinars'] });
+      setEditingWebinar(null);
+    }
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: number) => 
+      apiRequest(`/api/webinars/${id}`, {
+        method: 'DELETE'
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/webinars'] });
+    }
+  });
+
+  const handleCreate = () => {
+    createMutation.mutate(createData);
+  };
+
+  const handleEdit = (webinar: any) => {
+    setEditingWebinar({ ...webinar });
+  };
+
+  const handleUpdate = () => {
+    if (editingWebinar) {
+      updateMutation.mutate({
+        id: editingWebinar.id,
+        data: editingWebinar
+      });
+    }
+  };
+
+  const handleDelete = (id: number) => {
+    if (confirm('آیا مطمئن هستید که می‌خواهید این وبینار را حذف کنید؟')) {
+      deleteMutation.mutate(id);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -88,11 +171,152 @@ function WebinarsManagerTab() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold text-gray-900">وبینارهای آموزشی</h2>
-        <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+        <button 
+          onClick={() => setShowCreateForm(true)}
+          className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+        >
           <Plus className="h-4 w-4" />
           وبینار جدید
         </button>
       </div>
+
+      {/* Create Form */}
+      {showCreateForm && (
+        <div className="bg-white rounded-lg border p-6">
+          <h3 className="text-lg font-semibold mb-4">ایجاد وبینار جدید</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">عنوان</label>
+              <input
+                type="text"
+                value={createData.title}
+                onChange={(e) => setCreateData({...createData, title: e.target.value})}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">مدرس</label>
+              <input
+                type="text"
+                value={createData.instructor}
+                onChange={(e) => setCreateData({...createData, instructor: e.target.value})}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">مدت زمان</label>
+              <input
+                type="text"
+                value={createData.duration}
+                onChange={(e) => setCreateData({...createData, duration: e.target.value})}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">تاریخ برگزاری</label>
+              <input
+                type="date"
+                value={createData.eventDate}
+                onChange={(e) => setCreateData({...createData, eventDate: e.target.value})}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+          </div>
+          <div className="mt-4">
+            <label className="block text-sm font-medium text-gray-700 mb-1">توضیحات</label>
+            <textarea
+              value={createData.description}
+              onChange={(e) => setCreateData({...createData, description: e.target.value})}
+              rows={3}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <div className="flex gap-2 mt-4">
+            <button
+              onClick={handleCreate}
+              disabled={createMutation.isPending}
+              className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50"
+            >
+              {createMutation.isPending ? 'در حال ایجاد...' : 'ایجاد'}
+            </button>
+            <button
+              onClick={() => setShowCreateForm(false)}
+              className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700"
+            >
+              لغو
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Form */}
+      {editingWebinar && (
+        <div className="bg-white rounded-lg border p-6">
+          <h3 className="text-lg font-semibold mb-4">ویرایش وبینار</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">عنوان</label>
+              <input
+                type="text"
+                value={editingWebinar.title}
+                onChange={(e) => setEditingWebinar({...editingWebinar, title: e.target.value})}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">مدرس</label>
+              <input
+                type="text"
+                value={editingWebinar.instructor}
+                onChange={(e) => setEditingWebinar({...editingWebinar, instructor: e.target.value})}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">مدت زمان</label>
+              <input
+                type="text"
+                value={editingWebinar.duration}
+                onChange={(e) => setEditingWebinar({...editingWebinar, duration: e.target.value})}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">تاریخ برگزاری</label>
+              <input
+                type="date"
+                value={editingWebinar.eventDate}
+                onChange={(e) => setEditingWebinar({...editingWebinar, eventDate: e.target.value})}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+          </div>
+          <div className="mt-4">
+            <label className="block text-sm font-medium text-gray-700 mb-1">توضیحات</label>
+            <textarea
+              value={editingWebinar.description}
+              onChange={(e) => setEditingWebinar({...editingWebinar, description: e.target.value})}
+              rows={3}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <div className="flex gap-2 mt-4">
+            <button
+              onClick={handleUpdate}
+              disabled={updateMutation.isPending}
+              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
+            >
+              {updateMutation.isPending ? 'در حال ویرایش...' : 'ویرایش'}
+            </button>
+            <button
+              onClick={() => setEditingWebinar(null)}
+              className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700"
+            >
+              لغو
+            </button>
+          </div>
+        </div>
+      )}
 
       <div className="bg-white rounded-lg border">
         <div className="p-4 border-b">
@@ -111,10 +335,16 @@ function WebinarsManagerTab() {
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <button className="text-blue-600 hover:text-blue-800">
+                <button 
+                  onClick={() => handleEdit(webinar)}
+                  className="text-blue-600 hover:text-blue-800"
+                >
                   <Edit className="h-4 w-4" />
                 </button>
-                <button className="text-red-600 hover:text-red-800">
+                <button 
+                  onClick={() => handleDelete(webinar.id)}
+                  className="text-red-600 hover:text-red-800"
+                >
                   <Trash className="h-4 w-4" />
                 </button>
               </div>
