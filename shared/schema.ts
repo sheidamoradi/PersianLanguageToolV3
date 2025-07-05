@@ -309,6 +309,9 @@ export const webinars = pgTable("webinars", {
   duration: text("duration"),
   level: text("level"), // مبتدی، متوسط، پیشرفته
   category: text("category"),
+  price: integer("price").default(0),
+  maxParticipants: integer("max_participants").default(0),
+  imageUrl: text("image_url"),
   isActive: boolean("is_active").default(true),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),

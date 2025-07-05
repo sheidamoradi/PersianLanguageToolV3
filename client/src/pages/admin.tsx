@@ -91,10 +91,23 @@ function WebinarsManagerTab() {
   });
 
   const createMutation = useMutation({
-    mutationFn: (data: any) => apiRequest('/api/webinars', {
-      method: 'POST',
-      body: JSON.stringify(data)
-    }),
+    mutationFn: async (data: any) => {
+      const response = await fetch('/api/webinars', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+      });
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Create error:', errorText);
+        throw new Error('خطا در ایجاد وبینار');
+      }
+      
+      return response.json();
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/webinars'] });
       setShowCreateForm(false);
@@ -110,18 +123,39 @@ function WebinarsManagerTab() {
         price: 0,
         maxParticipants: 0
       });
+      alert('وبینار با موفقیت ایجاد شد');
+    },
+    onError: (error) => {
+      console.error('Create error:', error);
+      alert('خطا در ایجاد وبینار');
     }
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }: { id: number; data: any }) => 
-      apiRequest(`/api/webinars/${id}`, {
+    mutationFn: async ({ id, data }: { id: number; data: any }) => {
+      const response = await fetch(`/api/webinars/${id}`, {
         method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify(data)
-      }),
+      });
+      
+      if (!response.ok) {
+        throw new Error('خطا در ویرایش وبینار');
+      }
+      
+      return response.json();
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/webinars'] });
       setEditingWebinar(null);
+      // Show success message
+      alert('وبینار با موفقیت ویرایش شد');
+    },
+    onError: (error) => {
+      console.error('Update error:', error);
+      alert('خطا در ویرایش وبینار');
     }
   });
 
