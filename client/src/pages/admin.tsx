@@ -112,6 +112,7 @@ function WebinarsManagerTab() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/webinars'] });
+      queryClient.refetchQueries({ queryKey: ['/api/webinars'] });
       setShowCreateForm(false);
       setCreateData({
         title: '',
@@ -151,6 +152,7 @@ function WebinarsManagerTab() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/webinars'] });
+      queryClient.refetchQueries({ queryKey: ['/api/webinars'] });
       setEditingWebinar(null);
       // Show success message
       alert('وبینار با موفقیت ویرایش شد');
@@ -162,12 +164,25 @@ function WebinarsManagerTab() {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id: number) => 
-      apiRequest(`/api/webinars/${id}`, {
+    mutationFn: async (id: number) => {
+      const response = await fetch(`/api/webinars/${id}`, {
         method: 'DELETE'
-      }),
+      });
+      
+      if (!response.ok) {
+        throw new Error('خطا در حذف وبینار');
+      }
+      
+      return response.json();
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/webinars'] });
+      queryClient.refetchQueries({ queryKey: ['/api/webinars'] });
+      alert('وبینار با موفقیت حذف شد');
+    },
+    onError: (error) => {
+      console.error('Delete error:', error);
+      alert('خطا در حذف وبینار');
     }
   });
 
