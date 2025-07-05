@@ -14,6 +14,8 @@ import {
   workshops, type Workshop, type InsertWorkshop,
   workshopContents, type WorkshopContent, type InsertWorkshopContent,
   workshopRegistrations, type WorkshopRegistration, type InsertWorkshopRegistration,
+  webinars, type Webinar, type InsertWebinar,
+  webinarSections, type WebinarSection, type InsertWebinarSection,
   slides, type Slide, type InsertSlide,
   quickAccessItems, type QuickAccessItem, type InsertQuickAccessItem,
   userCourseAccess, type UserCourseAccess, type InsertUserCourseAccess
@@ -122,6 +124,20 @@ export interface IStorage {
   createWorkshopRegistration(registration: InsertWorkshopRegistration): Promise<WorkshopRegistration>;
   updateWorkshopRegistration(id: number, registration: Partial<InsertWorkshopRegistration>): Promise<WorkshopRegistration | undefined>;
   deleteWorkshopRegistration(id: number): Promise<boolean>;
+
+  // Webinar methods
+  getWebinars(): Promise<Webinar[]>;
+  getWebinar(id: number): Promise<Webinar | undefined>;
+  createWebinar(webinar: InsertWebinar): Promise<Webinar>;
+  updateWebinar(id: number, webinar: Partial<InsertWebinar>): Promise<Webinar | undefined>;
+  deleteWebinar(id: number): Promise<boolean>;
+
+  // Webinar section methods
+  getWebinarSections(webinarId: number): Promise<WebinarSection[]>;
+  getWebinarSection(id: number): Promise<WebinarSection | undefined>;
+  createWebinarSection(section: InsertWebinarSection): Promise<WebinarSection>;
+  updateWebinarSection(id: number, section: Partial<InsertWebinarSection>): Promise<WebinarSection | undefined>;
+  deleteWebinarSection(id: number): Promise<boolean>;
 
   // User course access methods
   getUserCourseAccess(userId: number): Promise<UserCourseAccess[]>;
@@ -821,6 +837,66 @@ export class DatabaseStorage implements IStorage {
     
     // Premium and VIP users can download
     return user.subscriptionStatus === 'premium' || user.subscriptionStatus === 'vip';
+  }
+
+  // Webinar methods
+  async getWebinars(): Promise<Webinar[]> {
+    return await db.select().from(webinars).orderBy(asc(webinars.createdAt));
+  }
+
+  async getWebinar(id: number): Promise<Webinar | undefined> {
+    const [webinar] = await db.select().from(webinars).where(eq(webinars.id, id));
+    return webinar;
+  }
+
+  async createWebinar(webinar: InsertWebinar): Promise<Webinar> {
+    const [newWebinar] = await db.insert(webinars).values(webinar).returning();
+    return newWebinar;
+  }
+
+  async updateWebinar(id: number, webinar: Partial<InsertWebinar>): Promise<Webinar | undefined> {
+    const [updatedWebinar] = await db
+      .update(webinars)
+      .set({ ...webinar, updatedAt: new Date() })
+      .where(eq(webinars.id, id))
+      .returning();
+    return updatedWebinar;
+  }
+
+  async deleteWebinar(id: number): Promise<boolean> {
+    const result = await db.delete(webinars).where(eq(webinars.id, id));
+    return result.rowCount > 0;
+  }
+
+  // Webinar section methods
+  async getWebinarSections(webinarId: number): Promise<WebinarSection[]> {
+    return await db.select().from(webinarSections)
+      .where(eq(webinarSections.webinarId, webinarId))
+      .orderBy(asc(webinarSections.order));
+  }
+
+  async getWebinarSection(id: number): Promise<WebinarSection | undefined> {
+    const [section] = await db.select().from(webinarSections).where(eq(webinarSections.id, id));
+    return section;
+  }
+
+  async createWebinarSection(section: InsertWebinarSection): Promise<WebinarSection> {
+    const [newSection] = await db.insert(webinarSections).values(section).returning();
+    return newSection;
+  }
+
+  async updateWebinarSection(id: number, section: Partial<InsertWebinarSection>): Promise<WebinarSection | undefined> {
+    const [updatedSection] = await db
+      .update(webinarSections)
+      .set({ ...section, updatedAt: new Date() })
+      .where(eq(webinarSections.id, id))
+      .returning();
+    return updatedSection;
+  }
+
+  async deleteWebinarSection(id: number): Promise<boolean> {
+    const result = await db.delete(webinarSections).where(eq(webinarSections.id, id));
+    return result.rowCount > 0;
   }
 
   // Protection control methods

@@ -1,7 +1,7 @@
 import { db } from "./db";
 import { 
   users, courses, modules, projects, documents, mediaContent,
-  magazines, articles, workshopContents, workshops 
+  magazines, articles, workshopContents, workshops, webinars, webinarSections 
 } from "@shared/schema";
 
 async function seedDatabase() {
@@ -217,6 +217,90 @@ async function seedDatabase() {
         content: "نحوه استفاده از CSS برای زیباسازی صفحات وب...",
         contentType: "text",
         createdAt: new Date()
+      }
+    ]);
+
+    // ایجاد وبینارهای نمونه
+    await db.insert(webinars).values([
+      {
+        id: 1,
+        title: "وبینار آموزشی React و Next.js",
+        description: "آموزش کامل توسعه اپلیکیشن‌های وب مدرن با React و Next.js",
+        posterUrl: "/uploads/webinar1.jpg",
+        instructor: "دکتر محمد رضایی",
+        duration: "2 ساعت",
+        eventDate: "1403/10/20",
+        level: "متوسط",
+        category: "برنامه‌نویسی",
+        isActive: true,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      {
+        id: 2,
+        title: "وبینار طراحی رابط کاربری",
+        description: "اصول و تکنیک‌های طراحی UI/UX برای اپلیکیشن‌های موبایل",
+        posterUrl: "/uploads/webinar2.jpg",
+        instructor: "مهندس فاطمه احمدی",
+        duration: "1.5 ساعت",
+        eventDate: "1403/10/25",
+        level: "مقدماتی",
+        category: "طراحی",
+        isActive: true,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      }
+    ]);
+
+    // ایجاد بخش‌های وبینار
+    await db.insert(webinarSections).values([
+      {
+        id: 1,
+        webinarId: 1,
+        title: "بخش اول: مقدمه React",
+        description: "آشنایی با مفاهیم پایه React",
+        content: "در این بخش با component ها، state و props آشنا می‌شویم",
+        order: 1,
+        videoUrl: "/uploads/videos/react-intro.mp4",
+        isLocked: false,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      {
+        id: 2,
+        webinarId: 1,
+        title: "بخش دوم: Next.js Framework",
+        description: "کار با Next.js برای پروژه‌های پیشرفته",
+        content: "معرفی ویژگی‌های Next.js و نحوه پیاده‌سازی",
+        order: 2,
+        videoUrl: "/uploads/videos/nextjs-advanced.mp4",
+        isLocked: false,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      {
+        id: 3,
+        webinarId: 2,
+        title: "بخش اول: اصول طراحی UI",
+        description: "مبانی طراحی رابط کاربری",
+        content: "اصول رنگ، تایپوگرافی و layout در طراحی UI",
+        order: 1,
+        presentationUrl: "/uploads/presentations/ui-basics.pdf",
+        isLocked: false,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      {
+        id: 4,
+        webinarId: 2,
+        title: "بخش دوم: تجربه کاربری",
+        description: "بهبود UX در اپلیکیشن‌ها",
+        content: "روش‌های بهینه‌سازی تجربه کاربری",
+        order: 2,
+        presentationUrl: "/uploads/presentations/ux-optimization.pdf",
+        isLocked: false,
+        createdAt: new Date(),
+        updatedAt: new Date()
       }
     ]);
 

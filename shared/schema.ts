@@ -298,6 +298,37 @@ export const workshopContents = pgTable("workshop_contents", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+// مدل‌های داده‌ برای وبینارهای آموزشی
+export const webinars = pgTable("webinars", {
+  id: serial("id").primaryKey(),
+  title: text("title").notNull(),
+  description: text("description"),
+  posterUrl: text("poster_url"),
+  eventDate: text("event_date"),
+  instructor: text("instructor"),
+  duration: text("duration"),
+  level: text("level"), // مبتدی، متوسط، پیشرفته
+  category: text("category"),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const webinarSections = pgTable("webinar_sections", {
+  id: serial("id").primaryKey(),
+  webinarId: integer("webinar_id").notNull(),
+  title: text("title").notNull(),
+  description: text("description"),
+  content: text("content"),
+  videoUrl: text("video_url"),
+  presentationUrl: text("presentation_url"),
+  documentUrl: text("document_url"),
+  order: integer("order").notNull(),
+  isLocked: boolean("is_locked").default(false),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 
 
 // Workshop registrations table
@@ -366,6 +397,8 @@ export const insertArticleContentSchema = createInsertSchema(articleContents).om
 export const insertWorkshopSchema = createInsertSchema(workshops).omit({ id: true, createdAt: true, updatedAt: true });
 export const insertWorkshopSectionSchema = createInsertSchema(workshopSections).omit({ id: true, createdAt: true, updatedAt: true });
 export const insertWorkshopContentSchema = createInsertSchema(workshopContents).omit({ id: true, createdAt: true });
+export const insertWebinarSchema = createInsertSchema(webinars).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertWebinarSectionSchema = createInsertSchema(webinarSections).omit({ id: true, createdAt: true, updatedAt: true });
 export const insertPostSchema = createInsertSchema(posts).omit({ id: true, createdAt: true, updatedAt: true });
 export const insertMediaLibrarySchema = createInsertSchema(mediaLibrary).omit({ id: true, uploadedAt: true });
 
@@ -414,6 +447,12 @@ export type WorkshopSection = typeof workshopSections.$inferSelect;
 
 export type InsertWorkshopContent = z.infer<typeof insertWorkshopContentSchema>;
 export type WorkshopContent = typeof workshopContents.$inferSelect;
+
+export type InsertWebinar = z.infer<typeof insertWebinarSchema>;
+export type Webinar = typeof webinars.$inferSelect;
+
+export type InsertWebinarSection = z.infer<typeof insertWebinarSectionSchema>;
+export type WebinarSection = typeof webinarSections.$inferSelect;
 
 export type InsertPost = z.infer<typeof insertPostSchema>;
 export type Post = typeof posts.$inferSelect;

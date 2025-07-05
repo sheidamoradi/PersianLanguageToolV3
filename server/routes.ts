@@ -22,6 +22,8 @@ import {
   insertArticleSchema,
   insertArticleContentSchema,
   insertWorkshopSchema,
+  insertWebinarSchema,
+  insertWebinarSectionSchema,
   insertSlideSchema,
   insertWorkshopRegistrationSchema
 } from "@shared/schema";
@@ -650,6 +652,115 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error deleting workshop registration:", error);
       res.status(500).json({ message: "خطا در حذف ثبت‌نام" });
+    }
+  });
+
+  // Webinars API
+  app.get("/api/webinars", async (req, res) => {
+    const webinars = await storage.getWebinars();
+    res.json(webinars);
+  });
+
+  app.get("/api/webinars/:id", async (req, res) => {
+    const id = parseInt(req.params.id);
+
+    if (isNaN(id)) {
+      return res.status(400).json({ message: "Invalid webinar ID" });
+    }
+
+    const webinar = await storage.getWebinar(id);
+
+    if (!webinar) {
+      return res.status(404).json({ message: "Webinar not found" });
+    }
+
+    res.json(webinar);
+  });
+
+  app.post("/api/webinars", async (req, res) => {
+    try {
+      const webinarData = insertWebinarSchema.parse(req.body);
+      const newWebinar = await storage.createWebinar(webinarData);
+      res.status(201).json(newWebinar);
+    } catch (error) {
+      if (error instanceof ZodError) {
+        return res.status(400).json({ message: fromZodError(error).toString() });
+      }
+      return res.status(500).json({ message: "خطا در ایجاد وبینار" });
+    }
+  });
+
+  app.put("/api/webinars/:id", async (req, res) => {
+    const id = parseInt(req.params.id);
+
+    if (isNaN(id)) {
+      return res.status(400).json({ message: "Invalid webinar ID" });
+    }
+
+    try {
+      const webinarData = insertWebinarSchema.partial().parse(req.body);
+      const updatedWebinar = await storage.updateWebinar(id, webinarData);
+
+      if (!updatedWebinar) {
+        return res.status(404).json({ message: "Webinar not found" });
+      }
+
+      return res.json(updatedWebinar);
+    } catch (error) {
+      if (error instanceof ZodError) {
+        return res.status(400).json({ message: fromZodError(error).toString() });
+      }
+      return res.status(500).json({ message: "خطا در به‌روزرسانی وبینار" });
+    }
+  });
+
+  app.delete("/api/webinars/:id", async (req, res) => {
+    const id = parseInt(req.params.id);
+
+    if (isNaN(id)) {
+      return res.status(400).json({ message: "Invalid webinar ID" });
+    }
+
+    const deleted = await storage.deleteWebinar(id);
+
+    if (!deleted) {
+      return res.status(404).json({ message: "Webinar not found" });
+    }
+
+    return res.json({ message: "Webinar deleted successfully" });
+  });
+
+  // Webinar sections API
+  app.get("/api/webinars/:id/sections", async (req, res) => {
+    const webinarId = parseInt(req.params.id);
+
+    if (isNaN(webinarId)) {
+      return res.status(400).json({ message: "Invalid webinar ID" });
+    }
+
+    const sections = await storage.getWebinarSections(webinarId);
+    res.json(sections);
+  });
+
+  app.post("/api/webinars/:id/sections", async (req, res) => {
+    const webinarId = parseInt(req.params.id);
+
+    if (isNaN(webinarId)) {
+      return res.status(400).json({ message: "Invalid webinar ID" });
+    }
+
+    try {
+      const sectionData = insertWebinarSectionSchema.parse({
+        ...req.body,
+        webinarId
+      });
+      const newSection = await storage.createWebinarSection(sectionData);
+      res.status(201).json(newSection);
+    } catch (error) {
+      if (error instanceof ZodError) {
+        return res.status(400).json({ message: fromZodError(error).toString() });
+      }
+      return res.status(500).json({ message: "خطا در ایجاد بخش وبینار" });
     }
   });
 
