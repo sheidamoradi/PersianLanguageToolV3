@@ -221,6 +221,33 @@ function WebinarsManagerTab() {
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">قیمت (تومان)</label>
+              <input
+                type="number"
+                value={createData.price}
+                onChange={(e) => setCreateData({...createData, price: Number(e.target.value)})}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">حداکثر شرکت‌کننده</label>
+              <input
+                type="number"
+                value={createData.maxParticipants}
+                onChange={(e) => setCreateData({...createData, maxParticipants: Number(e.target.value)})}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">دسته‌بندی</label>
+              <input
+                type="text"
+                value={createData.category}
+                onChange={(e) => setCreateData({...createData, category: e.target.value})}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
           </div>
           <div className="mt-4">
             <label className="block text-sm font-medium text-gray-700 mb-1">توضیحات</label>
@@ -230,6 +257,36 @@ function WebinarsManagerTab() {
               rows={3}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
+          </div>
+          <div className="mt-4">
+            <label className="block text-sm font-medium text-gray-700 mb-1">عکس پوستر</label>
+            <div className="flex items-center gap-4">
+              <input
+                type="text"
+                value={createData.imageUrl}
+                onChange={(e) => setCreateData({...createData, imageUrl: e.target.value})}
+                placeholder="آدرس عکس پوستر"
+                className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <button
+                type="button"
+                onClick={() => {
+                  window.postMessage({ type: 'SWITCH_TAB', tab: 'media-library' }, '*');
+                }}
+                className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700"
+              >
+                انتخاب از کتابخانه
+              </button>
+            </div>
+            {createData.imageUrl && (
+              <div className="mt-2">
+                <img
+                  src={createData.imageUrl}
+                  alt="پیش‌نمایش"
+                  className="max-h-32 rounded-md border"
+                />
+              </div>
+            )}
           </div>
           <div className="flex gap-2 mt-4">
             <button
@@ -290,6 +347,33 @@ function WebinarsManagerTab() {
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">قیمت (تومان)</label>
+              <input
+                type="number"
+                value={editingWebinar.price || 0}
+                onChange={(e) => setEditingWebinar({...editingWebinar, price: Number(e.target.value)})}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">حداکثر شرکت‌کننده</label>
+              <input
+                type="number"
+                value={editingWebinar.maxParticipants || 0}
+                onChange={(e) => setEditingWebinar({...editingWebinar, maxParticipants: Number(e.target.value)})}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">دسته‌بندی</label>
+              <input
+                type="text"
+                value={editingWebinar.category || ''}
+                onChange={(e) => setEditingWebinar({...editingWebinar, category: e.target.value})}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
           </div>
           <div className="mt-4">
             <label className="block text-sm font-medium text-gray-700 mb-1">توضیحات</label>
@@ -299,6 +383,36 @@ function WebinarsManagerTab() {
               rows={3}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
+          </div>
+          <div className="mt-4">
+            <label className="block text-sm font-medium text-gray-700 mb-1">عکس پوستر</label>
+            <div className="flex items-center gap-4">
+              <input
+                type="text"
+                value={editingWebinar.imageUrl || ''}
+                onChange={(e) => setEditingWebinar({...editingWebinar, imageUrl: e.target.value})}
+                placeholder="آدرس عکس پوستر"
+                className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <button
+                type="button"
+                onClick={() => {
+                  window.postMessage({ type: 'SWITCH_TAB', tab: 'media-library' }, '*');
+                }}
+                className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700"
+              >
+                انتخاب از کتابخانه
+              </button>
+            </div>
+            {editingWebinar.imageUrl && (
+              <div className="mt-2">
+                <img
+                  src={editingWebinar.imageUrl}
+                  alt="پیش‌نمایش"
+                  className="max-h-32 rounded-md border"
+                />
+              </div>
+            )}
           </div>
           <div className="flex gap-2 mt-4">
             <button

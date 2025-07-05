@@ -11,6 +11,7 @@ import AdminPage from './pages/admin';
 import AdminSimple from './pages/admin-simple';
 import ProtectedContentDemo from './pages/protected-content';
 import WebinarDetail from './pages/webinar-detail';
+import MediaLibraryPage from './pages/media-library';
 import Header from './components/layout/Header';
 
 const queryClient = new QueryClient({
@@ -77,6 +78,7 @@ function App() {
       case 'library': return <LibraryPage />;
       case 'profile': return <ProfilePage />;
       case 'admin': return <AdminPage />;
+      case 'media-library': return <MediaLibraryPage />;
       case 'webinar': return selectedWebinarId ? <WebinarDetail webinarId={selectedWebinarId} /> : <HomePage />;
       case 'protected': return <ProtectedContentDemo />;
       default: return <HomePage />;
