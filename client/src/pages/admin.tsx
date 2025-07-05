@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { type Course, type Document, type MediaContent, type Magazine, type Article, type ArticleContent, type Slide, type Workshop, type WorkshopSection, type WorkshopRegistration } from "@shared/schema";
-import { Calendar, Edit, Eye, File, Folder, Image, Lock, LockOpen, MoreHorizontal, Plus, RefreshCw, Trash, Upload, Video } from "lucide-react";
+import { Calendar, Edit, Eye, File, Folder, Image, Lock, LockOpen, MoreHorizontal, Plus, RefreshCw, Trash, Upload, Video, X } from "lucide-react";
 import WorkshopsTab from "@/components/admin/WorkshopsTab";
 
 export default function AdminPage() {
@@ -12,6 +12,7 @@ export default function AdminPage() {
     { id: "courses", label: "دوره‌ها", icon: Video },
     { id: "webinars", label: "وبینارهای آموزشی", icon: Video },
     { id: "documents", label: "اسناد", icon: File },
+    { id: "media", label: "کتابخانه رسانه", icon: Image },
     { id: "slides", label: "اسلایدها", icon: Image },
     { id: "magazines", label: "مجله‌ها", icon: Calendar },
     { id: "workshops", label: "کارگاه‌ها", icon: Calendar },
@@ -59,6 +60,7 @@ export default function AdminPage() {
           {activeTab === "courses" && <CoursesTab />}
           {activeTab === "webinars" && <WebinarsManagerTab />}
           {activeTab === "documents" && <DocumentsTab />}
+          {activeTab === "media" && <MediaTab />}
           {activeTab === "slides" && <SlidesTab />}
           {activeTab === "magazines" && <MagazinesTab />}
           {activeTab === "workshops" && <WorkshopsTab />}
@@ -563,6 +565,316 @@ function CoursesTab() {
 
 function DocumentsTab() {
   return <div>اسناد</div>;
+}
+
+function MediaTab() {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedFile, setSelectedFile] = useState<any>(null);
+  const queryClient = useQueryClient();
+
+  const { data: mediaFiles, isLoading } = useQuery<any[]>({
+    queryKey: ['/api/media-library', searchQuery],
+  });
+
+  const uploadMutation = useMutation({
+    mutationFn: async (file: File) => {
+      const formData = new FormData();
+      formData.append('file', file);
+      
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+      
+      if (!response.ok) {
+        throw new Error('خطا در آپلود فایل');
+      }
+      
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/media-library'] });
+      alert('فایل با موفقیت آپلود شد');
+    },
+    onError: () => {
+      alert('خطا در آپلود فایل');
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: async (id: number) => {
+      const response = await fetch(`/api/media-library/${id}`, {
+        method: 'DELETE',
+      });
+      
+      if (!response.ok) {
+        throw new Error('خطا در حذف فایل');
+      }
+      
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/media-library'] });
+      setSelectedFile(null);
+      alert('فایل حذف شد');
+    },
+    onError: () => {
+      alert('خطا در حذف فایل');
+    },
+  });
+
+  const formatFileSize = (bytes: number) => {
+    if (bytes === 0) return '0 بایت';
+    const k = 1024;
+    const sizes = ['بایت', 'کیلوبایت', 'مگابایت', 'گیگابایت'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  };
+
+  const getFileIcon = (type: string) => {
+    if (type?.startsWith('image/')) return <Image className="h-5 w-5" />;
+    if (type?.startsWith('video/')) return <Video className="h-5 w-5" />;
+    return <File className="h-5 w-5" />;
+  };
+
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      uploadMutation.mutate(file);
+    }
+  };
+
+  const copyUrl = (url: string) => {
+    navigator.clipboard.writeText(url);
+    alert('آدرس فایل کپی شد');
+  };
+
+  // Sample data for demonstration
+  const sampleMediaFiles = [
+    {
+      id: 1,
+      filename: "logo-pistach.png",
+      originalName: "لوگو پیستاط.png",
+      size: 45632,
+      type: "image/png",
+      url: "/uploads/logo-pistach.png",
+      uploadedAt: "2024-01-15T10:30:00Z"
+    },
+    {
+      id: 2,
+      filename: "course-agriculture.jpg",
+      originalName: "دوره کشاورزی.jpg",
+      size: 234567,
+      type: "image/jpeg",
+      url: "/uploads/course-agriculture.jpg",
+      uploadedAt: "2024-01-14T15:45:00Z"
+    },
+    {
+      id: 3,
+      filename: "video-irrigation.mp4",
+      originalName: "آموزش آبیاری.mp4",
+      size: 15678901,
+      type: "video/mp4",
+      url: "/uploads/video-irrigation.mp4",
+      uploadedAt: "2024-01-13T09:20:00Z"
+    }
+  ];
+
+  const displayFiles = mediaFiles || sampleMediaFiles;
+  const filteredFiles = displayFiles.filter((file: any) =>
+    file.originalName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    file.filename?.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-bold text-gray-900">کتابخانه رسانه</h2>
+        <div className="flex items-center gap-4">
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="جستجو در فایل‌ها..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pr-3 pl-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <label className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 cursor-pointer">
+            <Upload className="h-4 w-4" />
+            آپلود فایل
+            <input
+              type="file"
+              accept="image/*,video/*,.pdf,.doc,.docx"
+              onChange={handleFileUpload}
+              className="hidden"
+            />
+          </label>
+        </div>
+      </div>
+
+      <div className="bg-white rounded-lg border">
+        <div className="p-4 border-b">
+          <h4 className="font-semibold">فایل‌های رسانه</h4>
+        </div>
+        
+        {isLoading ? (
+          <div className="p-6">
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+              {Array.from({ length: 12 }).map((_, i) => (
+                <div key={i} className="aspect-square bg-gray-200 rounded-lg animate-pulse"></div>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <div className="p-6">
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+              {filteredFiles.map((file: any) => (
+                <div
+                  key={file.id}
+                  className={`group relative border rounded-lg overflow-hidden cursor-pointer transition-all hover:shadow-md ${
+                    selectedFile?.id === file.id ? 'ring-2 ring-blue-500' : ''
+                  }`}
+                  onClick={() => setSelectedFile(file)}
+                >
+                  <div className="aspect-square bg-gray-100 flex items-center justify-center">
+                    {file.type?.startsWith('image/') ? (
+                      <img
+                        src={file.url}
+                        alt={file.originalName}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="text-gray-400">
+                        {getFileIcon(file.type)}
+                      </div>
+                    )}
+                  </div>
+                  <div className="p-2">
+                    <p className="text-xs text-gray-900 truncate font-medium">
+                      {file.originalName}
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      {formatFileSize(file.size)}
+                    </p>
+                  </div>
+                  
+                  <div className="absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="flex gap-1">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          copyUrl(file.url);
+                        }}
+                        className="p-1 bg-black/50 text-white rounded hover:bg-black/70"
+                      >
+                        <Eye className="h-3 w-3" />
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          deleteMutation.mutate(file.id);
+                        }}
+                        className="p-1 bg-red-500/80 text-white rounded hover:bg-red-600"
+                      >
+                        <Trash className="h-3 w-3" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {(!filteredFiles || filteredFiles.length === 0) && (
+              <div className="p-8 text-center text-gray-500">
+                هنوز فایلی آپلود نشده است.
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* File Details Sidebar */}
+      {selectedFile && (
+        <div className="bg-white rounded-lg border p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold">جزئیات فایل</h3>
+            <button
+              onClick={() => setSelectedFile(null)}
+              className="p-1 hover:bg-gray-200 rounded"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Preview */}
+            <div className="aspect-square bg-gray-100 rounded-lg border p-4 flex items-center justify-center">
+              {selectedFile.type?.startsWith('image/') ? (
+                <img
+                  src={selectedFile.url}
+                  alt={selectedFile.originalName}
+                  className="max-w-full max-h-full object-contain"
+                />
+              ) : (
+                <div className="text-gray-400">
+                  {getFileIcon(selectedFile.type)}
+                </div>
+              )}
+            </div>
+
+            {/* Details */}
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700">نام فایل</label>
+                <p className="text-sm text-gray-900 mt-1">{selectedFile.originalName}</p>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">نوع فایل</label>
+                <p className="text-sm text-gray-900 mt-1">{selectedFile.type}</p>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">حجم</label>
+                <p className="text-sm text-gray-900 mt-1">{formatFileSize(selectedFile.size)}</p>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">آدرس فایل</label>
+                <div className="flex items-center gap-2 mt-1">
+                  <input
+                    type="text"
+                    value={selectedFile.url}
+                    readOnly
+                    className="flex-1 text-sm bg-gray-100 px-2 py-1 rounded border"
+                  />
+                  <button
+                    onClick={() => copyUrl(selectedFile.url)}
+                    className="p-1 text-gray-600 hover:text-gray-800"
+                  >
+                    <Eye className="h-4 w-4" />
+                  </button>
+                </div>
+              </div>
+
+              <div className="flex gap-2 pt-4 border-t">
+                <button
+                  onClick={() => copyUrl(selectedFile.url)}
+                  className="flex-1 px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                >
+                  کپی آدرس
+                </button>
+                <button
+                  onClick={() => deleteMutation.mutate(selectedFile.id)}
+                  className="px-3 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+                >
+                  حذف
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }
 
 function SlidesTab() {
