@@ -117,6 +117,12 @@ Changelog:
   * WordPress-like media library interface
   * Fixed slide form to accept relative URLs from media library
   * Added helper button to quickly access media library from slide form
+- July 7, 2025. Enhanced file upload system for demo content:
+  * Added demo-uploader.html for easy file upload interface
+  * Created direct upload guide for copying files to public/uploads
+  * Prepared sample demo files (logo, slides, webinar posters)
+  * Fixed cache invalidation issues with staleTime: 0 configuration
+  * Added refetchQueries to all mutations for immediate UI updates
 ```
 
 ## User Preferences
