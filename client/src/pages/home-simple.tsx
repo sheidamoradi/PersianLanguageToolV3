@@ -224,12 +224,12 @@ export default function HomePage() {
                 window.parent.postMessage({ type: 'SWITCH_TAB', tab: 'workshops' }, '*');
               }}
             >
-              <div className="w-full h-24 bg-gray-100 rounded-lg mb-3 flex items-center justify-center overflow-hidden">
+              <div className="w-full h-32 rounded-lg mb-3 flex items-center justify-center overflow-hidden">
                 {workshop.posterUrl ? (
                   <img 
                     src={workshop.posterUrl} 
                     alt={workshop.title}
-                    className="w-full h-full object-contain"
+                    className="w-full h-full object-cover"
                   />
                 ) : (
                   <svg className="w-10 h-10 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
