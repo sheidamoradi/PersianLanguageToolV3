@@ -89,7 +89,7 @@ export default function WorkshopsPage() {
               <img
                 src={workshop.posterUrl}
                 alt={workshop.title}
-                className="w-full h-48 object-cover"
+                className="w-full h-48 object-contain bg-gray-100"
               />
             )}
             

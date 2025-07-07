@@ -229,7 +229,7 @@ export default function HomePage() {
                   <img 
                     src={workshop.posterUrl} 
                     alt={workshop.title}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-contain"
                   />
                 ) : (
                   <svg className="w-10 h-10 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">

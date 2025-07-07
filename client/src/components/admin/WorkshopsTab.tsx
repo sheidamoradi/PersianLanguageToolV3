@@ -319,7 +319,7 @@ export default function WorkshopsTab() {
                   <img
                     src={workshop.posterUrl}
                     alt={workshop.title}
-                    className="w-16 h-16 object-cover rounded-lg"
+                    className="w-16 h-16 object-contain bg-gray-100 rounded-lg"
                   />
                 )}
                 <div>
