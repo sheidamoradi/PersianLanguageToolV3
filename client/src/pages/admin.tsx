@@ -4,6 +4,7 @@ import { queryClient, apiRequest } from "@/lib/queryClient";
 import { type Course, type Document, type MediaContent, type Magazine, type Article, type ArticleContent, type Slide, type Workshop, type WorkshopSection, type WorkshopRegistration } from "@shared/schema";
 import { Calendar, Edit, Eye, File, Folder, Image, Lock, LockOpen, MoreHorizontal, Plus, RefreshCw, Trash, Upload, Video, X } from "lucide-react";
 import WorkshopsTab from "@/components/admin/WorkshopsTab";
+import WebinarSectionsTab from "@/components/admin/WebinarSectionsTab";
 
 export default function AdminPage() {
   const [activeTab, setActiveTab] = useState("workshop-registrations");
@@ -11,6 +12,7 @@ export default function AdminPage() {
   const tabs = [
     { id: "courses", label: "دوره‌ها", icon: Video },
     { id: "webinars", label: "وبینارهای آموزشی", icon: Video },
+    { id: "webinar-sections", label: "بخش‌های وبینار", icon: Folder },
     { id: "documents", label: "اسناد", icon: File },
     { id: "media", label: "کتابخانه رسانه", icon: Image },
     { id: "slides", label: "اسلایدها", icon: Image },
@@ -59,6 +61,7 @@ export default function AdminPage() {
         <div className="flex-1 space-y-6">
           {activeTab === "courses" && <CoursesTab />}
           {activeTab === "webinars" && <WebinarsManagerTab />}
+          {activeTab === "webinar-sections" && <WebinarSectionsTab />}
           {activeTab === "documents" && <DocumentsTab />}
           {activeTab === "media" && <MediaTab />}
           {activeTab === "slides" && <SlidesTab />}
