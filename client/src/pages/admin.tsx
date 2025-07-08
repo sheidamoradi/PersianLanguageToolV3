@@ -153,7 +153,14 @@ function WebinarsManagerTab() {
       
       return response.json();
     },
-    onSuccess: () => {
+    onSuccess: (updatedWebinar) => {
+      // Immediately update the cache with the new data
+      queryClient.setQueryData(['/api/webinars'], (oldData: any[]) => {
+        if (!oldData) return [];
+        return oldData.map(webinar => 
+          webinar.id === updatedWebinar.id ? updatedWebinar : webinar
+        );
+      });
       queryClient.invalidateQueries({ queryKey: ['/api/webinars'] });
       queryClient.refetchQueries({ queryKey: ['/api/webinars'] });
       setEditingWebinar(null);
