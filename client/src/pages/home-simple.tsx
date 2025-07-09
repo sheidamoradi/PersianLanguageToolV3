@@ -144,7 +144,7 @@ export default function HomePage() {
                 // Navigate based on exact item title matching section titles
                 if (item.title === 'فصلنامه رویش سبز' || item.title.includes('فصلنامه') || item.title.includes('مجله')) {
                   window.postMessage({ type: 'SWITCH_TAB', tab: 'magazines' }, '*');
-                } else if (item.title === 'ویدیو آموزشی' || item.title === 'ویدیوهای آموزشی' || item.title.includes('ویدیو')) {
+                } else if (item.title === 'ویدیو آموزشی' || item.title === 'ویدیوهای آموزشی' || item.title === 'آموزشی' || item.title.includes('ویدیو') || item.title.includes('آموزشی')) {
                   window.postMessage({ type: 'SWITCH_TAB', tab: 'videos' }, '*');
                 } else if (item.title === 'آرشیو پیستاط' || item.title === 'کتابخانه' || item.title.includes('آرشیو') || item.title.includes('کتابخانه')) {
                   window.postMessage({ type: 'SWITCH_TAB', tab: 'library' }, '*');
