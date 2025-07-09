@@ -222,9 +222,12 @@ export default function HomePage() {
             </svg>
             کارگاه‌های آموزشی
           </h2>
-          <a href="/workshops" className="text-sm font-medium text-green-600 hover:text-green-700 transition-colors">
+          <button 
+            onClick={() => window.postMessage({ type: 'SWITCH_TAB', tab: 'workshops' }, '*')}
+            className="text-sm font-medium text-green-600 hover:text-green-700 transition-colors"
+          >
             مشاهده بیشتر
-          </a>
+          </button>
         </div>
         
         <div className="grid grid-cols-4 gap-4 mb-4">
@@ -327,9 +330,12 @@ export default function HomePage() {
             </svg>
             وبینارهای آموزشی
           </h2>
-          <a href="/webinars" className="text-sm font-medium text-green-600 hover:text-green-700 transition-colors">
+          <button 
+            onClick={() => window.postMessage({ type: 'SWITCH_TAB', tab: 'webinars' }, '*')}
+            className="text-sm font-medium text-green-600 hover:text-green-700 transition-colors"
+          >
             مشاهده بیشتر
-          </a>
+          </button>
         </div>
         
         <div className="grid grid-cols-4 gap-4 mb-4">
@@ -447,9 +453,12 @@ export default function HomePage() {
             </div>
             
             {/* View More */}
-            <a href="/educational-videos" className="text-xs font-bold cursor-pointer hover:opacity-80 transition-opacity">
+            <button 
+              onClick={() => window.postMessage({ type: 'SWITCH_TAB', tab: 'videos' }, '*')}
+              className="text-xs font-bold cursor-pointer hover:opacity-80 transition-opacity"
+            >
               مشاهده بیشتر &gt;
-            </a>
+            </button>
           </div>
           
           {/* Left side - Videos */}
@@ -605,9 +614,12 @@ function MagazineSection() {
           </svg>
           فصلنامه رویش سبز
         </h2>
-        <a href="/magazines" className="text-sm font-medium text-green-600 hover:text-green-700 transition-colors">
+        <button 
+          onClick={() => window.postMessage({ type: 'SWITCH_TAB', tab: 'magazines' }, '*')}
+          className="text-sm font-medium text-green-600 hover:text-green-700 transition-colors"
+        >
           مشاهده بیشتر
-        </a>
+        </button>
       </div>
 
       <div className="grid grid-cols-4 gap-4 mb-4">
@@ -735,9 +747,12 @@ function ArchiveSection() {
           </svg>
           آرشیو پیستاط
         </h2>
-        <a href="/documents" className="text-sm font-medium text-green-600 hover:text-green-700 transition-colors">
+        <button 
+          onClick={() => window.postMessage({ type: 'SWITCH_TAB', tab: 'library' }, '*')}
+          className="text-sm font-medium text-green-600 hover:text-green-700 transition-colors"
+        >
           مشاهده بیشتر
-        </a>
+        </button>
       </div>
 
       <div className="grid grid-cols-4 gap-4 mb-4">

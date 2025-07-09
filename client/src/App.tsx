@@ -87,6 +87,9 @@ function App() {
       case 'media-library': return <MediaLibraryPage />;
       case 'webinar': return selectedWebinarId ? <WebinarDetail webinarId={selectedWebinarId} /> : <HomePage />;
       case 'magazine': return selectedMagazineId ? <MagazineDetailPage magazineId={selectedMagazineId} /> : <HomePage />;
+      case 'magazines': return <LibraryPage />;
+      case 'webinars': return <LibraryPage />;
+      case 'videos': return <LibraryPage />;
       case 'protected': return <ProtectedContentDemo />;
       default: return <HomePage />;
     }
