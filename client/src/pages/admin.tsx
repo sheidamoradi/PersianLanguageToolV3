@@ -915,7 +915,331 @@ function SlidesTab() {
 }
 
 function MagazinesTab() {
-  return <div>مجله‌ها</div>;
+  const [showCreateForm, setShowCreateForm] = useState(false);
+  const [editingMagazine, setEditingMagazine] = useState<any>(null);
+  const [createData, setCreateData] = useState({
+    title: '',
+    description: '',
+    issueNumber: '',
+    publishDate: '',
+    coverImageUrl: '',
+    isActive: true
+  });
+
+  const { data: magazines, isLoading } = useQuery<any[]>({
+    queryKey: ['/api/magazines'],
+  });
+
+  const createMutation = useMutation({
+    mutationFn: (data: any) => apiRequest('/api/magazines', 'POST', data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/magazines'] });
+      setShowCreateForm(false);
+      setCreateData({
+        title: '',
+        description: '',
+        issueNumber: '',
+        publishDate: '',
+        coverImageUrl: '',
+        isActive: true
+      });
+    },
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: (data: any) => apiRequest(`/api/magazines/${editingMagazine.id}`, 'PUT', data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/magazines'] });
+      setEditingMagazine(null);
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: number) => apiRequest(`/api/magazines/${id}`, 'DELETE'),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/magazines'] });
+    },
+  });
+
+  const handleCreateSubmit = () => {
+    createMutation.mutate(createData);
+  };
+
+  const handleUpdateSubmit = () => {
+    updateMutation.mutate(editingMagazine);
+  };
+
+  const handleEdit = (magazine: any) => {
+    setEditingMagazine({ ...magazine });
+  };
+
+  const handleDelete = (id: number) => {
+    if (confirm('آیا از حذف این مجله اطمینان دارید؟')) {
+      deleteMutation.mutate(id);
+    }
+  };
+
+  if (isLoading) {
+    return <div className="text-center py-8">در حال بارگذاری...</div>;
+  }
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-bold text-gray-900">فصلنامه رویش سبز</h2>
+        <button
+          onClick={() => setShowCreateForm(true)}
+          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center gap-2"
+        >
+          <Plus className="h-4 w-4" />
+          افزودن مجله جدید
+        </button>
+      </div>
+
+      {/* Create Form */}
+      {showCreateForm && (
+        <div className="bg-white rounded-lg border p-6">
+          <h3 className="text-lg font-semibold mb-4">افزودن مجله جدید</h3>
+          
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">عنوان</label>
+              <input
+                type="text"
+                value={createData.title}
+                onChange={(e) => setCreateData({...createData, title: e.target.value})}
+                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="عنوان مجله"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">توضیحات</label>
+              <textarea
+                value={createData.description}
+                onChange={(e) => setCreateData({...createData, description: e.target.value})}
+                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                rows={3}
+                placeholder="توضیحات مجله"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">شماره</label>
+              <input
+                type="text"
+                value={createData.issueNumber}
+                onChange={(e) => setCreateData({...createData, issueNumber: e.target.value})}
+                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="شماره مجله"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">تاریخ انتشار</label>
+              <input
+                type="date"
+                value={createData.publishDate}
+                onChange={(e) => setCreateData({...createData, publishDate: e.target.value})}
+                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">آدرس تصویر جلد</label>
+              <input
+                type="url"
+                value={createData.coverImageUrl}
+                onChange={(e) => setCreateData({...createData, coverImageUrl: e.target.value})}
+                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="https://example.com/image.jpg"
+              />
+            </div>
+
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={createData.isActive}
+                onChange={(e) => setCreateData({...createData, isActive: e.target.checked})}
+                className="rounded"
+              />
+              <label className="text-sm text-gray-700">فعال</label>
+            </div>
+
+            <div className="flex gap-2">
+              <button
+                onClick={handleCreateSubmit}
+                disabled={createMutation.isPending}
+                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50"
+              >
+                {createMutation.isPending ? 'در حال ایجاد...' : 'ایجاد مجله'}
+              </button>
+              <button
+                onClick={() => setShowCreateForm(false)}
+                className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600"
+              >
+                لغو
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Magazines List */}
+      <div className="bg-white rounded-lg border overflow-hidden">
+        <div className="p-4 border-b bg-gray-50">
+          <h4 className="font-semibold">لیست مجله‌ها</h4>
+        </div>
+        
+        {magazines && magazines.length > 0 ? (
+          <div className="divide-y">
+            {magazines.map((magazine) => (
+              <div key={magazine.id} className="p-4 hover:bg-gray-50">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
+                      {magazine.coverImageUrl ? (
+                        <img 
+                          src={magazine.coverImageUrl} 
+                          alt={magazine.title}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <Calendar className="h-8 w-8 text-gray-400" />
+                      )}
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-gray-900">{magazine.title}</h3>
+                      <p className="text-sm text-gray-600">{magazine.description}</p>
+                      <div className="flex items-center gap-4 mt-1">
+                        <span className="text-xs text-gray-500">شماره {magazine.issueNumber}</span>
+                        <span className="text-xs text-gray-500">{magazine.publishDate}</span>
+                        <span className={`text-xs px-2 py-1 rounded-full ${
+                          magazine.isActive 
+                            ? 'bg-green-100 text-green-800' 
+                            : 'bg-gray-100 text-gray-800'
+                        }`}>
+                          {magazine.isActive ? 'فعال' : 'غیرفعال'}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => handleEdit(magazine)}
+                      className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg"
+                    >
+                      <Edit className="h-4 w-4" />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(magazine.id)}
+                      className="p-2 text-red-600 hover:bg-red-50 rounded-lg"
+                    >
+                      <Trash className="h-4 w-4" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="p-8 text-center text-gray-500">
+            <Calendar className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-gray-900 mb-2">هیچ مجله‌ای یافت نشد</h3>
+            <p className="text-gray-600">برای شروع، مجله جدیدی اضافه کنید</p>
+          </div>
+        )}
+      </div>
+
+      {/* Edit Modal */}
+      {editingMagazine && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md">
+            <h3 className="text-lg font-semibold mb-4">ویرایش مجله</h3>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">عنوان</label>
+                <input
+                  type="text"
+                  value={editingMagazine.title}
+                  onChange={(e) => setEditingMagazine({...editingMagazine, title: e.target.value})}
+                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">توضیحات</label>
+                <textarea
+                  value={editingMagazine.description}
+                  onChange={(e) => setEditingMagazine({...editingMagazine, description: e.target.value})}
+                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  rows={3}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">شماره</label>
+                <input
+                  type="text"
+                  value={editingMagazine.issueNumber}
+                  onChange={(e) => setEditingMagazine({...editingMagazine, issueNumber: e.target.value})}
+                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">تاریخ انتشار</label>
+                <input
+                  type="date"
+                  value={editingMagazine.publishDate}
+                  onChange={(e) => setEditingMagazine({...editingMagazine, publishDate: e.target.value})}
+                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">آدرس تصویر جلد</label>
+                <input
+                  type="url"
+                  value={editingMagazine.coverImageUrl}
+                  onChange={(e) => setEditingMagazine({...editingMagazine, coverImageUrl: e.target.value})}
+                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={editingMagazine.isActive}
+                  onChange={(e) => setEditingMagazine({...editingMagazine, isActive: e.target.checked})}
+                  className="rounded"
+                />
+                <label className="text-sm text-gray-700">فعال</label>
+              </div>
+
+              <div className="flex gap-2">
+                <button
+                  onClick={handleUpdateSubmit}
+                  disabled={updateMutation.isPending}
+                  className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                >
+                  {updateMutation.isPending ? 'در حال ذخیره...' : 'ذخیره تغییرات'}
+                </button>
+                <button
+                  onClick={() => setEditingMagazine(null)}
+                  className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600"
+                >
+                  لغو
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }
 
 function UsersTab() {
