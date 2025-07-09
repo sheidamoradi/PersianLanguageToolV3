@@ -2,11 +2,11 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { type Course, type Project, type Document, type MediaContent, type Magazine, type Article, type ArticleContent, type Slide, type Workshop, type WorkshopSection } from "@shared/schema";
-import { Calendar, Edit, Eye, File, Folder, Image, Lock, LockOpen, MoreHorizontal, Plus, RefreshCw, Trash, Upload, Video, Copy, X, Zap } from "lucide-react";
+import { Calendar, Edit, Eye, File, Folder, Image, Lock, LockOpen, MoreHorizontal, Plus, RefreshCw, Trash, Upload, Video, Copy, X, Zap, Info, Phone, Users, Building } from "lucide-react";
 import WorkshopsTab from "../components/admin/WorkshopsTab";
 
 export default function AdminPage() {
-  const [activeTab, setActiveTab] = useState("aboutus");
+  const [activeTab, setActiveTab] = useState("courses");
 
   return (
     <div dir="rtl" className="min-h-screen bg-gray-50">
@@ -15,7 +15,7 @@ export default function AdminPage() {
         <div className="w-64 bg-white shadow-sm border-l min-h-screen">
           <div className="p-6 border-b">
             <h1 className="text-xl font-bold text-gray-900">پنل مدیریت</h1>
-            <p className="text-sm text-gray-600 mt-1">مدیریت محتوا و تنظیمات</p>
+            <p className="text-sm text-gray-600 mt-1">مدیریت محتوا و تنظیمات - به‌روزرسانی شده</p>
           </div>
           
           <nav className="p-4">
@@ -29,8 +29,8 @@ export default function AdminPage() {
                 { id: "quickaccess", label: "دسترسی سریع", icon: Zap },
                 { id: "magazines", label: "مجله‌ها", icon: Calendar },
                 { id: "media", label: "کتابخانه رسانه", icon: Upload },
-                { id: "aboutus", label: "درباره ما", icon: Eye },
-                { id: "contactus", label: "تماس با ما", icon: MoreHorizontal },
+                { id: "aboutus", label: "درباره ما", icon: Building },
+                { id: "contactus", label: "تماس با ما", icon: Phone },
                 { id: "users", label: "کاربران", icon: Lock }
               ].map(tab => {
                 const IconComponent = tab.icon;
