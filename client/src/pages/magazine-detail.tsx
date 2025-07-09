@@ -50,12 +50,12 @@ export default function MagazineDetailPage({ magazineId }: MagazineDetailPagePro
   const [expandedArticle, setExpandedArticle] = useState<number | null>(null);
   
   const { data: magazine, isLoading: magazineLoading } = useQuery<Magazine>({
-    queryKey: ['/api/magazines', magazineId],
+    queryKey: [`/api/magazines/${magazineId}`],
     enabled: !!magazineId,
   });
 
   const { data: articles = [], isLoading: articlesLoading } = useQuery<Article[]>({
-    queryKey: ['/api/articles/magazine', magazineId],
+    queryKey: [`/api/articles/magazine/${magazineId}`],
     enabled: !!magazineId,
   });
 
