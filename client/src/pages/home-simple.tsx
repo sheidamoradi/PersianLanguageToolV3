@@ -423,7 +423,7 @@ export default function HomePage() {
             {/* Logo */}
             <div className="w-16 h-16 flex items-center justify-center">
               <img 
-                src="/attached_assets/logo w_1752049371138.png" 
+                src="/uploads/logo-white.png" 
                 alt="Pistat Logo" 
                 className="w-12 h-12"
               />
