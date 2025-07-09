@@ -57,17 +57,25 @@ export default function WorkshopsTab() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const formData = new FormData(e.target as HTMLFormElement);
+    const title = formData.get('title') as string;
+    
+    // Only require title - all other fields are optional
+    if (!title?.trim()) {
+      alert('عنوان کارگاه الزامی است');
+      return;
+    }
+    
     const data = {
-      title: formData.get('title') as string,
-      description: formData.get('description') as string,
-      posterUrl: formData.get('posterUrl') as string,
-      eventDate: formData.get('eventDate') as string,
-      location: formData.get('location') as string,
-      instructor: formData.get('instructor') as string,
-      duration: formData.get('duration') as string,
+      title: title.trim(),
+      description: formData.get('description') as string || '',
+      posterUrl: formData.get('posterUrl') as string || '',
+      eventDate: formData.get('eventDate') as string || '',
+      location: formData.get('location') as string || '',
+      instructor: formData.get('instructor') as string || '',
+      duration: formData.get('duration') as string || '',
       capacity: parseInt(formData.get('capacity') as string) || 0,
-      level: formData.get('level') as string,
-      category: formData.get('category') as string,
+      level: formData.get('level') as string || '',
+      category: formData.get('category') as string || '',
       isActive: formData.get('isActive') === 'on',
       registrationOpen: formData.get('registrationOpen') === 'on',
     };

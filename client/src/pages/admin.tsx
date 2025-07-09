@@ -199,6 +199,12 @@ function WebinarsManagerTab() {
   });
 
   const handleCreate = () => {
+    // Only require title - all other fields are optional
+    if (!createData.title.trim()) {
+      alert('عنوان وبینار الزامی است');
+      return;
+    }
+    
     createMutation.mutate(createData);
   };
 
@@ -1129,7 +1135,13 @@ function EducationalVideosTab() {
   });
 
   const handleCreateSubmit = () => {
-    const tagsArray = createData.tags.split(',').map(tag => tag.trim()).filter(tag => tag);
+    // Only require title - all other fields are optional
+    if (!createData.title.trim()) {
+      alert('عنوان الزامی است');
+      return;
+    }
+    
+    const tagsArray = createData.tags ? createData.tags.split(',').map(tag => tag.trim()).filter(tag => tag) : [];
     createMutation.mutate({
       ...createData,
       tags: tagsArray

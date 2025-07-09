@@ -29,7 +29,7 @@ export const users = pgTable("users", {
 export const courses = pgTable("courses", {
   id: serial("id").primaryKey(),
   title: text("title").notNull(),
-  description: text("description").notNull(),
+  description: text("description"),
   thumbnailUrl: text("thumbnail_url"),
   progress: integer("progress").default(0),
   totalModules: integer("total_modules").default(0),
@@ -64,9 +64,9 @@ export const modules = pgTable("modules", {
 export const projects = pgTable("projects", {
   id: serial("id").primaryKey(),
   title: text("title").notNull(),
-  description: text("description").notNull(),
+  description: text("description"),
   thumbnailUrl: text("thumbnail_url"),
-  type: text("type").notNull(), // "project" or "magazine"
+  type: text("type").default("project"), // "project" or "magazine"
   dueDate: text("due_date"),
   pages: integer("pages"),
   contentUrl: text("content_url"),
@@ -110,9 +110,9 @@ export const documents = pgTable("documents", {
   excerpt: text("excerpt"),
   author: text("author"),
   featuredImageUrl: text("featured_image_url"),
-  fileName: text("file_name").notNull(),
-  fileUrl: text("file_url").notNull(),
-  fileType: text("file_type").notNull(),
+  fileName: text("file_name"),
+  fileUrl: text("file_url"),
+  fileType: text("file_type"),
   fileSize: integer("file_size"),
   totalPages: integer("total_pages"),
   categoryId: integer("category_id").references(() => documentCategories.id),
@@ -144,7 +144,7 @@ export const mediaContent = pgTable("media_content", {
   title: text("title").notNull(),
   description: text("description"),
   thumbnailUrl: text("thumbnail_url"),
-  contentUrl: text("content_url").notNull(),
+  contentUrl: text("content_url"),
   duration: text("duration"),
   instructorName: text("instructor_name"),
   instructorTitle: text("instructor_title"),
@@ -350,7 +350,7 @@ export const workshopRegistrations = pgTable("workshop_registrations", {
 export const slides = pgTable("slides", {
   id: serial("id").primaryKey(),
   title: text("title").notNull(),
-  description: text("description").notNull(),
+  description: text("description"),
   imageUrl: text("image_url"),
   buttonText: text("button_text"),
   buttonUrl: text("button_url"),
@@ -388,8 +388,8 @@ export const quickAccessItems = pgTable("quick_access_items", {
 export const educationalVideos = pgTable("educational_videos", {
   id: serial("id").primaryKey(),
   title: text("title").notNull(),
-  description: text("description").notNull(),
-  videoUrl: text("video_url").notNull(),
+  description: text("description"),
+  videoUrl: text("video_url"),
   thumbnailUrl: text("thumbnail_url"),
   duration: text("duration"), // e.g., "10 دقیقه"
   category: text("category"), // e.g., "برنامه‌نویسی", "کشاورزی"
