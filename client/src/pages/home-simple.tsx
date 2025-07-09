@@ -412,6 +412,29 @@ export default function HomePage() {
       <div>
         {/* Green container box with side-by-side layout */}
         <div className="relative rounded-2xl overflow-hidden p-4 flex gap-4" style={{backgroundColor: 'hsl(140, 60%, 35%)'}}>
+          {/* Right side - Title, Logo, and "View More" in vertical column */}
+          <div className="flex flex-col items-center justify-center text-center text-white min-w-[120px] space-y-4">
+            {/* Title */}
+            <div>
+              <h2 className="text-xl font-bold mb-1">ویدیو</h2>
+              <h3 className="text-lg">آموزشی</h3>
+            </div>
+            
+            {/* Logo */}
+            <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center">
+              <img 
+                src="/uploads/logo.png" 
+                alt="Pistat Logo" 
+                className="w-12 h-12"
+              />
+            </div>
+            
+            {/* View More */}
+            <div className="text-sm cursor-pointer hover:opacity-80 transition-opacity">
+              مشاهده بیشتر
+            </div>
+          </div>
+          
           {/* Left side - Videos */}
           <div className="flex-1">
             <div className="flex gap-3 overflow-x-auto pb-2">
@@ -522,29 +545,6 @@ export default function HomePage() {
                 </div>
               </>
             )}
-            </div>
-          </div>
-          
-          {/* Right side - Title, Logo, and "View More" in vertical column */}
-          <div className="flex flex-col items-center justify-center text-center text-white min-w-[120px] space-y-4">
-            {/* Title */}
-            <div>
-              <h2 className="text-xl font-bold mb-1">ویدیو</h2>
-              <h3 className="text-lg">آموزشی</h3>
-            </div>
-            
-            {/* Logo */}
-            <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center">
-              <img 
-                src="/uploads/logo.png" 
-                alt="Pistat Logo" 
-                className="w-12 h-12"
-              />
-            </div>
-            
-            {/* View More */}
-            <div className="text-sm cursor-pointer hover:opacity-80 transition-opacity">
-              مشاهده بیشتر
             </div>
           </div>
         </div>
