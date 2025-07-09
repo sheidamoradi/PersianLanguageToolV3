@@ -18,7 +18,8 @@ import {
   webinarSections, type WebinarSection, type InsertWebinarSection,
   slides, type Slide, type InsertSlide,
   quickAccessItems, type QuickAccessItem, type InsertQuickAccessItem,
-  userCourseAccess, type UserCourseAccess, type InsertUserCourseAccess
+  userCourseAccess, type UserCourseAccess, type InsertUserCourseAccess,
+  educationalVideos, type EducationalVideo, type InsertEducationalVideo
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, asc, like, and, sql } from "drizzle-orm";
@@ -164,6 +165,14 @@ export interface IStorage {
   createQuickAccessItem(item: InsertQuickAccessItem): Promise<QuickAccessItem>;
   updateQuickAccessItem(id: number, item: Partial<InsertQuickAccessItem>): Promise<QuickAccessItem | undefined>;
   deleteQuickAccessItem(id: number): Promise<boolean>;
+
+  // Educational Video methods
+  getEducationalVideos(): Promise<EducationalVideo[]>;
+  getActiveEducationalVideos(): Promise<EducationalVideo[]>;
+  getEducationalVideo(id: number): Promise<EducationalVideo | undefined>;
+  createEducationalVideo(video: InsertEducationalVideo): Promise<EducationalVideo>;
+  updateEducationalVideo(id: number, video: Partial<InsertEducationalVideo>): Promise<EducationalVideo | undefined>;
+  deleteEducationalVideo(id: number): Promise<boolean>;
 
   // Protection control methods
   updateCourseProtection(id: number, protection: any): Promise<Course | undefined>;
@@ -967,6 +976,42 @@ export class DatabaseStorage implements IStorage {
 
   async deleteWorkshopRegistration(id: number): Promise<boolean> {
     const result = await db.delete(workshopRegistrations).where(eq(workshopRegistrations.id, id));
+    return (result.rowCount ?? 0) > 0;
+  }
+
+  // Educational Video methods
+  async getEducationalVideos(): Promise<EducationalVideo[]> {
+    return await db.select().from(educationalVideos).orderBy(asc(educationalVideos.order));
+  }
+
+  async getActiveEducationalVideos(): Promise<EducationalVideo[]> {
+    return await db.select().from(educationalVideos).where(eq(educationalVideos.isActive, true)).orderBy(asc(educationalVideos.order));
+  }
+
+  async getEducationalVideo(id: number): Promise<EducationalVideo | undefined> {
+    const [video] = await db.select().from(educationalVideos).where(eq(educationalVideos.id, id));
+    return video;
+  }
+
+  async createEducationalVideo(video: InsertEducationalVideo): Promise<EducationalVideo> {
+    const [newVideo] = await db
+      .insert(educationalVideos)
+      .values(video)
+      .returning();
+    return newVideo;
+  }
+
+  async updateEducationalVideo(id: number, video: Partial<InsertEducationalVideo>): Promise<EducationalVideo | undefined> {
+    const [updatedVideo] = await db
+      .update(educationalVideos)
+      .set(video)
+      .where(eq(educationalVideos.id, id))
+      .returning();
+    return updatedVideo;
+  }
+
+  async deleteEducationalVideo(id: number): Promise<boolean> {
+    const result = await db.delete(educationalVideos).where(eq(educationalVideos.id, id));
     return (result.rowCount ?? 0) > 0;
   }
 }

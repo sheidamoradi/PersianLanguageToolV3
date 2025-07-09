@@ -25,7 +25,8 @@ import {
   insertWebinarSchema,
   insertWebinarSectionSchema,
   insertSlideSchema,
-  insertWorkshopRegistrationSchema
+  insertWorkshopRegistrationSchema,
+  insertEducationalVideoSchema
 } from "@shared/schema";
 
 // Configure multer for file uploads
@@ -1079,6 +1080,86 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
 
     return res.json({ message: "Registration deleted successfully" });
+  });
+
+  // Educational Videos API
+  app.get("/api/educational-videos", async (req, res) => {
+    const videos = await storage.getEducationalVideos();
+    res.json(videos);
+  });
+
+  app.get("/api/educational-videos/active", async (req, res) => {
+    const videos = await storage.getActiveEducationalVideos();
+    res.json(videos);
+  });
+
+  app.get("/api/educational-videos/:id", async (req, res) => {
+    const id = parseInt(req.params.id);
+
+    if (isNaN(id)) {
+      return res.status(400).json({ message: "Invalid video ID" });
+    }
+
+    const video = await storage.getEducationalVideo(id);
+
+    if (!video) {
+      return res.status(404).json({ message: "Video not found" });
+    }
+
+    return res.json(video);
+  });
+
+  app.post("/api/educational-videos", async (req, res) => {
+    try {
+      const videoData = insertEducationalVideoSchema.parse(req.body);
+      const video = await storage.createEducationalVideo(videoData);
+      return res.status(201).json(video);
+    } catch (error) {
+      if (error instanceof ZodError) {
+        return res.status(400).json({ message: fromZodError(error).toString() });
+      }
+      return res.status(500).json({ message: "خطا در ایجاد ویدیو" });
+    }
+  });
+
+  app.put("/api/educational-videos/:id", async (req, res) => {
+    const id = parseInt(req.params.id);
+
+    if (isNaN(id)) {
+      return res.status(400).json({ message: "Invalid video ID" });
+    }
+
+    try {
+      const videoData = insertEducationalVideoSchema.partial().parse(req.body);
+      const updatedVideo = await storage.updateEducationalVideo(id, videoData);
+
+      if (!updatedVideo) {
+        return res.status(404).json({ message: "Video not found" });
+      }
+
+      return res.json(updatedVideo);
+    } catch (error) {
+      if (error instanceof ZodError) {
+        return res.status(400).json({ message: fromZodError(error).toString() });
+      }
+      return res.status(500).json({ message: "خطا در به‌روزرسانی ویدیو" });
+    }
+  });
+
+  app.delete("/api/educational-videos/:id", async (req, res) => {
+    const id = parseInt(req.params.id);
+
+    if (isNaN(id)) {
+      return res.status(400).json({ message: "Invalid video ID" });
+    }
+
+    const deleted = await storage.deleteEducationalVideo(id);
+
+    if (!deleted) {
+      return res.status(404).json({ message: "Video not found" });
+    }
+
+    return res.json({ message: "Video deleted successfully" });
   });
 
   const server = createServer(app);

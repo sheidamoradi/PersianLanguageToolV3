@@ -384,6 +384,28 @@ export const quickAccessItems = pgTable("quick_access_items", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+// Educational Videos
+export const educationalVideos = pgTable("educational_videos", {
+  id: serial("id").primaryKey(),
+  title: text("title").notNull(),
+  description: text("description").notNull(),
+  videoUrl: text("video_url").notNull(),
+  thumbnailUrl: text("thumbnail_url"),
+  duration: text("duration"), // e.g., "10 دقیقه"
+  category: text("category"), // e.g., "برنامه‌نویسی", "کشاورزی"
+  level: text("level").default("beginner"), // beginner, intermediate, advanced
+  tags: text("tags").array(), // Array of tags
+  instructor: text("instructor"), // Instructor name
+  viewsCount: integer("views_count").default(0),
+  likesCount: integer("likes_count").default(0),
+  isActive: boolean("is_active").default(true),
+  isPublic: boolean("is_public").default(true),
+  requiresSubscription: boolean("requires_subscription").default(false),
+  order: integer("order").default(0),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 // Insert Schemas
 export const insertUserSchema = createInsertSchema(users).omit({ id: true });
 export const insertCourseSchema = createInsertSchema(courses).omit({ id: true });
@@ -466,6 +488,7 @@ export type MediaLibrary = typeof mediaLibrary.$inferSelect;
 export const insertSlideSchema = createInsertSchema(slides).omit({ id: true, createdAt: true, updatedAt: true });
 export const insertQuickAccessItemSchema = createInsertSchema(quickAccessItems).omit({ id: true, createdAt: true, updatedAt: true });
 export const insertWorkshopRegistrationSchema = createInsertSchema(workshopRegistrations).omit({ id: true, registrationDate: true });
+export const insertEducationalVideoSchema = createInsertSchema(educationalVideos).omit({ id: true, createdAt: true, updatedAt: true });
 
 // Slide Types
 export type InsertSlide = z.infer<typeof insertSlideSchema>;
@@ -478,6 +501,10 @@ export type QuickAccessItem = typeof quickAccessItems.$inferSelect;
 // Workshop Registration Types
 export type InsertWorkshopRegistration = z.infer<typeof insertWorkshopRegistrationSchema>;
 export type WorkshopRegistration = typeof workshopRegistrations.$inferSelect;
+
+// Educational Video Types
+export type InsertEducationalVideo = z.infer<typeof insertEducationalVideoSchema>;
+export type EducationalVideo = typeof educationalVideos.$inferSelect;
 
 
 // User Course Access Table

@@ -13,6 +13,7 @@ export default function AdminPage() {
     { id: "courses", label: "دوره‌ها", icon: Video },
     { id: "webinars", label: "وبینارهای آموزشی", icon: Video },
     { id: "webinar-sections", label: "بخش‌های وبینار", icon: Folder },
+    { id: "educational-videos", label: "ویدیوهای آموزشی", icon: Video },
     { id: "documents", label: "اسناد", icon: File },
     { id: "media", label: "کتابخانه رسانه", icon: Image },
     { id: "slides", label: "اسلایدها", icon: Image },
@@ -62,6 +63,7 @@ export default function AdminPage() {
           {activeTab === "courses" && <CoursesTab />}
           {activeTab === "webinars" && <WebinarsManagerTab />}
           {activeTab === "webinar-sections" && <WebinarSectionsTab />}
+          {activeTab === "educational-videos" && <EducationalVideosTab />}
           {activeTab === "documents" && <DocumentsTab />}
           {activeTab === "media" && <MediaTab />}
           {activeTab === "slides" && <SlidesTab />}
@@ -1021,6 +1023,555 @@ function WorkshopRegistrationsTab() {
           </div>
         )}
       </div>
+    </div>
+  );
+}
+
+function EducationalVideosTab() {
+  const [showCreateForm, setShowCreateForm] = useState(false);
+  const [editingVideo, setEditingVideo] = useState<any>(null);
+  const [createData, setCreateData] = useState({
+    title: '',
+    description: '',
+    videoUrl: '',
+    thumbnailUrl: '',
+    duration: '',
+    instructor: '',
+    category: '',
+    level: 'beginner' as const,
+    tags: '',
+    order: 0,
+    isActive: true
+  });
+
+  const { data: videos, isLoading } = useQuery<any[]>({
+    queryKey: ['/api/educational-videos'],
+  });
+
+  const createMutation = useMutation({
+    mutationFn: async (data: any) => {
+      const response = await fetch('/api/educational-videos', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+      });
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Create error:', errorText);
+        throw new Error('خطا در ایجاد ویدیو');
+      }
+      
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/educational-videos'] });
+      setShowCreateForm(false);
+      setCreateData({
+        title: '',
+        description: '',
+        videoUrl: '',
+        thumbnailUrl: '',
+        duration: '',
+        instructor: '',
+        category: '',
+        level: 'beginner',
+        tags: '',
+        order: 0,
+        isActive: true
+      });
+    }
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: async (data: any) => {
+      const response = await fetch(`/api/educational-videos/${editingVideo.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+      });
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Update error:', errorText);
+        throw new Error('خطا در به‌روزرسانی ویدیو');
+      }
+      
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/educational-videos'] });
+      setEditingVideo(null);
+    }
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: async (id: number) => {
+      const response = await fetch(`/api/educational-videos/${id}`, {
+        method: 'DELETE',
+      });
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Delete error:', errorText);
+        throw new Error('خطا در حذف ویدیو');
+      }
+      
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/educational-videos'] });
+    }
+  });
+
+  const handleCreateSubmit = () => {
+    const tagsArray = createData.tags.split(',').map(tag => tag.trim()).filter(tag => tag);
+    createMutation.mutate({
+      ...createData,
+      tags: tagsArray
+    });
+  };
+
+  const handleUpdateSubmit = () => {
+    if (!editingVideo) return;
+    
+    const tagsArray = editingVideo.tags.split(',').map((tag: string) => tag.trim()).filter((tag: string) => tag);
+    updateMutation.mutate({
+      ...editingVideo,
+      tags: tagsArray
+    });
+  };
+
+  const handleEdit = (video: any) => {
+    setEditingVideo({
+      ...video,
+      tags: Array.isArray(video.tags) ? video.tags.join(', ') : video.tags
+    });
+  };
+
+  if (isLoading) return <div>در حال بارگذاری...</div>;
+
+  return (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold">ویدیوهای آموزشی</h2>
+        <button
+          onClick={() => setShowCreateForm(!showCreateForm)}
+          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center gap-2"
+        >
+          <Plus className="h-4 w-4" />
+          ایجاد ویدیو جدید
+        </button>
+      </div>
+
+      {showCreateForm && (
+        <div className="bg-white rounded-lg border p-6">
+          <h3 className="text-lg font-semibold mb-4">ایجاد ویدیو جدید</h3>
+          
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                عنوان
+              </label>
+              <input
+                type="text"
+                value={createData.title}
+                onChange={(e) => setCreateData({...createData, title: e.target.value})}
+                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="عنوان ویدیو..."
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                توضیحات
+              </label>
+              <textarea
+                value={createData.description}
+                onChange={(e) => setCreateData({...createData, description: e.target.value})}
+                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                rows={3}
+                placeholder="توضیحات کامل ویدیو..."
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  آدرس ویدیو
+                </label>
+                <input
+                  type="url"
+                  value={createData.videoUrl}
+                  onChange={(e) => setCreateData({...createData, videoUrl: e.target.value})}
+                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="https://example.com/video.mp4"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  تصویر کوچک
+                </label>
+                <input
+                  type="url"
+                  value={createData.thumbnailUrl}
+                  onChange={(e) => setCreateData({...createData, thumbnailUrl: e.target.value})}
+                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="/uploads/thumbnail.jpg"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-3 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  مدت زمان
+                </label>
+                <input
+                  type="text"
+                  value={createData.duration}
+                  onChange={(e) => setCreateData({...createData, duration: e.target.value})}
+                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="۱۵ دقیقه"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  مدرس
+                </label>
+                <input
+                  type="text"
+                  value={createData.instructor}
+                  onChange={(e) => setCreateData({...createData, instructor: e.target.value})}
+                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="نام مدرس..."
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  دسته‌بندی
+                </label>
+                <input
+                  type="text"
+                  value={createData.category}
+                  onChange={(e) => setCreateData({...createData, category: e.target.value})}
+                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="کشاورزی، باغبانی، ..."
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-3 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  سطح
+                </label>
+                <select
+                  value={createData.level}
+                  onChange={(e) => setCreateData({...createData, level: e.target.value as 'beginner' | 'intermediate' | 'advanced'})}
+                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="beginner">مبتدی</option>
+                  <option value="intermediate">متوسط</option>
+                  <option value="advanced">پیشرفته</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  ترتیب
+                </label>
+                <input
+                  type="number"
+                  value={createData.order}
+                  onChange={(e) => setCreateData({...createData, order: parseInt(e.target.value)})}
+                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  min="0"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  وضعیت
+                </label>
+                <select
+                  value={createData.isActive ? 'true' : 'false'}
+                  onChange={(e) => setCreateData({...createData, isActive: e.target.value === 'true'})}
+                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="true">فعال</option>
+                  <option value="false">غیرفعال</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                برچسب‌ها (با کاما جدا کنید)
+              </label>
+              <input
+                type="text"
+                value={createData.tags}
+                onChange={(e) => setCreateData({...createData, tags: e.target.value})}
+                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="کشاورزی, باغبانی, آموزش"
+              />
+            </div>
+
+            <div className="flex gap-2">
+              <button
+                onClick={handleCreateSubmit}
+                disabled={createMutation.isPending}
+                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50"
+              >
+                {createMutation.isPending ? 'در حال ایجاد...' : 'ایجاد ویدیو'}
+              </button>
+              <button
+                onClick={() => setShowCreateForm(false)}
+                className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600"
+              >
+                لغو
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="bg-white rounded-lg border overflow-hidden">
+        <div className="p-4 border-b bg-gray-50">
+          <h4 className="font-semibold">لیست ویدیوهای آموزشی</h4>
+        </div>
+        
+        {!videos || videos.length === 0 ? (
+          <div className="p-8 text-center text-gray-500">
+            هنوز ویدیویی اضافه نشده است.
+          </div>
+        ) : (
+          <div className="divide-y divide-gray-200">
+            {videos.map((video) => (
+              <div key={video.id} className="p-4 hover:bg-gray-50">
+                <div className="flex items-center justify-between">
+                  <div className="flex-1">
+                    <h5 className="font-semibold text-gray-900">{video.title}</h5>
+                    <p className="text-sm text-gray-600 mt-1">{video.description}</p>
+                    <div className="flex items-center gap-4 mt-2 text-sm text-gray-500">
+                      <span>مدرس: {video.instructor}</span>
+                      <span>مدت: {video.duration}</span>
+                      <span>سطح: {video.level === 'beginner' ? 'مبتدی' : video.level === 'intermediate' ? 'متوسط' : 'پیشرفته'}</span>
+                      <span>دسته: {video.category}</span>
+                      <span className={`px-2 py-1 rounded text-xs ${video.isActive ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                        {video.isActive ? 'فعال' : 'غیرفعال'}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => handleEdit(video)}
+                      className="text-blue-600 hover:text-blue-800"
+                    >
+                      <Edit className="h-4 w-4" />
+                    </button>
+                    <button
+                      onClick={() => deleteMutation.mutate(video.id)}
+                      disabled={deleteMutation.isPending}
+                      className="text-red-600 hover:text-red-800 disabled:opacity-50"
+                    >
+                      <Trash className="h-4 w-4" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {editingVideo && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg font-semibold">ویرایش ویدیو</h3>
+                <button
+                  onClick={() => setEditingVideo(null)}
+                  className="text-gray-500 hover:text-gray-700"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+              
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    عنوان
+                  </label>
+                  <input
+                    type="text"
+                    value={editingVideo.title}
+                    onChange={(e) => setEditingVideo({...editingVideo, title: e.target.value})}
+                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    توضیحات
+                  </label>
+                  <textarea
+                    value={editingVideo.description}
+                    onChange={(e) => setEditingVideo({...editingVideo, description: e.target.value})}
+                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    rows={3}
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      آدرس ویدیو
+                    </label>
+                    <input
+                      type="url"
+                      value={editingVideo.videoUrl}
+                      onChange={(e) => setEditingVideo({...editingVideo, videoUrl: e.target.value})}
+                      className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      تصویر کوچک
+                    </label>
+                    <input
+                      type="url"
+                      value={editingVideo.thumbnailUrl}
+                      onChange={(e) => setEditingVideo({...editingVideo, thumbnailUrl: e.target.value})}
+                      className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      مدت زمان
+                    </label>
+                    <input
+                      type="text"
+                      value={editingVideo.duration}
+                      onChange={(e) => setEditingVideo({...editingVideo, duration: e.target.value})}
+                      className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      مدرس
+                    </label>
+                    <input
+                      type="text"
+                      value={editingVideo.instructor}
+                      onChange={(e) => setEditingVideo({...editingVideo, instructor: e.target.value})}
+                      className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      دسته‌بندی
+                    </label>
+                    <input
+                      type="text"
+                      value={editingVideo.category}
+                      onChange={(e) => setEditingVideo({...editingVideo, category: e.target.value})}
+                      className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      سطح
+                    </label>
+                    <select
+                      value={editingVideo.level}
+                      onChange={(e) => setEditingVideo({...editingVideo, level: e.target.value})}
+                      className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                      <option value="beginner">مبتدی</option>
+                      <option value="intermediate">متوسط</option>
+                      <option value="advanced">پیشرفته</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      ترتیب
+                    </label>
+                    <input
+                      type="number"
+                      value={editingVideo.order}
+                      onChange={(e) => setEditingVideo({...editingVideo, order: parseInt(e.target.value)})}
+                      className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      min="0"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      وضعیت
+                    </label>
+                    <select
+                      value={editingVideo.isActive ? 'true' : 'false'}
+                      onChange={(e) => setEditingVideo({...editingVideo, isActive: e.target.value === 'true'})}
+                      className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                      <option value="true">فعال</option>
+                      <option value="false">غیرفعال</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    برچسب‌ها (با کاما جدا کنید)
+                  </label>
+                  <input
+                    type="text"
+                    value={editingVideo.tags}
+                    onChange={(e) => setEditingVideo({...editingVideo, tags: e.target.value})}
+                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+
+                <div className="flex gap-2">
+                  <button
+                    onClick={handleUpdateSubmit}
+                    disabled={updateMutation.isPending}
+                    className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                  >
+                    {updateMutation.isPending ? 'در حال ذخیره...' : 'ذخیره تغییرات'}
+                  </button>
+                  <button
+                    onClick={() => setEditingVideo(null)}
+                    className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600"
+                  >
+                    لغو
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
