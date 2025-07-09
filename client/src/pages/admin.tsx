@@ -14,7 +14,7 @@ export default function AdminPage() {
     { id: "webinars", label: "وبینارهای آموزشی", icon: Video },
     { id: "webinar-sections", label: "بخش‌های وبینار", icon: Folder },
     { id: "educational-videos", label: "ویدیوهای آموزشی", icon: Video },
-    { id: "documents", label: "اسناد", icon: File },
+    { id: "documents", label: "آرشیو پیستاط", icon: File },
     { id: "media", label: "کتابخانه رسانه", icon: Image },
     { id: "slides", label: "اسلایدها", icon: Image },
     { id: "magazines", label: "مجله‌ها", icon: Calendar },
@@ -599,7 +599,566 @@ function CoursesTab() {
 }
 
 function DocumentsTab() {
-  return <div>اسناد</div>;
+  const [showCreateForm, setShowCreateForm] = useState(false);
+  const [editingPost, setEditingPost] = useState<any>(null);
+  const [filterStatus, setFilterStatus] = useState<string>('all');
+  const [filterCategory, setFilterCategory] = useState<string>('all');
+  const [createData, setCreateData] = useState({
+    title: '',
+    content: '',
+    excerpt: '',
+    featuredImage: '',
+    category: 'general',
+    tags: '',
+    status: 'published',
+    allowComments: true,
+    isSticky: false,
+    seoTitle: '',
+    seoDescription: '',
+    customFields: ''
+  });
+
+  const { data: posts, isLoading } = useQuery<any[]>({
+    queryKey: ['/api/documents'],
+  });
+
+  const createMutation = useMutation({
+    mutationFn: (data: any) => {
+      const postData = {
+        ...data,
+        tags: data.tags.split(',').map((tag: string) => tag.trim()).filter(Boolean),
+        customFields: data.customFields ? JSON.parse(data.customFields) : {}
+      };
+      return apiRequest('/api/documents', { method: 'POST', body: JSON.stringify(postData) });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/documents'] });
+      setShowCreateForm(false);
+      setCreateData({
+        title: '',
+        content: '',
+        excerpt: '',
+        featuredImage: '',
+        category: 'general',
+        tags: '',
+        status: 'published',
+        allowComments: true,
+        isSticky: false,
+        seoTitle: '',
+        seoDescription: '',
+        customFields: ''
+      });
+    },
+    onError: (error) => {
+      console.error('Error creating post:', error);
+      alert('خطا در ایجاد پست: ' + error.message);
+    },
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: (data: any) => {
+      const postData = {
+        ...data,
+        tags: typeof data.tags === 'string' ? data.tags.split(',').map((tag: string) => tag.trim()).filter(Boolean) : data.tags,
+        customFields: typeof data.customFields === 'string' ? JSON.parse(data.customFields) : data.customFields
+      };
+      return apiRequest(`/api/documents/${editingPost.id}`, { method: 'PUT', body: JSON.stringify(postData) });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/documents'] });
+      setEditingPost(null);
+    },
+    onError: (error) => {
+      console.error('Error updating post:', error);
+      alert('خطا در بروزرسانی پست: ' + error.message);
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: number) => apiRequest(`/api/documents/${id}`, { method: 'DELETE' }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/documents'] });
+    },
+    onError: (error) => {
+      console.error('Error deleting post:', error);
+      alert('خطا در حذف پست: ' + error.message);
+    },
+  });
+
+  const handleCreateSubmit = () => {
+    if (!createData.title.trim()) {
+      alert('لطفاً عنوان پست را وارد کنید');
+      return;
+    }
+    if (!createData.content.trim()) {
+      alert('لطفاً محتوای پست را وارد کنید');
+      return;
+    }
+    createMutation.mutate(createData);
+  };
+
+  const handleUpdateSubmit = () => {
+    updateMutation.mutate(editingPost);
+  };
+
+  const handleEdit = (post: any) => {
+    setEditingPost({ 
+      ...post, 
+      tags: Array.isArray(post.tags) ? post.tags.join(', ') : post.tags || '',
+      customFields: post.customFields ? JSON.stringify(post.customFields, null, 2) : ''
+    });
+  };
+
+  const handleDelete = (id: number) => {
+    if (confirm('آیا از حذف این پست اطمینان دارید؟')) {
+      deleteMutation.mutate(id);
+    }
+  };
+
+  const categories = [
+    { value: 'general', label: 'عمومی' },
+    { value: 'agriculture', label: 'کشاورزی' },
+    { value: 'technology', label: 'فناوری' },
+    { value: 'education', label: 'آموزش' },
+    { value: 'research', label: 'پژوهش' },
+    { value: 'news', label: 'اخبار' }
+  ];
+
+  const statuses = [
+    { value: 'published', label: 'منتشر شده' },
+    { value: 'draft', label: 'پیش‌نویس' },
+    { value: 'private', label: 'خصوصی' },
+    { value: 'pending', label: 'در انتظار بررسی' }
+  ];
+
+  const filteredPosts = posts?.filter(post => {
+    const statusMatch = filterStatus === 'all' || post.status === filterStatus;
+    const categoryMatch = filterCategory === 'all' || post.category === filterCategory;
+    return statusMatch && categoryMatch;
+  }) || [];
+
+  if (isLoading) {
+    return <div className="text-center py-8">در حال بارگذاری...</div>;
+  }
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-bold text-gray-900">آرشیو پیستاط</h2>
+        <button
+          onClick={() => setShowCreateForm(true)}
+          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center gap-2"
+        >
+          <Plus className="h-4 w-4" />
+          افزودن پست جدید
+        </button>
+      </div>
+
+      {/* Filters */}
+      <div className="bg-white rounded-lg border p-4">
+        <div className="flex gap-4 flex-wrap">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">وضعیت</label>
+            <select
+              value={filterStatus}
+              onChange={(e) => setFilterStatus(e.target.value)}
+              className="px-3 py-2 border rounded-lg text-sm"
+            >
+              <option value="all">همه</option>
+              {statuses.map(status => (
+                <option key={status.value} value={status.value}>{status.label}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">دسته‌بندی</label>
+            <select
+              value={filterCategory}
+              onChange={(e) => setFilterCategory(e.target.value)}
+              className="px-3 py-2 border rounded-lg text-sm"
+            >
+              <option value="all">همه</option>
+              {categories.map(category => (
+                <option key={category.value} value={category.value}>{category.label}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+      </div>
+
+      {/* Create Form */}
+      {showCreateForm && (
+        <div className="bg-white rounded-lg border p-6">
+          <h3 className="text-lg font-semibold mb-4">افزودن پست جدید</h3>
+          
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Main Content */}
+            <div className="lg:col-span-2 space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">عنوان</label>
+                <input
+                  type="text"
+                  value={createData.title}
+                  onChange={(e) => setCreateData({...createData, title: e.target.value})}
+                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="عنوان پست"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">محتوا</label>
+                <textarea
+                  value={createData.content}
+                  onChange={(e) => setCreateData({...createData, content: e.target.value})}
+                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  rows={12}
+                  placeholder="محتوای پست..."
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">خلاصه</label>
+                <textarea
+                  value={createData.excerpt}
+                  onChange={(e) => setCreateData({...createData, excerpt: e.target.value})}
+                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  rows={3}
+                  placeholder="خلاصه پست..."
+                />
+              </div>
+            </div>
+
+            {/* Sidebar */}
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">وضعیت</label>
+                <select
+                  value={createData.status}
+                  onChange={(e) => setCreateData({...createData, status: e.target.value})}
+                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  {statuses.map(status => (
+                    <option key={status.value} value={status.value}>{status.label}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">دسته‌بندی</label>
+                <select
+                  value={createData.category}
+                  onChange={(e) => setCreateData({...createData, category: e.target.value})}
+                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  {categories.map(category => (
+                    <option key={category.value} value={category.value}>{category.label}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">برچسب‌ها</label>
+                <input
+                  type="text"
+                  value={createData.tags}
+                  onChange={(e) => setCreateData({...createData, tags: e.target.value})}
+                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="برچسب1، برچسب2"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">تصویر شاخص</label>
+                <input
+                  type="url"
+                  value={createData.featuredImage}
+                  onChange={(e) => setCreateData({...createData, featuredImage: e.target.value})}
+                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="/uploads/image.jpg"
+                />
+              </div>
+
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={createData.allowComments}
+                  onChange={(e) => setCreateData({...createData, allowComments: e.target.checked})}
+                  className="rounded"
+                />
+                <label className="text-sm text-gray-700">مجاز به نظر</label>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={createData.isSticky}
+                  onChange={(e) => setCreateData({...createData, isSticky: e.target.checked})}
+                  className="rounded"
+                />
+                <label className="text-sm text-gray-700">پست ثابت</label>
+              </div>
+
+              {/* SEO Section */}
+              <div className="border-t pt-4">
+                <h4 className="font-medium text-gray-900 mb-2">تنظیمات SEO</h4>
+                <div className="space-y-2">
+                  <input
+                    type="text"
+                    value={createData.seoTitle}
+                    onChange={(e) => setCreateData({...createData, seoTitle: e.target.value})}
+                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="عنوان SEO"
+                  />
+                  <textarea
+                    value={createData.seoDescription}
+                    onChange={(e) => setCreateData({...createData, seoDescription: e.target.value})}
+                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    rows={2}
+                    placeholder="توضیحات SEO"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex gap-2 mt-6 pt-4 border-t">
+            <button
+              onClick={handleCreateSubmit}
+              disabled={createMutation.isPending}
+              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50"
+            >
+              {createMutation.isPending ? 'در حال انتشار...' : 'انتشار پست'}
+            </button>
+            <button
+              onClick={() => setShowCreateForm(false)}
+              className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600"
+            >
+              لغو
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Posts List */}
+      <div className="bg-white rounded-lg border overflow-hidden">
+        <div className="p-4 border-b bg-gray-50">
+          <h4 className="font-semibold">پست‌های آرشیو ({filteredPosts.length})</h4>
+        </div>
+        
+        {filteredPosts.length > 0 ? (
+          <div className="divide-y">
+            {filteredPosts.map((post) => (
+              <div key={post.id} className="p-4 hover:bg-gray-50">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-2">
+                      <h3 className="font-semibold text-gray-900">{post.title}</h3>
+                      {post.isSticky && (
+                        <span className="text-xs px-2 py-1 rounded-full bg-yellow-100 text-yellow-800">
+                          ثابت
+                        </span>
+                      )}
+                      <span className={`text-xs px-2 py-1 rounded-full ${
+                        post.status === 'published' ? 'bg-green-100 text-green-800' :
+                        post.status === 'draft' ? 'bg-gray-100 text-gray-800' :
+                        post.status === 'private' ? 'bg-red-100 text-red-800' :
+                        'bg-orange-100 text-orange-800'
+                      }`}>
+                        {statuses.find(s => s.value === post.status)?.label}
+                      </span>
+                    </div>
+                    
+                    <p className="text-sm text-gray-600 mb-2">
+                      {post.excerpt || post.content?.substring(0, 100) + '...'}
+                    </p>
+                    
+                    <div className="flex items-center gap-4 text-xs text-gray-500">
+                      <span>دسته: {categories.find(c => c.value === post.category)?.label}</span>
+                      {post.tags && post.tags.length > 0 && (
+                        <span>برچسب‌ها: {Array.isArray(post.tags) ? post.tags.join(', ') : post.tags}</span>
+                      )}
+                      <span>نظرات: {post.allowComments ? 'فعال' : 'غیرفعال'}</span>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => handleEdit(post)}
+                      className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg"
+                    >
+                      <Edit className="h-4 w-4" />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(post.id)}
+                      className="p-2 text-red-600 hover:bg-red-50 rounded-lg"
+                    >
+                      <Trash className="h-4 w-4" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="p-8 text-center text-gray-500">
+            <File className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-gray-900 mb-2">هیچ پستی یافت نشد</h3>
+            <p className="text-gray-600">برای شروع، پست جدیدی اضافه کنید</p>
+          </div>
+        )}
+      </div>
+
+      {/* Edit Modal */}
+      {editingPost && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-6xl max-h-[90vh] overflow-y-auto">
+            <h3 className="text-lg font-semibold mb-4">ویرایش پست</h3>
+            
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* Main Content */}
+              <div className="lg:col-span-2 space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">عنوان</label>
+                  <input
+                    type="text"
+                    value={editingPost.title}
+                    onChange={(e) => setEditingPost({...editingPost, title: e.target.value})}
+                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">محتوا</label>
+                  <textarea
+                    value={editingPost.content}
+                    onChange={(e) => setEditingPost({...editingPost, content: e.target.value})}
+                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    rows={12}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">خلاصه</label>
+                  <textarea
+                    value={editingPost.excerpt}
+                    onChange={(e) => setEditingPost({...editingPost, excerpt: e.target.value})}
+                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    rows={3}
+                  />
+                </div>
+              </div>
+
+              {/* Sidebar */}
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">وضعیت</label>
+                  <select
+                    value={editingPost.status}
+                    onChange={(e) => setEditingPost({...editingPost, status: e.target.value})}
+                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    {statuses.map(status => (
+                      <option key={status.value} value={status.value}>{status.label}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">دسته‌بندی</label>
+                  <select
+                    value={editingPost.category}
+                    onChange={(e) => setEditingPost({...editingPost, category: e.target.value})}
+                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    {categories.map(category => (
+                      <option key={category.value} value={category.value}>{category.label}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">برچسب‌ها</label>
+                  <input
+                    type="text"
+                    value={editingPost.tags}
+                    onChange={(e) => setEditingPost({...editingPost, tags: e.target.value})}
+                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">تصویر شاخص</label>
+                  <input
+                    type="url"
+                    value={editingPost.featuredImage}
+                    onChange={(e) => setEditingPost({...editingPost, featuredImage: e.target.value})}
+                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={editingPost.allowComments}
+                    onChange={(e) => setEditingPost({...editingPost, allowComments: e.target.checked})}
+                    className="rounded"
+                  />
+                  <label className="text-sm text-gray-700">مجاز به نظر</label>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={editingPost.isSticky}
+                    onChange={(e) => setEditingPost({...editingPost, isSticky: e.target.checked})}
+                    className="rounded"
+                  />
+                  <label className="text-sm text-gray-700">پست ثابت</label>
+                </div>
+
+                {/* SEO Section */}
+                <div className="border-t pt-4">
+                  <h4 className="font-medium text-gray-900 mb-2">تنظیمات SEO</h4>
+                  <div className="space-y-2">
+                    <input
+                      type="text"
+                      value={editingPost.seoTitle}
+                      onChange={(e) => setEditingPost({...editingPost, seoTitle: e.target.value})}
+                      className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="عنوان SEO"
+                    />
+                    <textarea
+                      value={editingPost.seoDescription}
+                      onChange={(e) => setEditingPost({...editingPost, seoDescription: e.target.value})}
+                      className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      rows={2}
+                      placeholder="توضیحات SEO"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex gap-2 mt-6 pt-4 border-t">
+              <button
+                onClick={handleUpdateSubmit}
+                disabled={updateMutation.isPending}
+                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50"
+              >
+                {updateMutation.isPending ? 'در حال ذخیره...' : 'ذخیره تغییرات'}
+              </button>
+              <button
+                onClick={() => setEditingPost(null)}
+                className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600"
+              >
+                لغو
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }
 
 function MediaTab() {

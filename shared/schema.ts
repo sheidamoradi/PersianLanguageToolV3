@@ -109,21 +109,27 @@ export const documents = pgTable("documents", {
   content: text("content"),
   excerpt: text("excerpt"),
   author: text("author"),
-  featuredImageUrl: text("featured_image_url"),
+  featuredImage: text("featured_image"),
   fileName: text("file_name"),
   fileUrl: text("file_url"),
   fileType: text("file_type"),
   fileSize: integer("file_size"),
   totalPages: integer("total_pages"),
-  categoryId: integer("category_id").references(() => documentCategories.id),
-  status: text("status").default("published"), // published, draft, private
+  category: text("category").default("general"), // general, agriculture, technology, education, research, news
+  tags: text("tags").array().default([]), // Array of tags
+  status: text("status").default("published"), // published, draft, private, pending
   allowDownload: boolean("allow_download").default(true),
+  allowComments: boolean("allow_comments").default(true),
   downloadCount: integer("download_count").default(0),
   viewCount: integer("view_count").default(0),
-  isFeatured: boolean("is_featured").default(false),
+  isSticky: boolean("is_sticky").default(false),
   publishedAt: timestamp("published_at"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
+  // SEO Fields
+  seoTitle: text("seo_title"),
+  seoDescription: text("seo_description"),
+  customFields: jsonb("custom_fields").default({}),
   // Enhanced Content Protection Settings
   allowScreenshot: boolean("allow_screenshot").default(true),
   allowCopy: boolean("allow_copy").default(true),

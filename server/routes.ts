@@ -314,6 +314,48 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.put("/api/documents/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid document ID" });
+      }
+
+      const documentData = req.body;
+      const document = await storage.updateDocument(id, documentData);
+      
+      if (!document) {
+        return res.status(404).json({ message: "Document not found" });
+      }
+
+      return res.json(document);
+    } catch (error) {
+      if (error instanceof ZodError) {
+        return res.status(400).json({ message: fromZodError(error).toString() });
+      }
+      return res.status(500).json({ message: "خطا در بروزرسانی سند" });
+    }
+  });
+
+  app.delete("/api/documents/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid document ID" });
+      }
+
+      const success = await storage.deleteDocument(id);
+      
+      if (!success) {
+        return res.status(404).json({ message: "Document not found" });
+      }
+
+      return res.status(204).send();
+    } catch (error) {
+      return res.status(500).json({ message: "خطا در حذف سند" });
+    }
+  });
+
   // Media Content API
   app.get("/api/media/:id", async (req, res) => {
     const id = parseInt(req.params.id);
