@@ -149,7 +149,7 @@ export default function HomePage() {
                   window.postMessage({ type: 'SWITCH_TAB', tab: 'magazines' }, '*');
                 } else if (item.title === 'ویدیو آموزشی' || item.title === 'ویدیوهای آموزشی' || item.title === 'آموزشی' || item.title.includes('ویدیو') || item.title.includes('آموزشی')) {
                   window.postMessage({ type: 'SWITCH_TAB', tab: 'videos' }, '*');
-                } else if (item.title === 'آرشیو پیستاط' || item.title === 'کتابخانه' || item.title.includes('آرشیو') || item.title.includes('کتابخانه')) {
+                } else if (item.title === 'آرشیو پیستاط' || item.title === 'کتابخانه' || item.title.includes('آرشیف') || item.title.includes('کتابخانه')) {
                   window.postMessage({ type: 'SWITCH_TAB', tab: 'library' }, '*');
                 } else if (item.title === 'کارگاه‌های آموزشی' || item.title.includes('کارگاه')) {
                   window.postMessage({ type: 'SWITCH_TAB', tab: 'workshops' }, '*');
@@ -159,7 +159,7 @@ export default function HomePage() {
                   window.open(item.linkUrl, '_blank');
                 }
               }}
-              className="block"
+              className="block guest-allowed"
             >
               <div className="w-16 h-16 mx-auto mb-2 rounded-full flex items-center justify-center shadow-lg bg-gray-100 border overflow-hidden">
                 {item.iconUrl ? (

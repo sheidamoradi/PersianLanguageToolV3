@@ -129,6 +129,57 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
+  app.post('/api/register', async (req, res) => {
+    try {
+      const { username, password, name, email } = req.body;
+      
+      if (!username || !password || !name || !email) {
+        return res.status(400).json({ error: 'تمام فیلدها الزامی هستند' });
+      }
+
+      // Check if username already exists
+      const existingUser = await storage.getUserByUsername(username);
+      if (existingUser) {
+        return res.status(409).json({ error: 'نام کاربری قبلاً استفاده شده است' });
+      }
+
+      // Check if email already exists
+      const existingEmail = await storage.getUserByEmail(email);
+      if (existingEmail) {
+        return res.status(409).json({ error: 'ایمیل قبلاً استفاده شده است' });
+      }
+
+      // Hash password
+      const hashedPassword = await hashPassword(password);
+
+      // Create user
+      const user = await storage.createUser({
+        username,
+        password: hashedPassword,
+        name,
+        email,
+        role: 'user'
+      });
+
+      // Store user in session
+      req.session.user = {
+        id: user.id,
+        username: user.username,
+        role: user.role,
+        name: user.name,
+        email: user.email
+      };
+
+      res.json({ 
+        message: 'ثبت‌نام موفقیت‌آمیز',
+        user: req.session.user
+      });
+    } catch (error) {
+      console.error('Register error:', error);
+      res.status(500).json({ error: 'خطا در ثبت‌نام' });
+    }
+  });
+
   app.get('/api/auth/user', (req, res) => {
     if (req.session?.user) {
       res.json(req.session.user);

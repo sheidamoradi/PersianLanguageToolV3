@@ -9,6 +9,7 @@ import LibraryPage from './pages/library-simple';
 import ProfilePage from './pages/profile-simple';
 import FavoritesPage from './pages/favorites';
 import LoginPage from './pages/login';
+import RegisterPage from './pages/register';
 import AdminPage from './pages/admin';
 import AdminSimple from './pages/admin-simple';
 import ProtectedContentDemo from './pages/protected-content';
@@ -127,6 +128,7 @@ function App() {
       case 'webinars': return <WebinarsPage />;
       case 'videos': return <VideosPage />;
       case 'protected': return <ProtectedContentDemo />;
+      case 'register': return <RegisterPage />;
       default: return <HomePage />;
     }
   };

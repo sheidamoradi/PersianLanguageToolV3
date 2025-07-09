@@ -1,4 +1,7 @@
 import { useAuth } from '@/hooks/useAuth';
+import { useState } from 'react';
+import { LoginModal } from './LoginModal';
+import { LogIn } from 'lucide-react';
 
 interface AuthGuardProps {
   children: React.ReactNode;
@@ -7,6 +10,8 @@ interface AuthGuardProps {
 
 export function AuthGuard({ children, fallback }: AuthGuardProps) {
   const { isAuthenticated, isLoading } = useAuth();
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [loginMessage, setLoginMessage] = useState("");
 
   if (isLoading) {
     return (
@@ -17,27 +22,80 @@ export function AuthGuard({ children, fallback }: AuthGuardProps) {
   }
 
   if (!isAuthenticated) {
+    const handleRestrictedAction = (actionName: string) => {
+      setLoginMessage(`برای ${actionName} باید وارد حساب کاربری خود شوید`);
+      setShowLoginModal(true);
+    };
+
     return fallback || (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50" dir="rtl">
-        <div className="text-center p-8 bg-white rounded-lg shadow-lg max-w-md mx-4">
-          <div className="mx-auto h-12 w-12 flex items-center justify-center rounded-full bg-orange-100 mb-4">
-            <svg className="h-6 w-6 text-orange-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-            </svg>
-          </div>
-          <h2 className="text-xl font-bold text-gray-900 mb-2">
-            دسترسی محدود
-          </h2>
-          <p className="text-gray-600 mb-4">
-            برای دسترسی به این بخش، لطفاً وارد حساب کاربری خود شوید
-          </p>
-          <button
-            onClick={() => window.parent.postMessage({ type: 'SWITCH_TAB', tab: 'profile' }, '*')}
-            className="w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 transition-colors"
+      <div className="relative">
+        <style>{`
+          .guest-restricted .btn-primary,
+          .guest-restricted button:not(.guest-allowed),
+          .guest-restricted .card-interactive {
+            position: relative;
+            overflow: hidden;
+          }
+          
+          .guest-restricted .btn-primary::after,
+          .guest-restricted button:not(.guest-allowed)::after,
+          .guest-restricted .card-interactive::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.1);
+            z-index: 1;
+          }
+          
+          .guest-restricted .card-interactive:hover::after {
+            background: rgba(0, 0, 0, 0.2);
+          }
+        `}</style>
+        
+        <div className="guest-restricted">
+          <div 
+            onClick={(e) => {
+              const target = e.target as HTMLElement;
+              if (target.closest('button:not(.guest-allowed)') || 
+                  target.closest('.btn-primary') || 
+                  target.closest('.card-interactive')) {
+                e.preventDefault();
+                e.stopPropagation();
+                handleRestrictedAction("استفاده از این قابلیت");
+              }
+            }}
           >
-            ورود به حساب کاربری
-          </button>
+            {children}
+          </div>
         </div>
+
+        {/* Guest Banner */}
+        <div className="fixed bottom-20 left-4 right-4 bg-gradient-to-r from-green-600 to-green-700 text-white p-4 rounded-lg shadow-lg z-40" dir="rtl">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <LogIn className="w-6 h-6" />
+              <div>
+                <p className="font-medium">شما در حالت مهمان هستید</p>
+                <p className="text-sm text-green-100">برای دسترسی کامل وارد شوید</p>
+              </div>
+            </div>
+            <button
+              onClick={() => setShowLoginModal(true)}
+              className="bg-white text-green-600 px-4 py-2 rounded-lg font-medium hover:bg-green-50 transition-colors guest-allowed"
+            >
+              ورود
+            </button>
+          </div>
+        </div>
+
+        <LoginModal
+          isOpen={showLoginModal}
+          onClose={() => setShowLoginModal(false)}
+          message={loginMessage}
+        />
       </div>
     );
   }
