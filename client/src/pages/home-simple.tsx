@@ -421,17 +421,17 @@ export default function HomePage() {
             </div>
             
             {/* Logo */}
-            <div className="w-20 h-20 flex items-center justify-center">
+            <div className="w-24 h-24 flex items-center justify-center">
               <img 
                 src="/uploads/logo-white.png" 
                 alt="Pistat Logo" 
-                className="w-16 h-16"
+                className="w-20 h-20"
               />
             </div>
             
             {/* View More */}
             <div className="text-xs font-bold cursor-pointer hover:opacity-80 transition-opacity">
-              &lt; مشاهده بیشتر
+              مشاهده بیشتر &gt;
             </div>
           </div>
           
