@@ -17,6 +17,7 @@ export default function AdminPage() {
     { id: "documents", label: "آرشیو پیستاط", icon: File },
     { id: "media", label: "کتابخانه رسانه", icon: Image },
     { id: "slides", label: "اسلایدها", icon: Image },
+    { id: "quick-access", label: "دسترسی سریع", icon: MoreHorizontal },
     { id: "magazines", label: "مجله‌ها", icon: Calendar },
     { id: "articles", label: "مقاله‌ها", icon: File },
     { id: "workshops", label: "کارگاه‌ها", icon: Calendar },
@@ -68,6 +69,7 @@ export default function AdminPage() {
           {activeTab === "documents" && <DocumentsTab />}
           {activeTab === "media" && <MediaTab />}
           {activeTab === "slides" && <SlidesTab />}
+          {activeTab === "quick-access" && <QuickAccessTab />}
           {activeTab === "magazines" && <MagazinesTab />}
           {activeTab === "articles" && <ArticlesTab />}
           {activeTab === "workshops" && <WorkshopsTab />}
@@ -2744,6 +2746,323 @@ function ArticlesTab() {
                 </button>
                 <button
                   onClick={() => setEditingArticle(null)}
+                  className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600"
+                >
+                  لغو
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function QuickAccessTab() {
+  const [showCreateForm, setShowCreateForm] = useState(false);
+  const [editingItem, setEditingItem] = useState<any>(null);
+  const [createData, setCreateData] = useState({
+    title: '',
+    iconUrl: '',
+    linkUrl: '',
+    orderPosition: 0
+  });
+
+  const { data: quickAccessItems, isLoading } = useQuery<any[]>({
+    queryKey: ['/api/quick-access'],
+  });
+
+  const createMutation = useMutation({
+    mutationFn: async (data: any) => {
+      const response = await fetch('/api/quick-access', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+      });
+      
+      if (!response.ok) {
+        throw new Error('خطا در ایجاد آیتم');
+      }
+      
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/quick-access'] });
+      setShowCreateForm(false);
+      setCreateData({
+        title: '',
+        iconUrl: '',
+        linkUrl: '',
+        orderPosition: 0
+      });
+    },
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: async (data: any) => {
+      const response = await fetch(`/api/quick-access/${data.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+      });
+      
+      if (!response.ok) {
+        throw new Error('خطا در بروزرسانی آیتم');
+      }
+      
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/quick-access'] });
+      setEditingItem(null);
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: async (id: number) => {
+      const response = await fetch(`/api/quick-access/${id}`, {
+        method: 'DELETE'
+      });
+      
+      if (!response.ok) {
+        throw new Error('خطا در حذف آیتم');
+      }
+      
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/quick-access'] });
+    },
+  });
+
+  const handleCreateSubmit = () => {
+    if (!createData.title.trim()) {
+      alert('لطفاً عنوان را وارد کنید');
+      return;
+    }
+    createMutation.mutate(createData);
+  };
+
+  const handleUpdateSubmit = () => {
+    updateMutation.mutate(editingItem);
+  };
+
+  const handleEdit = (item: any) => {
+    setEditingItem({ ...item });
+  };
+
+  const handleDelete = (id: number) => {
+    if (confirm('آیا از حذف این آیتم اطمینان دارید؟')) {
+      deleteMutation.mutate(id);
+    }
+  };
+
+  if (isLoading) {
+    return <div className="text-center py-8">در حال بارگذاری...</div>;
+  }
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-bold text-gray-900">منوی دسترسی سریع</h2>
+        <button
+          onClick={() => setShowCreateForm(true)}
+          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center gap-2"
+        >
+          <Plus className="h-4 w-4" />
+          افزودن آیتم جدید
+        </button>
+      </div>
+
+      {/* Create Form */}
+      {showCreateForm && (
+        <div className="bg-white rounded-lg border p-6">
+          <h3 className="text-lg font-semibold mb-4">افزودن آیتم جدید</h3>
+          
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">عنوان</label>
+              <input
+                type="text"
+                value={createData.title}
+                onChange={(e) => setCreateData({...createData, title: e.target.value})}
+                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="مثال: کتابخانه"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">آدرس آیکون</label>
+              <input
+                type="url"
+                value={createData.iconUrl}
+                onChange={(e) => setCreateData({...createData, iconUrl: e.target.value})}
+                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="/uploads/icon.png"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">لینک</label>
+              <input
+                type="url"
+                value={createData.linkUrl}
+                onChange={(e) => setCreateData({...createData, linkUrl: e.target.value})}
+                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="https://example.com"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">ترتیب نمایش</label>
+              <input
+                type="number"
+                value={createData.orderPosition}
+                onChange={(e) => setCreateData({...createData, orderPosition: parseInt(e.target.value) || 0})}
+                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                min="0"
+              />
+            </div>
+
+            <div className="flex gap-2">
+              <button
+                onClick={handleCreateSubmit}
+                disabled={createMutation.isPending}
+                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50"
+              >
+                {createMutation.isPending ? 'در حال ایجاد...' : 'ایجاد آیتم'}
+              </button>
+              <button
+                onClick={() => setShowCreateForm(false)}
+                className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600"
+              >
+                لغو
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Items List */}
+      <div className="bg-white rounded-lg border overflow-hidden">
+        <div className="p-4 border-b bg-gray-50">
+          <h4 className="font-semibold">لیست آیتم‌های منو</h4>
+        </div>
+        
+        {quickAccessItems && quickAccessItems.length > 0 ? (
+          <div className="divide-y">
+            {quickAccessItems.map((item) => (
+              <div key={item.id} className="p-4 hover:bg-gray-50">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
+                      {item.iconUrl ? (
+                        <img 
+                          src={item.iconUrl} 
+                          alt={item.title}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <MoreHorizontal className="h-8 w-8 text-gray-400" />
+                      )}
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-gray-900">{item.title}</h3>
+                      <p className="text-sm text-gray-600">{item.linkUrl}</p>
+                      <span className="text-xs text-gray-500">ترتیب: {item.orderPosition}</span>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => handleEdit(item)}
+                      className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg"
+                    >
+                      <Edit className="h-4 w-4" />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(item.id)}
+                      className="p-2 text-red-600 hover:bg-red-50 rounded-lg"
+                    >
+                      <Trash className="h-4 w-4" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="p-8 text-center text-gray-500">
+            <MoreHorizontal className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-gray-900 mb-2">هیچ آیتمی یافت نشد</h3>
+            <p className="text-gray-600">برای شروع، آیتم جدیدی اضافه کنید</p>
+          </div>
+        )}
+      </div>
+
+      {/* Edit Modal */}
+      {editingItem && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md">
+            <h3 className="text-lg font-semibold mb-4">ویرایش آیتم</h3>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">عنوان</label>
+                <input
+                  type="text"
+                  value={editingItem.title}
+                  onChange={(e) => setEditingItem({...editingItem, title: e.target.value})}
+                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">آدرس آیکون</label>
+                <input
+                  type="url"
+                  value={editingItem.iconUrl}
+                  onChange={(e) => setEditingItem({...editingItem, iconUrl: e.target.value})}
+                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">لینک</label>
+                <input
+                  type="url"
+                  value={editingItem.linkUrl}
+                  onChange={(e) => setEditingItem({...editingItem, linkUrl: e.target.value})}
+                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">ترتیب نمایش</label>
+                <input
+                  type="number"
+                  value={editingItem.orderPosition}
+                  onChange={(e) => setEditingItem({...editingItem, orderPosition: parseInt(e.target.value) || 0})}
+                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  min="0"
+                />
+              </div>
+
+              <div className="flex gap-2">
+                <button
+                  onClick={handleUpdateSubmit}
+                  disabled={updateMutation.isPending}
+                  className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                >
+                  {updateMutation.isPending ? 'در حال ذخیره...' : 'ذخیره تغییرات'}
+                </button>
+                <button
+                  onClick={() => setEditingItem(null)}
                   className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600"
                 >
                   لغو
