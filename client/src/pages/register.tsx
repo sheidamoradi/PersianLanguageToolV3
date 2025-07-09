@@ -27,7 +27,7 @@ export default function Register() {
     },
     onSuccess: () => {
       refetch();
-      window.parent.postMessage({ type: 'SWITCH_TAB', tab: 'home' }, '*');
+      window.location.href = "/";
     },
     onError: (error: any) => {
       if (error.message.includes("نام کاربری")) {
@@ -231,7 +231,7 @@ export default function Register() {
               قبلاً حساب کاربری دارید؟{" "}
               <button
                 onClick={() => {
-                  window.parent.postMessage({ type: 'SWITCH_TAB', tab: 'profile' }, '*');
+                  window.location.href = "/login";
                 }}
                 className="text-green-600 hover:text-green-700 font-medium"
               >

@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
+import { useAuth } from '@/hooks/useAuth';
 
 export default function LoginPage() {
+  const { refetch } = useAuth();
   const [isLogin, setIsLogin] = useState(true);
   const [formData, setFormData] = useState({
     username: '',
@@ -22,14 +24,15 @@ export default function LoginPage() {
     },
     onSuccess: (data) => {
       setError(null);
+      refetch();
       
       // Check if user is admin
       if (data.user.role === 'admin') {
-        // Send message to parent to show admin panel
-        window.parent.postMessage({ type: 'SHOW_ADMIN_PANEL' }, '*');
+        // Redirect admin to admin panel
+        window.location.href = "/admin";
       } else {
         // Redirect normal user to home
-        window.parent.postMessage({ type: 'SHOW_HOME' }, '*');
+        window.location.href = "/";
       }
     },
     onError: (error: any) => {
@@ -178,13 +181,31 @@ export default function LoginPage() {
           )}
 
           <div className="text-center">
-            <button
-              type="button"
-              onClick={() => setIsLogin(!isLogin)}
-              className="font-medium text-green-600 hover:text-green-500"
-            >
-              {isLogin ? 'حساب کاربری ندارید؟ ثبت‌نام کنید' : 'حساب کاربری دارید؟ وارد شوید'}
-            </button>
+            <p className="text-sm text-gray-600">
+              {isLogin ? (
+                <>
+                  حساب کاربری ندارید؟{" "}
+                  <button
+                    type="button"
+                    onClick={() => window.location.href = "/register"}
+                    className="font-medium text-green-600 hover:text-green-500"
+                  >
+                    ثبت‌نام کنید
+                  </button>
+                </>
+              ) : (
+                <>
+                  حساب کاربری دارید؟{" "}
+                  <button
+                    type="button"
+                    onClick={() => setIsLogin(true)}
+                    className="font-medium text-green-600 hover:text-green-500"
+                  >
+                    وارد شوید
+                  </button>
+                </>
+              )}
+            </p>
           </div>
         </form>
 
