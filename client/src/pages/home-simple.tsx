@@ -416,22 +416,22 @@ export default function HomePage() {
           <div className="flex flex-col items-center justify-center text-center text-white min-w-[120px] space-y-4">
             {/* Title */}
             <div>
-              <h2 className="text-xl font-bold mb-1">ویدیو</h2>
-              <h3 className="text-lg">آموزشی</h3>
+              <h2 className="text-2xl font-bold mb-1">ویدیو</h2>
+              <h3 className="text-xl">آموزشی</h3>
             </div>
             
             {/* Logo */}
-            <div className="w-16 h-16 flex items-center justify-center">
+            <div className="w-20 h-20 flex items-center justify-center">
               <img 
                 src="/uploads/logo-white.png" 
                 alt="Pistat Logo" 
-                className="w-12 h-12"
+                className="w-16 h-16"
               />
             </div>
             
             {/* View More */}
-            <div className="text-sm cursor-pointer hover:opacity-80 transition-opacity">
-              مشاهده بیشتر
+            <div className="text-xs font-bold cursor-pointer hover:opacity-80 transition-opacity">
+              &lt; مشاهده بیشتر
             </div>
           </div>
           
