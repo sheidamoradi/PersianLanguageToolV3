@@ -218,10 +218,10 @@ export default function HomePage() {
           </h2>
         </div>
         
-        <div className="grid grid-cols-3 gap-4 mb-4">
+        <div className="grid grid-cols-4 gap-4 mb-4">
           {workshops && workshops
             .filter((workshop: any) => workshop.isActive)
-            .slice(0, 3)
+            .slice(0, 4)
             .map((workshop: any) => (
             <div 
               key={workshop.id} 
@@ -302,6 +302,16 @@ export default function HomePage() {
                 <h3 className="font-medium text-gray-800 text-sm mb-1">کنترل آفات</h3>
                 <p className="text-xs text-gray-500">روش‌های طبیعی</p>
               </div>
+              
+              <div className="bg-white rounded-xl p-4 shadow-sm border cursor-pointer hover:shadow-lg transition-shadow">
+                <div className="w-full h-32 rounded-lg mb-3 flex items-center justify-center bg-blue-50">
+                  <svg className="w-10 h-10 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </div>
+                <h3 className="font-medium text-gray-800 text-sm mb-1">مشاهده بیشتر</h3>
+                <p className="text-xs text-gray-500">همه کارگاه‌های آموزشی</p>
+              </div>
             </>
           )}
         </div>
@@ -318,10 +328,10 @@ export default function HomePage() {
           </h2>
         </div>
         
-        <div className="grid grid-cols-3 gap-4 mb-4">
+        <div className="grid grid-cols-4 gap-4 mb-4">
           {webinars && webinars
             .filter((webinar: any) => webinar.isActive)
-            .slice(0, 3)
+            .slice(0, 4)
             .map((webinar: any) => (
             <div 
               key={webinar.id} 
@@ -404,6 +414,16 @@ export default function HomePage() {
                 <p className="text-xs text-gray-500">روش‌های طبیعی کنترل آفات</p>
                 <p className="text-xs text-purple-600 mt-1">👨‍🏫 احمد کریمی</p>
               </div>
+              
+              <div className="bg-white rounded-xl p-4 shadow-sm border cursor-pointer hover:shadow-lg transition-shadow">
+                <div className="w-full h-32 rounded-lg mb-3 flex items-center justify-center bg-blue-50">
+                  <svg className="w-10 h-10 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </div>
+                <h3 className="font-medium text-gray-800 text-sm mb-1">مشاهده بیشتر</h3>
+                <p className="text-xs text-gray-500">همه وبینارهای آموزشی</p>
+              </div>
             </>
           )}
         </div>
@@ -440,7 +460,7 @@ export default function HomePage() {
           <div className="flex-1">
             <div className="flex gap-3 overflow-x-auto pb-2">
             {educationalVideos && educationalVideos
-              .slice(0, 6)
+              .slice(0, 4)
               .map((video: any) => (
               <div 
                 key={video.id} 
@@ -531,6 +551,21 @@ export default function HomePage() {
                     </div>
                   </div>
                 </div>
+                
+                <div className="flex-shrink-0 w-48 bg-white rounded-xl shadow-sm border cursor-pointer hover:shadow-lg transition-shadow overflow-hidden">
+                  <div className="w-full h-32 bg-blue-50 flex items-center justify-center">
+                    <svg className="w-10 h-10 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </div>
+                  <div className="p-3">
+                    <h3 className="font-semibold text-gray-800 text-sm mb-1">مشاهده بیشتر</h3>
+                    <p className="text-xs text-gray-500 mb-2">همه ویدیوهای آموزشی</p>
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="text-blue-600">→</span>
+                    </div>
+                  </div>
+                </div>
               </>
             )}
             </div>
@@ -589,8 +624,8 @@ function MagazineSection() {
         </h2>
       </div>
 
-      <div className="grid grid-cols-3 gap-4 mb-4">
-          {activeMagazines.map((magazine) => (
+      <div className="grid grid-cols-4 gap-4 mb-4">
+          {activeMagazines.slice(0, 4).map((magazine) => (
             <div 
               key={magazine.id} 
               className="bg-white rounded-xl p-4 shadow-sm border cursor-pointer hover:shadow-lg transition-shadow"
@@ -668,6 +703,16 @@ function MagazineSection() {
                   <span className="text-xs text-gray-500">۱۴۰۳/۰۴/۱۰</span>
                 </div>
               </div>
+              
+              <div className="bg-white rounded-xl p-4 shadow-sm border cursor-pointer hover:shadow-lg transition-shadow">
+                <div className="w-full h-32 rounded-lg mb-3 flex items-center justify-center bg-blue-50">
+                  <svg className="w-10 h-10 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </div>
+                <h3 className="font-medium text-gray-800 text-sm mb-1">مشاهده بیشتر</h3>
+                <p className="text-xs text-gray-500">همه شماره‌های مجله</p>
+              </div>
             </>
           )}
         </div>
@@ -718,8 +763,8 @@ function ArchiveSection() {
         </h2>
       </div>
 
-      <div className="grid grid-cols-3 gap-4 mb-4">
-          {publishedDocuments.map((document) => (
+      <div className="grid grid-cols-4 gap-4 mb-4">
+          {publishedDocuments.slice(0, 4).map((document) => (
             <div 
               key={document.id} 
               className="bg-white rounded-xl p-4 shadow-sm border cursor-pointer hover:shadow-lg transition-shadow"
@@ -796,6 +841,16 @@ function ArchiveSection() {
                   <span className="text-xs text-blue-600">گلخانه</span>
                   <span className="text-xs text-gray-500">۱۴۰۳/۰۴/۱۰</span>
                 </div>
+              </div>
+              
+              <div className="bg-white rounded-xl p-4 shadow-sm border cursor-pointer hover:shadow-lg transition-shadow">
+                <div className="w-full h-32 rounded-lg mb-3 flex items-center justify-center bg-blue-50">
+                  <svg className="w-10 h-10 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </div>
+                <h3 className="font-medium text-gray-800 text-sm mb-1">مشاهده بیشتر</h3>
+                <p className="text-xs text-gray-500">همه مطالب آرشیو</p>
               </div>
             </>
           )}
