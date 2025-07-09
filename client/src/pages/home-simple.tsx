@@ -139,14 +139,24 @@ export default function HomePage() {
       <div className="grid grid-cols-4 gap-4 px-4">
         {quickAccessItems?.filter((item: any) => item.isActive).slice(0, 4).map((item: any) => (
           <div key={item.id} className="text-center">
-            <a 
-              href={item.link || '#'} 
-              className="block"
-              onClick={(e) => {
-                if (!item.link) {
-                  e.preventDefault();
+            <button 
+              onClick={() => {
+                // Navigate based on item title or use linkUrl as fallback
+                if (item.title.includes('فصلنامه') || item.title.includes('مجله')) {
+                  window.postMessage({ type: 'SWITCH_TAB', tab: 'magazines' }, '*');
+                } else if (item.title.includes('ویدیو') || item.title.includes('آموزشی')) {
+                  window.postMessage({ type: 'SWITCH_TAB', tab: 'videos' }, '*');
+                } else if (item.title.includes('کتابخانه') || item.title.includes('آرشیو')) {
+                  window.postMessage({ type: 'SWITCH_TAB', tab: 'library' }, '*');
+                } else if (item.title.includes('کارگاه')) {
+                  window.postMessage({ type: 'SWITCH_TAB', tab: 'workshops' }, '*');
+                } else if (item.title.includes('وبینار')) {
+                  window.postMessage({ type: 'SWITCH_TAB', tab: 'webinars' }, '*');
+                } else if (item.linkUrl) {
+                  window.open(item.linkUrl, '_blank');
                 }
               }}
+              className="block"
             >
               <div className="w-16 h-16 mx-auto mb-2 rounded-full flex items-center justify-center shadow-lg bg-gray-100 border overflow-hidden">
                 {item.iconUrl ? (
@@ -162,7 +172,7 @@ export default function HomePage() {
                 )}
               </div>
               <p className="text-xs text-gray-700 font-medium">{item.title}</p>
-            </a>
+            </button>
           </div>
         ))}
         
@@ -170,36 +180,36 @@ export default function HomePage() {
         {(!quickAccessItems || quickAccessItems?.filter((item: any) => item.isActive).length === 0) && (
           <>
             <div className="text-center">
-              <a href="/documents" className="block">
+              <button onClick={() => window.postMessage({ type: 'SWITCH_TAB', tab: 'library' }, '*')} className="block">
                 <div className="w-16 h-16 mx-auto mb-2 rounded-full flex items-center justify-center shadow-lg" style={{backgroundColor: 'hsl(270, 60%, 95%)'}}>
                   <svg className="w-8 h-8" style={{color: 'hsl(270, 70%, 60%)'}} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                   </svg>
                 </div>
                 <p className="text-xs text-gray-700 font-medium">کتابخانه</p>
-              </a>
+              </button>
             </div>
 
             <div className="text-center">
-              <a href="/educational-videos" className="block">
+              <button onClick={() => window.postMessage({ type: 'SWITCH_TAB', tab: 'videos' }, '*')} className="block">
                 <div className="w-16 h-16 mx-auto mb-2 rounded-full flex items-center justify-center shadow-lg" style={{backgroundColor: 'hsl(25, 100%, 92%)'}}>
                   <svg className="w-8 h-8" style={{color: 'hsl(25, 85%, 65%)'}} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
                   </svg>
                 </div>
                 <p className="text-xs text-gray-700 font-medium">ویدیوهای آموزشی</p>
-              </a>
+              </button>
             </div>
 
             <div className="text-center">
-              <a href="/magazines" className="block">
+              <button onClick={() => window.postMessage({ type: 'SWITCH_TAB', tab: 'magazines' }, '*')} className="block">
                 <div className="w-16 h-16 mx-auto mb-2 rounded-full flex items-center justify-center shadow-lg" style={{backgroundColor: 'hsl(140, 50%, 92%)'}}>
                   <svg className="w-8 h-8" style={{color: 'hsl(140, 60%, 50%)'}} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                   </svg>
                 </div>
                 <p className="text-xs text-gray-700 font-medium">فصلنامه رویش سبز</p>
-              </a>
+              </button>
             </div>
 
             <div className="text-center">
