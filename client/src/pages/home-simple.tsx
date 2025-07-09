@@ -216,6 +216,9 @@ export default function HomePage() {
             </svg>
             کارگاه‌های آموزشی
           </h2>
+          <button className="text-sm font-medium text-green-600 hover:text-green-700 transition-colors">
+            مشاهده بیشتر
+          </button>
         </div>
         
         <div className="grid grid-cols-4 gap-4 mb-4">
@@ -303,15 +306,7 @@ export default function HomePage() {
                 <p className="text-xs text-gray-500">روش‌های طبیعی</p>
               </div>
               
-              <div className="bg-white rounded-xl p-4 shadow-sm border cursor-pointer hover:shadow-lg transition-shadow">
-                <div className="w-full h-32 rounded-lg mb-3 flex items-center justify-center bg-blue-50">
-                  <svg className="w-10 h-10 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </div>
-                <h3 className="font-medium text-gray-800 text-sm mb-1">مشاهده بیشتر</h3>
-                <p className="text-xs text-gray-500">همه کارگاه‌های آموزشی</p>
-              </div>
+
             </>
           )}
         </div>
@@ -326,6 +321,9 @@ export default function HomePage() {
             </svg>
             وبینارهای آموزشی
           </h2>
+          <button className="text-sm font-medium text-green-600 hover:text-green-700 transition-colors">
+            مشاهده بیشتر
+          </button>
         </div>
         
         <div className="grid grid-cols-4 gap-4 mb-4">
@@ -415,15 +413,7 @@ export default function HomePage() {
                 <p className="text-xs text-purple-600 mt-1">👨‍🏫 احمد کریمی</p>
               </div>
               
-              <div className="bg-white rounded-xl p-4 shadow-sm border cursor-pointer hover:shadow-lg transition-shadow">
-                <div className="w-full h-32 rounded-lg mb-3 flex items-center justify-center bg-blue-50">
-                  <svg className="w-10 h-10 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </div>
-                <h3 className="font-medium text-gray-800 text-sm mb-1">مشاهده بیشتر</h3>
-                <p className="text-xs text-gray-500">همه وبینارهای آموزشی</p>
-              </div>
+
             </>
           )}
         </div>
@@ -552,20 +542,7 @@ export default function HomePage() {
                   </div>
                 </div>
                 
-                <div className="flex-shrink-0 w-48 bg-white rounded-xl shadow-sm border cursor-pointer hover:shadow-lg transition-shadow overflow-hidden">
-                  <div className="w-full h-32 bg-blue-50 flex items-center justify-center">
-                    <svg className="w-10 h-10 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
-                  </div>
-                  <div className="p-3">
-                    <h3 className="font-semibold text-gray-800 text-sm mb-1">مشاهده بیشتر</h3>
-                    <p className="text-xs text-gray-500 mb-2">همه ویدیوهای آموزشی</p>
-                    <div className="flex items-center justify-between text-xs">
-                      <span className="text-blue-600">→</span>
-                    </div>
-                  </div>
-                </div>
+
               </>
             )}
             </div>
@@ -622,6 +599,9 @@ function MagazineSection() {
           </svg>
           فصلنامه رویش سبز
         </h2>
+        <button className="text-sm font-medium text-green-600 hover:text-green-700 transition-colors">
+          مشاهده بیشتر
+        </button>
       </div>
 
       <div className="grid grid-cols-4 gap-4 mb-4">
@@ -704,24 +684,12 @@ function MagazineSection() {
                 </div>
               </div>
               
-              <div className="bg-white rounded-xl p-4 shadow-sm border cursor-pointer hover:shadow-lg transition-shadow">
-                <div className="w-full h-32 rounded-lg mb-3 flex items-center justify-center bg-blue-50">
-                  <svg className="w-10 h-10 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </div>
-                <h3 className="font-medium text-gray-800 text-sm mb-1">مشاهده بیشتر</h3>
-                <p className="text-xs text-gray-500">همه شماره‌های مجله</p>
-              </div>
+
             </>
           )}
         </div>
         
-      <div className="mt-8 text-center">
-        <button className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">
-          مشاهده همه مجله‌ها
-        </button>
-      </div>
+
     </div>
   );
 }
@@ -761,6 +729,9 @@ function ArchiveSection() {
           </svg>
           آرشیو پیستاط
         </h2>
+        <button className="text-sm font-medium text-green-600 hover:text-green-700 transition-colors">
+          مشاهده بیشتر
+        </button>
       </div>
 
       <div className="grid grid-cols-4 gap-4 mb-4">
@@ -843,24 +814,12 @@ function ArchiveSection() {
                 </div>
               </div>
               
-              <div className="bg-white rounded-xl p-4 shadow-sm border cursor-pointer hover:shadow-lg transition-shadow">
-                <div className="w-full h-32 rounded-lg mb-3 flex items-center justify-center bg-blue-50">
-                  <svg className="w-10 h-10 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </div>
-                <h3 className="font-medium text-gray-800 text-sm mb-1">مشاهده بیشتر</h3>
-                <p className="text-xs text-gray-500">همه مطالب آرشیو</p>
-              </div>
+
             </>
           )}
         </div>
         
-      <div className="mt-8 text-center">
-        <button className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">
-          مشاهده همه مطالب
-        </button>
-      </div>
+
     </div>
   );
 }
