@@ -552,6 +552,13 @@ function MagazineSection() {
     queryKey: ['/api/magazines'],
   });
 
+  const handleMagazineClick = (magazineId: number) => {
+    window.postMessage({ 
+      type: 'OPEN_MAGAZINE', 
+      magazineId: magazineId 
+    }, '*');
+  };
+
   if (isLoading) {
     return (
       <div className="py-8">
@@ -579,7 +586,11 @@ function MagazineSection() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {activeMagazines.map((magazine) => (
-            <div key={magazine.id} className="bg-white rounded-xl shadow-sm border hover:shadow-lg transition-shadow overflow-hidden">
+            <div 
+              key={magazine.id} 
+              className="bg-white rounded-xl shadow-sm border hover:shadow-lg transition-shadow overflow-hidden cursor-pointer"
+              onClick={() => handleMagazineClick(magazine.id)}
+            >
               <div className="aspect-[4/3] bg-gray-100 flex items-center justify-center">
                 {magazine.coverImageUrl ? (
                   <img 

@@ -18,6 +18,7 @@ export default function AdminPage() {
     { id: "media", label: "کتابخانه رسانه", icon: Image },
     { id: "slides", label: "اسلایدها", icon: Image },
     { id: "magazines", label: "مجله‌ها", icon: Calendar },
+    { id: "articles", label: "مقاله‌ها", icon: File },
     { id: "workshops", label: "کارگاه‌ها", icon: Calendar },
     { id: "workshop-registrations", label: "ثبت‌نام کارگاه‌ها", icon: Edit },
     { id: "users", label: "کاربران", icon: Lock }
@@ -68,6 +69,7 @@ export default function AdminPage() {
           {activeTab === "media" && <MediaTab />}
           {activeTab === "slides" && <SlidesTab />}
           {activeTab === "magazines" && <MagazinesTab />}
+          {activeTab === "articles" && <ArticlesTab />}
           {activeTab === "workshops" && <WorkshopsTab />}
           {activeTab === "workshop-registrations" && <WorkshopRegistrationsTab />}
           {activeTab === "users" && <UsersTab />}
@@ -1248,6 +1250,459 @@ function MagazinesTab() {
                 </button>
                 <button
                   onClick={() => setEditingMagazine(null)}
+                  className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600"
+                >
+                  لغو
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ArticlesTab() {
+  const [showCreateForm, setShowCreateForm] = useState(false);
+  const [editingArticle, setEditingArticle] = useState<any>(null);
+  const [createData, setCreateData] = useState({
+    title: '',
+    author: '',
+    summary: '',
+    content: '',
+    magazineId: 1,
+    featuredImageUrl: '',
+    readTime: 0,
+    pdfUrl: '',
+    order: 0,
+    isPublished: true
+  });
+
+  const { data: articles, isLoading: articlesLoading } = useQuery<any[]>({
+    queryKey: ['/api/articles'],
+  });
+
+  const { data: magazines = [] } = useQuery<any[]>({
+    queryKey: ['/api/magazines'],
+  });
+
+  const createMutation = useMutation({
+    mutationFn: (data: any) => apiRequest('/api/articles', { method: 'POST', body: JSON.stringify(data) }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/articles'] });
+      setShowCreateForm(false);
+      setCreateData({
+        title: '',
+        author: '',
+        summary: '',
+        content: '',
+        magazineId: 1,
+        featuredImageUrl: '',
+        readTime: 0,
+        pdfUrl: '',
+        order: 0,
+        isPublished: true
+      });
+    },
+    onError: (error) => {
+      console.error('Error creating article:', error);
+      alert('خطا در ایجاد مقاله: ' + error.message);
+    },
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: (data: any) => apiRequest(`/api/articles/${editingArticle.id}`, { method: 'PUT', body: JSON.stringify(data) }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/articles'] });
+      setEditingArticle(null);
+    },
+    onError: (error) => {
+      console.error('Error updating article:', error);
+      alert('خطا در بروزرسانی مقاله: ' + error.message);
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: number) => apiRequest(`/api/articles/${id}`, { method: 'DELETE' }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/articles'] });
+    },
+    onError: (error) => {
+      console.error('Error deleting article:', error);
+      alert('خطا در حذف مقاله: ' + error.message);
+    },
+  });
+
+  const handleCreateSubmit = () => {
+    if (!createData.title.trim()) {
+      alert('لطفاً عنوان مقاله را وارد کنید');
+      return;
+    }
+    console.log('Creating article with data:', createData);
+    createMutation.mutate(createData);
+  };
+
+  const handleUpdateSubmit = () => {
+    updateMutation.mutate(editingArticle);
+  };
+
+  const handleEdit = (article: any) => {
+    setEditingArticle({ ...article });
+  };
+
+  const handleDelete = (id: number) => {
+    if (confirm('آیا از حذف این مقاله اطمینان دارید؟')) {
+      deleteMutation.mutate(id);
+    }
+  };
+
+  const getMagazineTitle = (magazineId: number) => {
+    const magazine = magazines.find(m => m.id === magazineId);
+    return magazine ? magazine.title : 'نامشخص';
+  };
+
+  if (articlesLoading) {
+    return <div className="text-center py-8">در حال بارگذاری...</div>;
+  }
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-bold text-gray-900">مقاله‌ها</h2>
+        <button
+          onClick={() => setShowCreateForm(true)}
+          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center gap-2"
+        >
+          <Plus className="h-4 w-4" />
+          افزودن مقاله جدید
+        </button>
+      </div>
+
+      {/* Create Form */}
+      {showCreateForm && (
+        <div className="bg-white rounded-lg border p-6">
+          <h3 className="text-lg font-semibold mb-4">افزودن مقاله جدید</h3>
+          
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">عنوان</label>
+              <input
+                type="text"
+                value={createData.title}
+                onChange={(e) => setCreateData({...createData, title: e.target.value})}
+                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="عنوان مقاله"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">نویسنده</label>
+              <input
+                type="text"
+                value={createData.author}
+                onChange={(e) => setCreateData({...createData, author: e.target.value})}
+                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="نام نویسنده"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">خلاصه</label>
+              <textarea
+                value={createData.summary}
+                onChange={(e) => setCreateData({...createData, summary: e.target.value})}
+                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                rows={3}
+                placeholder="خلاصه مقاله"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">محتوا</label>
+              <textarea
+                value={createData.content}
+                onChange={(e) => setCreateData({...createData, content: e.target.value})}
+                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                rows={8}
+                placeholder="محتوای مقاله"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">مجله</label>
+              <select
+                value={createData.magazineId}
+                onChange={(e) => setCreateData({...createData, magazineId: parseInt(e.target.value)})}
+                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                {magazines.map(magazine => (
+                  <option key={magazine.id} value={magazine.id}>
+                    {magazine.title} - شماره {magazine.issueNumber}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">زمان مطالعه (دقیقه)</label>
+                <input
+                  type="number"
+                  value={createData.readTime}
+                  onChange={(e) => setCreateData({...createData, readTime: parseInt(e.target.value) || 0})}
+                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  min="0"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">ترتیب</label>
+                <input
+                  type="number"
+                  value={createData.order}
+                  onChange={(e) => setCreateData({...createData, order: parseInt(e.target.value) || 0})}
+                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  min="0"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">آدرس تصویر شاخص</label>
+              <input
+                type="url"
+                value={createData.featuredImageUrl}
+                onChange={(e) => setCreateData({...createData, featuredImageUrl: e.target.value})}
+                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="https://example.com/image.jpg"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">آدرس PDF</label>
+              <input
+                type="url"
+                value={createData.pdfUrl}
+                onChange={(e) => setCreateData({...createData, pdfUrl: e.target.value})}
+                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="https://example.com/article.pdf"
+              />
+            </div>
+
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={createData.isPublished}
+                onChange={(e) => setCreateData({...createData, isPublished: e.target.checked})}
+                className="rounded"
+              />
+              <label className="text-sm text-gray-700">منتشر شده</label>
+            </div>
+
+            <div className="flex gap-2">
+              <button
+                onClick={handleCreateSubmit}
+                disabled={createMutation.isPending}
+                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50"
+              >
+                {createMutation.isPending ? 'در حال ایجاد...' : 'ایجاد مقاله'}
+              </button>
+              <button
+                onClick={() => setShowCreateForm(false)}
+                className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600"
+              >
+                لغو
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Articles List */}
+      <div className="bg-white rounded-lg border overflow-hidden">
+        <div className="p-4 border-b bg-gray-50">
+          <h4 className="font-semibold">لیست مقاله‌ها</h4>
+        </div>
+        
+        {articles && articles.length > 0 ? (
+          <div className="divide-y">
+            {articles.map((article) => (
+              <div key={article.id} className="p-4 hover:bg-gray-50">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-2">
+                      <h3 className="font-semibold text-gray-900">{article.title}</h3>
+                      <span className={`text-xs px-2 py-1 rounded-full ${
+                        article.isPublished 
+                          ? 'bg-green-100 text-green-800' 
+                          : 'bg-gray-100 text-gray-800'
+                      }`}>
+                        {article.isPublished ? 'منتشر شده' : 'پیش‌نویس'}
+                      </span>
+                    </div>
+                    <p className="text-sm text-gray-600 mb-2">{article.summary}</p>
+                    <div className="flex items-center gap-4 text-xs text-gray-500">
+                      <span>نویسنده: {article.author || 'نامشخص'}</span>
+                      <span>مجله: {getMagazineTitle(article.magazineId)}</span>
+                      <span>زمان مطالعه: {article.readTime} دقیقه</span>
+                      <span>ترتیب: {article.order}</span>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => handleEdit(article)}
+                      className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg"
+                    >
+                      <Edit className="h-4 w-4" />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(article.id)}
+                      className="p-2 text-red-600 hover:bg-red-50 rounded-lg"
+                    >
+                      <Trash className="h-4 w-4" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="p-8 text-center text-gray-500">
+            <File className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-gray-900 mb-2">هیچ مقاله‌ای یافت نشد</h3>
+            <p className="text-gray-600">برای شروع، مقاله جدیدی اضافه کنید</p>
+          </div>
+        )}
+      </div>
+
+      {/* Edit Modal */}
+      {editingArticle && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <h3 className="text-lg font-semibold mb-4">ویرایش مقاله</h3>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">عنوان</label>
+                <input
+                  type="text"
+                  value={editingArticle.title}
+                  onChange={(e) => setEditingArticle({...editingArticle, title: e.target.value})}
+                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">نویسنده</label>
+                <input
+                  type="text"
+                  value={editingArticle.author}
+                  onChange={(e) => setEditingArticle({...editingArticle, author: e.target.value})}
+                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">خلاصه</label>
+                <textarea
+                  value={editingArticle.summary}
+                  onChange={(e) => setEditingArticle({...editingArticle, summary: e.target.value})}
+                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  rows={3}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">محتوا</label>
+                <textarea
+                  value={editingArticle.content}
+                  onChange={(e) => setEditingArticle({...editingArticle, content: e.target.value})}
+                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  rows={8}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">مجله</label>
+                <select
+                  value={editingArticle.magazineId}
+                  onChange={(e) => setEditingArticle({...editingArticle, magazineId: parseInt(e.target.value)})}
+                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  {magazines.map(magazine => (
+                    <option key={magazine.id} value={magazine.id}>
+                      {magazine.title} - شماره {magazine.issueNumber}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">زمان مطالعه (دقیقه)</label>
+                  <input
+                    type="number"
+                    value={editingArticle.readTime}
+                    onChange={(e) => setEditingArticle({...editingArticle, readTime: parseInt(e.target.value) || 0})}
+                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    min="0"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">ترتیب</label>
+                  <input
+                    type="number"
+                    value={editingArticle.order}
+                    onChange={(e) => setEditingArticle({...editingArticle, order: parseInt(e.target.value) || 0})}
+                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    min="0"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">آدرس تصویر شاخص</label>
+                <input
+                  type="url"
+                  value={editingArticle.featuredImageUrl}
+                  onChange={(e) => setEditingArticle({...editingArticle, featuredImageUrl: e.target.value})}
+                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">آدرس PDF</label>
+                <input
+                  type="url"
+                  value={editingArticle.pdfUrl}
+                  onChange={(e) => setEditingArticle({...editingArticle, pdfUrl: e.target.value})}
+                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={editingArticle.isPublished}
+                  onChange={(e) => setEditingArticle({...editingArticle, isPublished: e.target.checked})}
+                  className="rounded"
+                />
+                <label className="text-sm text-gray-700">منتشر شده</label>
+              </div>
+
+              <div className="flex gap-2">
+                <button
+                  onClick={handleUpdateSubmit}
+                  disabled={updateMutation.isPending}
+                  className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                >
+                  {updateMutation.isPending ? 'در حال ذخیره...' : 'ذخیره تغییرات'}
+                </button>
+                <button
+                  onClick={() => setEditingArticle(null)}
                   className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600"
                 >
                   لغو
