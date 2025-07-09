@@ -8,6 +8,7 @@ import WorkshopsPage from './pages/workshops-simple';
 import LibraryPage from './pages/library-simple';
 import ProfilePage from './pages/profile-simple';
 import FavoritesPage from './pages/favorites';
+import LoginPage from './pages/login';
 import AdminPage from './pages/admin';
 import AdminSimple from './pages/admin-simple';
 import ProtectedContentDemo from './pages/protected-content';
@@ -114,7 +115,7 @@ function App() {
       case 'projects': return <ProjectsPage />;
       case 'workshops': return <WorkshopsPage />;
       case 'library': return <LibraryPage />;
-      case 'profile': return <ProfilePage />;
+      case 'profile': return <LoginPage />;
       case 'favorites': return <FavoritesPage />;
       case 'admin': return <AdminPage />;
       case 'media-library': return <MediaLibraryPage />;
