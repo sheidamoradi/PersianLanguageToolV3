@@ -37,6 +37,7 @@ export default function HomePage() {
   };
 
   return (
+    <>
     <div className="space-y-6 rtl">
       <div className="rounded-2xl text-center relative overflow-hidden min-h-[400px] flex items-center" style={{backgroundColor: currentSlideData?.imageUrl ? 'transparent' : 'hsl(118, 45%, 90%)'}}>
         {currentSlideData?.imageUrl && (
@@ -534,6 +535,136 @@ export default function HomePage() {
             )}
             </div>
           </div>
+        </div>
+      </div>
+    </div>
+    
+    {/* Magazine Section */}
+    <MagazineSection />
+    </>
+  );
+}
+
+function MagazineSection() {
+  const { data: magazines, isLoading } = useQuery<any[]>({
+    queryKey: ['/api/magazines'],
+  });
+
+  if (isLoading) {
+    return (
+      <div className="py-8">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="flex items-center justify-center h-32">
+            <div className="text-gray-500">در حال بارگذاری...</div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const activeMagazines = magazines?.filter(magazine => magazine.isActive) || [];
+
+  return (
+    <div className="py-8 bg-gray-50">
+      <div className="max-w-6xl mx-auto px-4">
+        <div className="mb-8">
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">مجله‌ها</h2>
+          <p className="text-gray-600">آخرین شماره‌های مجله‌های آموزشی</p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {activeMagazines.map((magazine) => (
+            <div key={magazine.id} className="bg-white rounded-xl shadow-sm border hover:shadow-lg transition-shadow overflow-hidden">
+              <div className="aspect-[4/3] bg-gray-100 flex items-center justify-center">
+                {magazine.coverImageUrl ? (
+                  <img 
+                    src={magazine.coverImageUrl} 
+                    alt={magazine.title}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <svg className="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+                  </svg>
+                )}
+              </div>
+              <div className="p-4">
+                <h3 className="font-semibold text-gray-900 mb-2">{magazine.title}</h3>
+                <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+                  {magazine.description || 'توضیحات مجله'}
+                </p>
+                <div className="flex items-center justify-between text-sm text-gray-500">
+                  <span>شماره {magazine.issueNumber}</span>
+                  <span>{new Date(magazine.publishDate).toLocaleDateString('fa-IR')}</span>
+                </div>
+              </div>
+            </div>
+          ))}
+          
+          {/* Fallback when no magazines exist */}
+          {(!magazines || magazines.length === 0) && (
+            <>
+              <div className="bg-white rounded-xl shadow-sm border hover:shadow-lg transition-shadow overflow-hidden">
+                <div className="aspect-[4/3] bg-gray-100 flex items-center justify-center">
+                  <svg className="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+                  </svg>
+                </div>
+                <div className="p-4">
+                  <h3 className="font-semibold text-gray-900 mb-2">مجله کشاورزی نوین</h3>
+                  <p className="text-sm text-gray-600 mb-3">
+                    آخرین تکنیک‌های کشاورزی و باغبانی
+                  </p>
+                  <div className="flex items-center justify-between text-sm text-gray-500">
+                    <span>شماره ۱۲</span>
+                    <span>۱۴۰۳/۰۴/۲۰</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="bg-white rounded-xl shadow-sm border hover:shadow-lg transition-shadow overflow-hidden">
+                <div className="aspect-[4/3] bg-gray-100 flex items-center justify-center">
+                  <svg className="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                  </svg>
+                </div>
+                <div className="p-4">
+                  <h3 className="font-semibold text-gray-900 mb-2">مجله تکنولوژی سبز</h3>
+                  <p className="text-sm text-gray-600 mb-3">
+                    نوآوری‌های سبز در کشاورزی
+                  </p>
+                  <div className="flex items-center justify-between text-sm text-gray-500">
+                    <span>شماره ۸</span>
+                    <span>۱۴۰۳/۰۴/۱۵</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="bg-white rounded-xl shadow-sm border hover:shadow-lg transition-shadow overflow-hidden">
+                <div className="aspect-[4/3] bg-gray-100 flex items-center justify-center">
+                  <svg className="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                </div>
+                <div className="p-4">
+                  <h3 className="font-semibold text-gray-900 mb-2">مجله مدیریت مزرعه</h3>
+                  <p className="text-sm text-gray-600 mb-3">
+                    راهکارهای مدیریت مزرعه و تولید
+                  </p>
+                  <div className="flex items-center justify-between text-sm text-gray-500">
+                    <span>شماره ۵</span>
+                    <span>۱۴۰۳/۰۴/۱۰</span>
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+        
+        <div className="mt-8 text-center">
+          <button className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+            مشاهده همه مجله‌ها
+          </button>
         </div>
       </div>
     </div>
