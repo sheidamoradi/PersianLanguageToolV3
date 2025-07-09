@@ -401,7 +401,7 @@ export const educationalVideos = pgTable("educational_videos", {
   isActive: boolean("is_active").default(true),
   isPublic: boolean("is_public").default(true),
   requiresSubscription: boolean("requires_subscription").default(false),
-  order: integer("order").default(0),
+  orderPosition: integer("order_position").default(0),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });

@@ -1038,16 +1038,8 @@ function EducationalVideosTab() {
   const [editingVideo, setEditingVideo] = useState<any>(null);
   const [createData, setCreateData] = useState({
     title: '',
-    description: '',
     videoUrl: '',
-    thumbnailUrl: '',
-    duration: '',
-    instructor: '',
-    category: '',
-    level: 'beginner' as const,
-    tags: '',
-    order: 0,
-    isActive: true
+    orderPosition: 0
   });
 
   const { data: videos, isLoading } = useQuery<any[]>({
@@ -1077,16 +1069,8 @@ function EducationalVideosTab() {
       setShowCreateForm(false);
       setCreateData({
         title: '',
-        description: '',
         videoUrl: '',
-        thumbnailUrl: '',
-        duration: '',
-        instructor: '',
-        category: '',
-        level: 'beginner',
-        tags: '',
-        order: 0,
-        isActive: true
+        orderPosition: 0
       });
     }
   });
@@ -1237,8 +1221,8 @@ function EducationalVideosTab() {
                 </label>
                 <input
                   type="number"
-                  value={createData.order}
-                  onChange={(e) => setCreateData({...createData, order: parseInt(e.target.value)})}
+                  value={createData.orderPosition}
+                  onChange={(e) => setCreateData({...createData, orderPosition: parseInt(e.target.value)})}
                   className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   min="0"
                 />
@@ -1294,7 +1278,7 @@ function EducationalVideosTab() {
                   <div className="flex-1">
                     <h5 className="font-semibold text-gray-900">{video.title}</h5>
                     <div className="flex items-center gap-4 mt-2 text-sm text-gray-500">
-                      <span>ترتیب: {video.order}</span>
+                      <span>ترتیب: {video.orderPosition}</span>
                     </div>
                   </div>
                   <div className="flex gap-2">
@@ -1383,8 +1367,8 @@ function EducationalVideosTab() {
                     </label>
                     <input
                       type="number"
-                      value={editingVideo.order}
-                      onChange={(e) => setEditingVideo({...editingVideo, order: parseInt(e.target.value)})}
+                      value={editingVideo.orderPosition}
+                      onChange={(e) => setEditingVideo({...editingVideo, orderPosition: parseInt(e.target.value)})}
                       className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                       min="0"
                     />

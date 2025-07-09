@@ -981,11 +981,11 @@ export class DatabaseStorage implements IStorage {
 
   // Educational Video methods
   async getEducationalVideos(): Promise<EducationalVideo[]> {
-    return await db.select().from(educationalVideos).orderBy(asc(educationalVideos.order));
+    return await db.select().from(educationalVideos).orderBy(asc(educationalVideos.orderPosition));
   }
 
   async getActiveEducationalVideos(): Promise<EducationalVideo[]> {
-    return await db.select().from(educationalVideos).where(eq(educationalVideos.isActive, true)).orderBy(asc(educationalVideos.order));
+    return await db.select().from(educationalVideos).where(eq(educationalVideos.isActive, true)).orderBy(asc(educationalVideos.orderPosition));
   }
 
   async getEducationalVideo(id: number): Promise<EducationalVideo | undefined> {
