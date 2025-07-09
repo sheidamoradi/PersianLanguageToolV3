@@ -568,7 +568,12 @@ function MagazineSection() {
     <div className="py-8 bg-gray-50">
       <div className="max-w-6xl mx-auto px-4">
         <div className="mb-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">مجله‌ها</h2>
+          <h2 className="text-xl font-bold text-gray-800 flex items-center mb-2">
+            <svg className="ml-2 h-6 w-6" fill="none" stroke="hsl(118, 54%, 40%)" viewBox="0 0 24 24" strokeWidth="2">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            فصلنامه رویش سبز
+          </h2>
           <p className="text-gray-600">آخرین شماره‌های مجله‌های آموزشی</p>
         </div>
 
