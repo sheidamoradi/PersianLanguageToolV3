@@ -19,11 +19,14 @@ export const users = pgTable("users", {
   username: text("username").notNull().unique(),
   password: text("password").notNull(),
   name: text("name"),
+  email: text("email").unique(),
   progress: integer("progress").default(0),
   membershipType: text("membership_type").default("Basic"),
   role: text("role").default("user"), // admin, user, premium
   subscriptionStatus: text("subscription_status").default("free"), // free, premium, vip
   subscriptionExpiry: timestamp("subscription_expiry"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
 });
 
 export const courses = pgTable("courses", {

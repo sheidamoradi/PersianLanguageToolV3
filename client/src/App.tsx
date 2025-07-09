@@ -50,8 +50,10 @@ function App() {
 
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
-      if (event.data.type === 'OPEN_ADMIN') {
+      if (event.data.type === 'OPEN_ADMIN' || event.data.type === 'SHOW_ADMIN_PANEL') {
         setActiveTab('admin');
+      } else if (event.data.type === 'SHOW_HOME') {
+        setActiveTab('home');
       } else if (event.data.type === 'SWITCH_TAB') {
         setActiveTab(event.data.tab);
         setSelectedWebinarId(null); // Reset webinar view when switching tabs

@@ -9,6 +9,9 @@ import fs from "fs";
 import multer from "multer";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
+import session from "express-session";
+import { authenticateUser, requireAuth, requireAdmin, hashPassword, AuthRequest } from "./auth";
+import { seedDatabase } from "./seed";
 import { 
   insertCourseSchema,
   insertModuleSchema, 
@@ -29,7 +32,8 @@ import {
   insertEducationalVideoSchema,
   insertAboutUsSchema,
   insertSubsidiaryCompanySchema,
-  insertContactUsSchema
+  insertContactUsSchema,
+  insertUserSchema
 } from "@shared/schema";
 
 // Configure multer for file uploads
@@ -67,6 +71,72 @@ const upload = multer({
 });
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Initialize database with admin user
+  await seedDatabase();
+
+  // Session configuration
+  app.use(session({
+    secret: process.env.SESSION_SECRET || 'your-secret-key-here',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      secure: process.env.NODE_ENV === 'production',
+      httpOnly: true,
+      maxAge: 1000 * 60 * 60 * 24 * 7 // 7 days
+    }
+  }));
+
+  // Authentication routes
+  app.post('/api/login', async (req, res) => {
+    try {
+      const { username, password } = req.body;
+      
+      if (!username || !password) {
+        return res.status(400).json({ error: 'نام کاربری و رمز عبور الزامی است' });
+      }
+
+      const user = await authenticateUser(username, password);
+      if (!user) {
+        return res.status(401).json({ error: 'نام کاربری یا رمز عبور اشتباه است' });
+      }
+
+      // Store user in session
+      req.session.user = {
+        id: user.id,
+        username: user.username,
+        role: user.role,
+        name: user.name,
+        email: user.email
+      };
+
+      res.json({ 
+        message: 'ورود موفقیت‌آمیز',
+        user: req.session.user
+      });
+    } catch (error) {
+      console.error('Login error:', error);
+      res.status(500).json({ error: 'خطا در سیستم احراز هویت' });
+    }
+  });
+
+  app.post('/api/logout', (req, res) => {
+    req.session.destroy((err) => {
+      if (err) {
+        return res.status(500).json({ error: 'خطا در خروج از سیستم' });
+      }
+      res.clearCookie('connect.sid');
+      res.json({ message: 'خروج موفقیت‌آمیز' });
+    });
+  });
+
+  app.get('/api/user', (req, res) => {
+    if (req.session?.user) {
+      res.json(req.session.user);
+    } else {
+      res.status(401).json({ error: 'کاربر وارد نشده' });
+    }
+  });
+
   // API routes with /api prefix
 
   // File Upload API

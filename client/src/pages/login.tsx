@@ -1,18 +1,59 @@
 import { useState } from 'react';
+import { useMutation } from '@tanstack/react-query';
+import { apiRequest } from '@/lib/queryClient';
 
 export default function LoginPage() {
   const [isLogin, setIsLogin] = useState(true);
   const [formData, setFormData] = useState({
-    email: '',
+    username: '',
     password: '',
     confirmPassword: '',
     name: ''
   });
+  const [error, setError] = useState<string | null>(null);
+
+  const loginMutation = useMutation({
+    mutationFn: async (data: { username: string; password: string }) => {
+      const response = await apiRequest('/api/login', {
+        method: 'POST',
+        body: JSON.stringify(data)
+      });
+      return response;
+    },
+    onSuccess: (data) => {
+      setError(null);
+      
+      // Check if user is admin
+      if (data.user.role === 'admin') {
+        // Send message to parent to show admin panel
+        window.parent.postMessage({ type: 'SHOW_ADMIN_PANEL' }, '*');
+      } else {
+        // Redirect normal user to home
+        window.parent.postMessage({ type: 'SHOW_HOME' }, '*');
+      }
+    },
+    onError: (error: any) => {
+      setError(error.message || 'خطا در ورود');
+    }
+  });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // اینجا می‌توانید منطق ورود/ثبت‌نام را اضافه کنید
-    console.log('Form submitted:', formData);
+    setError(null);
+    
+    if (isLogin) {
+      if (!formData.username || !formData.password) {
+        setError('لطفاً تمام فیلدها را پر کنید');
+        return;
+      }
+      loginMutation.mutate({
+        username: formData.username,
+        password: formData.password
+      });
+    } else {
+      // Handle registration logic here
+      setError('ثبت‌نام فعلاً در دسترس نیست');
+    }
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -60,18 +101,18 @@ export default function LoginPage() {
             )}
 
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                ایمیل
+              <label htmlFor="username" className="block text-sm font-medium text-gray-700">
+                نام کاربری
               </label>
               <input
-                id="email"
-                name="email"
-                type="email"
+                id="username"
+                name="username"
+                type="text"
                 required
-                value={formData.email}
+                value={formData.username}
                 onChange={handleInputChange}
                 className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
-                placeholder="آدرس ایمیل"
+                placeholder="نام کاربری"
               />
             </div>
 
@@ -123,11 +164,18 @@ export default function LoginPage() {
           <div>
             <button
               type="submit"
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+              disabled={loginMutation.isPending}
+              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50"
             >
-              {isLogin ? 'ورود' : 'ثبت‌نام'}
+              {loginMutation.isPending ? 'در حال ورود...' : (isLogin ? 'ورود' : 'ثبت‌نام')}
             </button>
           </div>
+
+          {error && (
+            <div className="text-center">
+              <p className="text-red-600 text-sm">{error}</p>
+            </div>
+          )}
 
           <div className="text-center">
             <button

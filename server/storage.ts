@@ -67,7 +67,7 @@ export interface IStorage {
 
   // Document methods
   getDocuments(): Promise<Document[]>;
-  getDocumentsByCategory(categoryId: number): Promise<Document[]>;
+  getDocumentsByCategory(category: string): Promise<Document[]>;
   getDocumentsByTag(tagId: number): Promise<Document[]>;
   getFeaturedDocuments(): Promise<Document[]>;
   searchDocuments(query: string): Promise<Document[]>;
@@ -681,8 +681,8 @@ export class DatabaseStorage implements IStorage {
     return await db.select().from(documents).orderBy(asc(documents.createdAt));
   }
 
-  async getDocumentsByCategory(categoryId: number): Promise<Document[]> {
-    return await db.select().from(documents).where(eq(documents.categoryId, categoryId));
+  async getDocumentsByCategory(category: string): Promise<Document[]> {
+    return await db.select().from(documents).where(eq(documents.category, category));
   }
 
   async getDocumentsByTag(tagId: number): Promise<Document[]> {
@@ -695,7 +695,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getFeaturedDocuments(): Promise<Document[]> {
-    return await db.select().from(documents).where(eq(documents.isFeatured, true));
+    return await db.select().from(documents).where(eq(documents.isSticky, true));
   }
 
   async searchDocuments(query: string): Promise<Document[]> {
@@ -901,7 +901,7 @@ export class DatabaseStorage implements IStorage {
 
   async deleteWebinar(id: number): Promise<boolean> {
     const result = await db.delete(webinars).where(eq(webinars.id, id));
-    return result.rowCount > 0;
+    return (result.rowCount ?? 0) > 0;
   }
 
   // Webinar section methods
@@ -932,7 +932,7 @@ export class DatabaseStorage implements IStorage {
 
   async deleteWebinarSection(id: number): Promise<boolean> {
     const result = await db.delete(webinarSections).where(eq(webinarSections.id, id));
-    return result.rowCount > 0;
+    return (result.rowCount ?? 0) > 0;
   }
 
   // Protection control methods
