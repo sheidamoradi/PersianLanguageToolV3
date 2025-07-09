@@ -6,7 +6,7 @@ import { Calendar, Edit, Eye, File, Folder, Image, Lock, LockOpen, MoreHorizonta
 import WorkshopsTab from "../components/admin/WorkshopsTab";
 
 export default function AdminPage() {
-  const [activeTab, setActiveTab] = useState("courses");
+  const [activeTab, setActiveTab] = useState("aboutus");
 
   return (
     <div dir="rtl" className="min-h-screen bg-gray-50">
