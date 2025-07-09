@@ -437,122 +437,125 @@ export default function HomePage() {
           <div className="absolute top-1/2 right-8 w-8 h-8 bg-green-200 rounded-full opacity-10"></div>
         </div>
         
-        <div className="flex gap-4 overflow-x-auto pb-4 mb-4">
-          {educationalVideos && educationalVideos
-            .slice(0, 6)
-            .map((video: any) => (
-            <div 
-              key={video.id} 
-              className="flex-shrink-0 w-64 bg-white rounded-xl shadow-sm border cursor-pointer hover:shadow-lg transition-shadow overflow-hidden"
-              onClick={() => {
-                // Switch to video view
-                window.parent.postMessage({ 
-                  type: 'OPEN_VIDEO', 
-                  videoId: video.id 
-                }, '*');
-              }}
-            >
-              <div className="w-full h-36 bg-gray-100 flex items-center justify-center overflow-hidden">
-                {video.thumbnailUrl ? (
-                  <img 
-                    src={video.thumbnailUrl} 
-                    alt={video.title}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <svg className="w-12 h-12 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1.01M15 10h1.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                )}
-              </div>
-              <div className="p-3">
-                <h3 className="font-semibold text-gray-800 text-sm mb-1" title={video.title}>
-                  {video.title.length > 30 ? `${video.title.substring(0, 30)}...` : video.title}
-                </h3>
-                <p className="text-xs text-gray-500 mb-2" title={video.description}>
-                  {video.description ? 
-                    (video.description.length > 40 ? `${video.description.substring(0, 40)}...` : video.description) 
-                    : 'ویدیو آموزشی'}
-                </p>
-                <div className="flex items-center justify-between mb-1">
-                  {video.instructor && (
-                    <p className="text-xs text-blue-600">👨‍🏫 {video.instructor}</p>
+        {/* Container box around all videos - similar to red container in reference */}
+        <div className="bg-white rounded-2xl border-2 border-gray-200 p-4 shadow-sm">
+          <div className="flex gap-4 overflow-x-auto pb-2">
+            {educationalVideos && educationalVideos
+              .slice(0, 6)
+              .map((video: any) => (
+              <div 
+                key={video.id} 
+                className="flex-shrink-0 w-64 bg-gray-50 rounded-xl shadow-sm border cursor-pointer hover:shadow-lg transition-shadow overflow-hidden"
+                onClick={() => {
+                  // Switch to video view
+                  window.parent.postMessage({ 
+                    type: 'OPEN_VIDEO', 
+                    videoId: video.id 
+                  }, '*');
+                }}
+              >
+                <div className="w-full h-36 bg-gray-100 flex items-center justify-center overflow-hidden">
+                  {video.thumbnailUrl ? (
+                    <img 
+                      src={video.thumbnailUrl} 
+                      alt={video.title}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <svg className="w-12 h-12 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1.01M15 10h1.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
                   )}
-                  {video.duration && (
-                    <p className="text-xs text-orange-600">⏱️ {video.duration}</p>
-                  )}
-                </div>
-                <div className="flex items-center justify-between">
-                  {video.category && (
-                    <p className="text-xs text-green-600">📂 {video.category}</p>
-                  )}
-                  {video.level && (
-                    <span className={`text-xs px-2 py-1 rounded-full ${
-                      video.level === 'beginner' ? 'bg-green-100 text-green-700' :
-                      video.level === 'intermediate' ? 'bg-yellow-100 text-yellow-700' :
-                      'bg-red-100 text-red-700'
-                    }`}>
-                      {video.level === 'beginner' ? 'مبتدی' : 
-                       video.level === 'intermediate' ? 'متوسط' : 'پیشرفته'}
-                    </span>
-                  )}
-                </div>
-              </div>
-            </div>
-          ))}
-          
-          {/* Fallback when no educational videos exist */}
-          {(!educationalVideos || educationalVideos.length === 0) && (
-            <>
-              <div className="flex-shrink-0 w-64 bg-white rounded-xl shadow-sm border cursor-pointer hover:shadow-lg transition-shadow overflow-hidden">
-                <div className="w-full h-36 bg-gray-100 flex items-center justify-center">
-                  <svg className="w-12 h-12 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1.01M15 10h1.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
                 </div>
                 <div className="p-3">
-                  <h3 className="font-semibold text-gray-800 text-sm mb-1">آموزش کشت گلخانه‌ای</h3>
-                  <p className="text-xs text-gray-500 mb-2">تکنیک‌های نوین کشت در محیط کنترل شده</p>
+                  <h3 className="font-semibold text-gray-800 text-sm mb-1" title={video.title}>
+                    {video.title.length > 30 ? `${video.title.substring(0, 30)}...` : video.title}
+                  </h3>
+                  <p className="text-xs text-gray-500 mb-2" title={video.description}>
+                    {video.description ? 
+                      (video.description.length > 40 ? `${video.description.substring(0, 40)}...` : video.description) 
+                      : 'ویدیو آموزشی'}
+                  </p>
+                  <div className="flex items-center justify-between mb-1">
+                    {video.instructor && (
+                      <p className="text-xs text-blue-600">👨‍🏫 {video.instructor}</p>
+                    )}
+                    {video.duration && (
+                      <p className="text-xs text-orange-600">⏱️ {video.duration}</p>
+                    )}
+                  </div>
                   <div className="flex items-center justify-between">
-                    <p className="text-xs text-blue-600">👨‍🏫 دکتر احمدی</p>
-                    <span className="text-xs px-2 py-1 rounded-full bg-green-100 text-green-700">مبتدی</span>
+                    {video.category && (
+                      <p className="text-xs text-green-600">📂 {video.category}</p>
+                    )}
+                    {video.level && (
+                      <span className={`text-xs px-2 py-1 rounded-full ${
+                        video.level === 'beginner' ? 'bg-green-100 text-green-700' :
+                        video.level === 'intermediate' ? 'bg-yellow-100 text-yellow-700' :
+                        'bg-red-100 text-red-700'
+                      }`}>
+                        {video.level === 'beginner' ? 'مبتدی' : 
+                         video.level === 'intermediate' ? 'متوسط' : 'پیشرفته'}
+                      </span>
+                    )}
                   </div>
                 </div>
               </div>
-              
-              <div className="flex-shrink-0 w-64 bg-white rounded-xl shadow-sm border cursor-pointer hover:shadow-lg transition-shadow overflow-hidden">
-                <div className="w-full h-36 bg-gray-100 flex items-center justify-center">
-                  <svg className="w-12 h-12 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-                  </svg>
-                </div>
-                <div className="p-3">
-                  <h3 className="font-semibold text-gray-800 text-sm mb-1">آموزش آبیاری قطره‌ای</h3>
-                  <p className="text-xs text-gray-500 mb-2">صرفه‌جویی در مصرف آب و بهبود کیفیت محصول</p>
-                  <div className="flex items-center justify-between">
-                    <p className="text-xs text-blue-600">👨‍🏫 مهندس کریمی</p>
-                    <span className="text-xs px-2 py-1 rounded-full bg-yellow-100 text-yellow-700">متوسط</span>
+            ))}
+            
+            {/* Fallback when no educational videos exist */}
+            {(!educationalVideos || educationalVideos.length === 0) && (
+              <>
+                <div className="flex-shrink-0 w-64 bg-gray-50 rounded-xl shadow-sm border cursor-pointer hover:shadow-lg transition-shadow overflow-hidden">
+                  <div className="w-full h-36 bg-gray-100 flex items-center justify-center">
+                    <svg className="w-12 h-12 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1.01M15 10h1.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <div className="p-3">
+                    <h3 className="font-semibold text-gray-800 text-sm mb-1">آموزش کشت گلخانه‌ای</h3>
+                    <p className="text-xs text-gray-500 mb-2">تکنیک‌های نوین کشت در محیط کنترل شده</p>
+                    <div className="flex items-center justify-between">
+                      <p className="text-xs text-blue-600">👨‍🏫 دکتر احمدی</p>
+                      <span className="text-xs px-2 py-1 rounded-full bg-green-100 text-green-700">مبتدی</span>
+                    </div>
                   </div>
                 </div>
-              </div>
-              
-              <div className="flex-shrink-0 w-64 bg-white rounded-xl shadow-sm border cursor-pointer hover:shadow-lg transition-shadow overflow-hidden">
-                <div className="w-full h-36 bg-gray-100 flex items-center justify-center">
-                  <svg className="w-12 h-12 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
-                  </svg>
-                </div>
-                <div className="p-3">
-                  <h3 className="font-semibold text-gray-800 text-sm mb-1">مدیریت خاک</h3>
-                  <p className="text-xs text-gray-500 mb-2">تشخیص و درمان مشکلات خاک</p>
-                  <div className="flex items-center justify-between">
-                    <p className="text-xs text-blue-600">👩‍🏫 دکتر رضایی</p>
-                    <span className="text-xs px-2 py-1 rounded-full bg-red-100 text-red-700">پیشرفته</span>
+                
+                <div className="flex-shrink-0 w-64 bg-gray-50 rounded-xl shadow-sm border cursor-pointer hover:shadow-lg transition-shadow overflow-hidden">
+                  <div className="w-full h-36 bg-gray-100 flex items-center justify-center">
+                    <svg className="w-12 h-12 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                    </svg>
+                  </div>
+                  <div className="p-3">
+                    <h3 className="font-semibold text-gray-800 text-sm mb-1">آموزش آبیاری قطره‌ای</h3>
+                    <p className="text-xs text-gray-500 mb-2">صرفه‌جویی در مصرف آب و بهبود کیفیت محصول</p>
+                    <div className="flex items-center justify-between">
+                      <p className="text-xs text-blue-600">👨‍🏫 مهندس کریمی</p>
+                      <span className="text-xs px-2 py-1 rounded-full bg-yellow-100 text-yellow-700">متوسط</span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </>
-          )}
+                
+                <div className="flex-shrink-0 w-64 bg-gray-50 rounded-xl shadow-sm border cursor-pointer hover:shadow-lg transition-shadow overflow-hidden">
+                  <div className="w-full h-36 bg-gray-100 flex items-center justify-center">
+                    <svg className="w-12 h-12 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                    </svg>
+                  </div>
+                  <div className="p-3">
+                    <h3 className="font-semibold text-gray-800 text-sm mb-1">مدیریت خاک</h3>
+                    <p className="text-xs text-gray-500 mb-2">تشخیص و درمان مشکلات خاک</p>
+                    <div className="flex items-center justify-between">
+                      <p className="text-xs text-blue-600">👩‍🏫 دکتر رضایی</p>
+                      <span className="text-xs px-2 py-1 rounded-full bg-red-100 text-red-700">پیشرفته</span>
+                    </div>
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
         </div>
       </div>
     </div>
