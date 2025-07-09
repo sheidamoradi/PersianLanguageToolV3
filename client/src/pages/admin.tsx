@@ -913,7 +913,367 @@ function MediaTab() {
 }
 
 function SlidesTab() {
-  return <div>اسلایدها</div>;
+  const [showCreateForm, setShowCreateForm] = useState(false);
+  const [editingSlide, setEditingSlide] = useState<any>(null);
+  const [createData, setCreateData] = useState({
+    title: '',
+    description: '',
+    imageUrl: '',
+    buttonText: '',
+    buttonUrl: '',
+    order: 0,
+    isActive: true
+  });
+
+  const { data: slides, isLoading } = useQuery<any[]>({
+    queryKey: ['/api/slides'],
+  });
+
+  const createMutation = useMutation({
+    mutationFn: (data: any) => apiRequest('/api/slides', { method: 'POST', body: JSON.stringify(data) }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/slides'] });
+      setShowCreateForm(false);
+      setCreateData({
+        title: '',
+        description: '',
+        imageUrl: '',
+        buttonText: '',
+        buttonUrl: '',
+        order: 0,
+        isActive: true
+      });
+    },
+    onError: (error) => {
+      console.error('Error creating slide:', error);
+      alert('خطا در ایجاد اسلاید: ' + error.message);
+    },
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: (data: any) => apiRequest(`/api/slides/${editingSlide.id}`, { method: 'PUT', body: JSON.stringify(data) }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/slides'] });
+      setEditingSlide(null);
+    },
+    onError: (error) => {
+      console.error('Error updating slide:', error);
+      alert('خطا در بروزرسانی اسلاید: ' + error.message);
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: number) => apiRequest(`/api/slides/${id}`, { method: 'DELETE' }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/slides'] });
+    },
+    onError: (error) => {
+      console.error('Error deleting slide:', error);
+      alert('خطا در حذف اسلاید: ' + error.message);
+    },
+  });
+
+  const handleCreateSubmit = () => {
+    if (!createData.title.trim()) {
+      alert('لطفاً عنوان اسلاید را وارد کنید');
+      return;
+    }
+    console.log('Creating slide with data:', createData);
+    createMutation.mutate(createData);
+  };
+
+  const handleUpdateSubmit = () => {
+    updateMutation.mutate(editingSlide);
+  };
+
+  const handleEdit = (slide: any) => {
+    setEditingSlide({ ...slide });
+  };
+
+  const handleDelete = (id: number) => {
+    if (confirm('آیا از حذف این اسلاید اطمینان دارید؟')) {
+      deleteMutation.mutate(id);
+    }
+  };
+
+  if (isLoading) {
+    return <div className="text-center py-8">در حال بارگذاری...</div>;
+  }
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-bold text-gray-900">اسلایدرهای صفحه اصلی</h2>
+        <button
+          onClick={() => setShowCreateForm(true)}
+          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center gap-2"
+        >
+          <Plus className="h-4 w-4" />
+          افزودن اسلاید جدید
+        </button>
+      </div>
+
+      {/* Create Form */}
+      {showCreateForm && (
+        <div className="bg-white rounded-lg border p-6">
+          <h3 className="text-lg font-semibold mb-4">افزودن اسلاید جدید</h3>
+          
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">عنوان</label>
+              <input
+                type="text"
+                value={createData.title}
+                onChange={(e) => setCreateData({...createData, title: e.target.value})}
+                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="عنوان اسلاید"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">توضیحات</label>
+              <textarea
+                value={createData.description}
+                onChange={(e) => setCreateData({...createData, description: e.target.value})}
+                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                rows={3}
+                placeholder="توضیحات اسلاید"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">آدرس تصویر</label>
+              <input
+                type="url"
+                value={createData.imageUrl}
+                onChange={(e) => setCreateData({...createData, imageUrl: e.target.value})}
+                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="/uploads/image.jpg"
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">متن دکمه</label>
+                <input
+                  type="text"
+                  value={createData.buttonText}
+                  onChange={(e) => setCreateData({...createData, buttonText: e.target.value})}
+                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="مشاهده بیشتر"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">آدرس دکمه</label>
+                <input
+                  type="url"
+                  value={createData.buttonUrl}
+                  onChange={(e) => setCreateData({...createData, buttonUrl: e.target.value})}
+                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="https://example.com"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">ترتیب</label>
+              <input
+                type="number"
+                value={createData.order}
+                onChange={(e) => setCreateData({...createData, order: parseInt(e.target.value) || 0})}
+                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                min="0"
+              />
+            </div>
+
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={createData.isActive}
+                onChange={(e) => setCreateData({...createData, isActive: e.target.checked})}
+                className="rounded"
+              />
+              <label className="text-sm text-gray-700">فعال</label>
+            </div>
+
+            <div className="flex gap-2">
+              <button
+                onClick={handleCreateSubmit}
+                disabled={createMutation.isPending}
+                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50"
+              >
+                {createMutation.isPending ? 'در حال ایجاد...' : 'ایجاد اسلاید'}
+              </button>
+              <button
+                onClick={() => setShowCreateForm(false)}
+                className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600"
+              >
+                لغو
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Slides List */}
+      <div className="bg-white rounded-lg border overflow-hidden">
+        <div className="p-4 border-b bg-gray-50">
+          <h4 className="font-semibold">لیست اسلایدها</h4>
+        </div>
+        
+        {slides && slides.length > 0 ? (
+          <div className="divide-y">
+            {slides.map((slide) => (
+              <div key={slide.id} className="p-4 hover:bg-gray-50">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-2">
+                      <h3 className="font-semibold text-gray-900">{slide.title}</h3>
+                      <span className={`text-xs px-2 py-1 rounded-full ${
+                        slide.isActive 
+                          ? 'bg-green-100 text-green-800' 
+                          : 'bg-gray-100 text-gray-800'
+                      }`}>
+                        {slide.isActive ? 'فعال' : 'غیرفعال'}
+                      </span>
+                    </div>
+                    <p className="text-sm text-gray-600 mb-2">{slide.description}</p>
+                    <div className="flex items-center gap-4 text-xs text-gray-500">
+                      <span>ترتیب: {slide.order}</span>
+                      {slide.buttonText && <span>دکمه: {slide.buttonText}</span>}
+                      {slide.imageUrl && <span>تصویر: ✓</span>}
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => handleEdit(slide)}
+                      className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg"
+                    >
+                      <Edit className="h-4 w-4" />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(slide.id)}
+                      className="p-2 text-red-600 hover:bg-red-50 rounded-lg"
+                    >
+                      <Trash className="h-4 w-4" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="p-8 text-center text-gray-500">
+            <Image className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-gray-900 mb-2">هیچ اسلایدی یافت نشد</h3>
+            <p className="text-gray-600">برای شروع، اسلاید جدیدی اضافه کنید</p>
+          </div>
+        )}
+      </div>
+
+      {/* Edit Modal */}
+      {editingSlide && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <h3 className="text-lg font-semibold mb-4">ویرایش اسلاید</h3>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">عنوان</label>
+                <input
+                  type="text"
+                  value={editingSlide.title}
+                  onChange={(e) => setEditingSlide({...editingSlide, title: e.target.value})}
+                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">توضیحات</label>
+                <textarea
+                  value={editingSlide.description}
+                  onChange={(e) => setEditingSlide({...editingSlide, description: e.target.value})}
+                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  rows={3}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">آدرس تصویر</label>
+                <input
+                  type="url"
+                  value={editingSlide.imageUrl}
+                  onChange={(e) => setEditingSlide({...editingSlide, imageUrl: e.target.value})}
+                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">متن دکمه</label>
+                  <input
+                    type="text"
+                    value={editingSlide.buttonText}
+                    onChange={(e) => setEditingSlide({...editingSlide, buttonText: e.target.value})}
+                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">آدرس دکمه</label>
+                  <input
+                    type="url"
+                    value={editingSlide.buttonUrl}
+                    onChange={(e) => setEditingSlide({...editingSlide, buttonUrl: e.target.value})}
+                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">ترتیب</label>
+                <input
+                  type="number"
+                  value={editingSlide.order}
+                  onChange={(e) => setEditingSlide({...editingSlide, order: parseInt(e.target.value) || 0})}
+                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  min="0"
+                />
+              </div>
+
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={editingSlide.isActive}
+                  onChange={(e) => setEditingSlide({...editingSlide, isActive: e.target.checked})}
+                  className="rounded"
+                />
+                <label className="text-sm text-gray-700">فعال</label>
+              </div>
+
+              <div className="flex gap-2">
+                <button
+                  onClick={handleUpdateSubmit}
+                  disabled={updateMutation.isPending}
+                  className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                >
+                  {updateMutation.isPending ? 'در حال ذخیره...' : 'ذخیره تغییرات'}
+                </button>
+                <button
+                  onClick={() => setEditingSlide(null)}
+                  className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600"
+                >
+                  لغو
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }
 
 function MagazinesTab() {
