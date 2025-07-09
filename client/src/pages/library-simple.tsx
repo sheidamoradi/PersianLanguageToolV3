@@ -15,6 +15,7 @@ import {
   TrendingUp
 } from "lucide-react";
 import { type Document } from "@shared/schema";
+import { AuthGuard } from "@/components/AuthGuard";
 
 export default function Library() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -56,7 +57,8 @@ export default function Library() {
   });
 
   return (
-    <div className="p-4 pb-24" dir="rtl">
+    <AuthGuard>
+      <div className="p-4 pb-24" dir="rtl">
       {/* Header */}
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-gray-900 mb-2">کتابخانه دیجیتال</h1>
@@ -190,6 +192,7 @@ export default function Library() {
           </div>
         )}
       </div>
-    </div>
+      </div>
+    </AuthGuard>
   );
 }

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { queryClient } from "@/lib/queryClient";
 import { Calendar, Clock, MapPin, Users, User } from "lucide-react";
+import { AuthGuard } from "@/components/AuthGuard";
 
 export default function WorkshopsPage() {
   const [selectedWorkshop, setSelectedWorkshop] = useState<any>(null);
@@ -63,7 +64,8 @@ export default function WorkshopsPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <AuthGuard>
+      <div className="container mx-auto px-4 py-8">
       {/* Header */}
       <div className="text-center mb-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-4">کارگاه‌های آموزشی</h1>
@@ -283,6 +285,7 @@ export default function WorkshopsPage() {
           </div>
         </div>
       )}
-    </div>
+      </div>
+    </AuthGuard>
   );
 }

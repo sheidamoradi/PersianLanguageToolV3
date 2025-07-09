@@ -1,8 +1,12 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { type Slide } from "@shared/schema";
+import { useAuth } from "@/hooks/useAuth";
+import { GuestContent } from "@/components/AuthGuard";
 
 export default function HomePage() {
+  const { isAuthenticated } = useAuth();
+  
   const { data: slides } = useQuery<Slide[]>({
     queryKey: ['/api/slides'],
   });
@@ -36,8 +40,7 @@ export default function HomePage() {
     setCurrentSlide((prev) => (prev - 1 + activeSlides.length) % activeSlides.length);
   };
 
-  return (
-    <>
+  const homeContent = (
     <div className="space-y-6 rtl">
       <div className="rounded-2xl text-center relative overflow-hidden min-h-[400px] flex items-center" style={{backgroundColor: currentSlideData?.imageUrl ? 'transparent' : 'hsl(118, 45%, 90%)'}}>
         {currentSlideData?.imageUrl && (
@@ -575,16 +578,37 @@ export default function HomePage() {
         </div>
       </div>
     </div>
-    
-    {/* Magazine Section */}
-    <div className="mt-8">
-      <MagazineSection />
-    </div>
-    
-    {/* Archive Section */}
-    <div className="mt-8">
-      <ArchiveSection />
-    </div>
+  );
+
+  return (
+    <>
+      {isAuthenticated ? (
+        <div>
+          {homeContent}
+          {/* Magazine Section */}
+          <div className="mt-8">
+            <MagazineSection />
+          </div>
+          
+          {/* Archive Section */}
+          <div className="mt-8">
+            <ArchiveSection />
+          </div>
+        </div>
+      ) : (
+        <GuestContent>
+          {homeContent}
+          {/* Magazine Section */}
+          <div className="mt-8">
+            <MagazineSection />
+          </div>
+          
+          {/* Archive Section */}
+          <div className="mt-8">
+            <ArchiveSection />
+          </div>
+        </GuestContent>
+      )}
     </>
   );
 }

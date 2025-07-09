@@ -129,7 +129,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
-  app.get('/api/user', (req, res) => {
+  app.get('/api/auth/user', (req, res) => {
     if (req.session?.user) {
       res.json(req.session.user);
     } else {

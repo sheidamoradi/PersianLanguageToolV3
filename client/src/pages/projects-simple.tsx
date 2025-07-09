@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { type Project } from "@shared/schema";
 import ProjectCard from "@/components/project/ProjectCard";
+import { AuthGuard } from "@/components/AuthGuard";
 
 export default function Projects() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -33,7 +34,8 @@ export default function Projects() {
   const webinars = filteredProjects.filter((p: Project) => p.type === "webinar");
 
   return (
-    <div className="p-4 pb-24" dir="rtl">
+    <AuthGuard>
+      <div className="p-4 pb-24" dir="rtl">
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-gray-900 mb-4">پروژه‌ها و وبینارها</h1>
         
@@ -134,6 +136,7 @@ export default function Projects() {
           </div>
         )}
       </div>
-    </div>
+      </div>
+    </AuthGuard>
   );
 }

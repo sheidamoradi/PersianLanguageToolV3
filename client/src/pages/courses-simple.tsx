@@ -3,6 +3,7 @@ import { useState } from "react";
 import { type Course } from "@shared/schema";
 import CourseCard from "@/components/course/CourseCard";
 import { Search, Filter } from "lucide-react";
+import { AuthGuard } from "@/components/AuthGuard";
 
 export default function Courses() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -24,10 +25,11 @@ export default function Courses() {
   const categories = Array.from(new Set(courses.map(course => course.category).filter(Boolean)));
 
   return (
-    <div className="space-y-6" dir="rtl">
-      {/* Header */}
-      <div className="bg-white rounded-lg shadow-sm p-6">
-        <h1 className="text-2xl font-bold text-gray-900 mb-4">دوره‌های آموزشی</h1>
+    <AuthGuard>
+      <div className="space-y-6" dir="rtl">
+        {/* Header */}
+        <div className="bg-white rounded-lg shadow-sm p-6">
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">دوره‌های آموزشی</h1>
         
         {/* Search and Filter */}
         <div className="flex flex-col md:flex-row gap-4">
@@ -197,6 +199,7 @@ export default function Courses() {
           </div>
         )}
       </div>
-    </div>
+      </div>
+    </AuthGuard>
   );
 }

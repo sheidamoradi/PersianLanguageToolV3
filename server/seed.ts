@@ -23,7 +23,8 @@ async function seedDatabase() {
         password: hashedPassword,
         name: 'مدیر سیستم',
         email: 'admin@pistach.com',
-        role: 'admin'
+        role: 'admin',
+        membershipType: 'Premium'
       });
       
       console.log('Admin user created successfully');
