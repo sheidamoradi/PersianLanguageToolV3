@@ -118,7 +118,7 @@ function App() {
       case 'projects': return <ProjectsPage />;
       case 'workshops': return <WorkshopsPage />;
       case 'library': return <LibraryPage />;
-      case 'profile': return <LoginPage />;
+      case 'profile': return <ProfilePage />;
       case 'favorites': return <FavoritesPage />;
       case 'admin': return <AdminPage />;
       case 'media-library': return <MediaLibraryPage />;
