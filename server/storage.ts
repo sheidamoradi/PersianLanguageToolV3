@@ -19,7 +19,10 @@ import {
   slides, type Slide, type InsertSlide,
   quickAccessItems, type QuickAccessItem, type InsertQuickAccessItem,
   userCourseAccess, type UserCourseAccess, type InsertUserCourseAccess,
-  educationalVideos, type EducationalVideo, type InsertEducationalVideo
+  educationalVideos, type EducationalVideo, type InsertEducationalVideo,
+  aboutUs, type AboutUs, type InsertAboutUs,
+  subsidiaryCompanies, type SubsidiaryCompany, type InsertSubsidiaryCompany,
+  contactUs, type ContactUs, type InsertContactUs
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, asc, like, and, sql } from "drizzle-orm";
@@ -179,6 +182,30 @@ export interface IStorage {
   updateProjectProtection(id: number, protection: any): Promise<Project | undefined>;
   updateDocumentProtection(id: number, protection: any): Promise<Document | undefined>;
   updateMagazineProtection(id: number, protection: any): Promise<Magazine | undefined>;
+
+  // About Us methods
+  getAboutUs(): Promise<AboutUs[]>;
+  getActiveAboutUs(): Promise<AboutUs[]>;
+  getAboutUsById(id: number): Promise<AboutUs | undefined>;
+  createAboutUs(aboutUs: InsertAboutUs): Promise<AboutUs>;
+  updateAboutUs(id: number, aboutUs: Partial<InsertAboutUs>): Promise<AboutUs | undefined>;
+  deleteAboutUs(id: number): Promise<boolean>;
+
+  // Subsidiary Companies methods
+  getSubsidiaryCompanies(): Promise<SubsidiaryCompany[]>;
+  getActiveSubsidiaryCompanies(): Promise<SubsidiaryCompany[]>;
+  getSubsidiaryCompanyById(id: number): Promise<SubsidiaryCompany | undefined>;
+  createSubsidiaryCompany(company: InsertSubsidiaryCompany): Promise<SubsidiaryCompany>;
+  updateSubsidiaryCompany(id: number, company: Partial<InsertSubsidiaryCompany>): Promise<SubsidiaryCompany | undefined>;
+  deleteSubsidiaryCompany(id: number): Promise<boolean>;
+
+  // Contact Us methods
+  getContactUs(): Promise<ContactUs[]>;
+  getActiveContactUs(): Promise<ContactUs[]>;
+  getContactUsById(id: number): Promise<ContactUs | undefined>;
+  createContactUs(contactUs: InsertContactUs): Promise<ContactUs>;
+  updateContactUs(id: number, contactUs: Partial<InsertContactUs>): Promise<ContactUs | undefined>;
+  deleteContactUs(id: number): Promise<boolean>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -1012,6 +1039,114 @@ export class DatabaseStorage implements IStorage {
 
   async deleteEducationalVideo(id: number): Promise<boolean> {
     const result = await db.delete(educationalVideos).where(eq(educationalVideos.id, id));
+    return (result.rowCount ?? 0) > 0;
+  }
+
+  // About Us methods
+  async getAboutUs(): Promise<AboutUs[]> {
+    return await db.select().from(aboutUs).orderBy(asc(aboutUs.id));
+  }
+
+  async getActiveAboutUs(): Promise<AboutUs[]> {
+    return await db.select().from(aboutUs).where(eq(aboutUs.isActive, true)).orderBy(asc(aboutUs.id));
+  }
+
+  async getAboutUsById(id: number): Promise<AboutUs | undefined> {
+    const [aboutUsData] = await db.select().from(aboutUs).where(eq(aboutUs.id, id));
+    return aboutUsData;
+  }
+
+  async createAboutUs(aboutUsData: InsertAboutUs): Promise<AboutUs> {
+    const [newAboutUs] = await db
+      .insert(aboutUs)
+      .values(aboutUsData)
+      .returning();
+    return newAboutUs;
+  }
+
+  async updateAboutUs(id: number, aboutUsData: Partial<InsertAboutUs>): Promise<AboutUs | undefined> {
+    const [updatedAboutUs] = await db
+      .update(aboutUs)
+      .set(aboutUsData)
+      .where(eq(aboutUs.id, id))
+      .returning();
+    return updatedAboutUs;
+  }
+
+  async deleteAboutUs(id: number): Promise<boolean> {
+    const result = await db.delete(aboutUs).where(eq(aboutUs.id, id));
+    return (result.rowCount ?? 0) > 0;
+  }
+
+  // Subsidiary Companies methods
+  async getSubsidiaryCompanies(): Promise<SubsidiaryCompany[]> {
+    return await db.select().from(subsidiaryCompanies).orderBy(asc(subsidiaryCompanies.order));
+  }
+
+  async getActiveSubsidiaryCompanies(): Promise<SubsidiaryCompany[]> {
+    return await db.select().from(subsidiaryCompanies).where(eq(subsidiaryCompanies.isActive, true)).orderBy(asc(subsidiaryCompanies.order));
+  }
+
+  async getSubsidiaryCompanyById(id: number): Promise<SubsidiaryCompany | undefined> {
+    const [company] = await db.select().from(subsidiaryCompanies).where(eq(subsidiaryCompanies.id, id));
+    return company;
+  }
+
+  async createSubsidiaryCompany(companyData: InsertSubsidiaryCompany): Promise<SubsidiaryCompany> {
+    const [newCompany] = await db
+      .insert(subsidiaryCompanies)
+      .values(companyData)
+      .returning();
+    return newCompany;
+  }
+
+  async updateSubsidiaryCompany(id: number, companyData: Partial<InsertSubsidiaryCompany>): Promise<SubsidiaryCompany | undefined> {
+    const [updatedCompany] = await db
+      .update(subsidiaryCompanies)
+      .set(companyData)
+      .where(eq(subsidiaryCompanies.id, id))
+      .returning();
+    return updatedCompany;
+  }
+
+  async deleteSubsidiaryCompany(id: number): Promise<boolean> {
+    const result = await db.delete(subsidiaryCompanies).where(eq(subsidiaryCompanies.id, id));
+    return (result.rowCount ?? 0) > 0;
+  }
+
+  // Contact Us methods
+  async getContactUs(): Promise<ContactUs[]> {
+    return await db.select().from(contactUs).orderBy(asc(contactUs.id));
+  }
+
+  async getActiveContactUs(): Promise<ContactUs[]> {
+    return await db.select().from(contactUs).where(eq(contactUs.isActive, true)).orderBy(asc(contactUs.id));
+  }
+
+  async getContactUsById(id: number): Promise<ContactUs | undefined> {
+    const [contactUsData] = await db.select().from(contactUs).where(eq(contactUs.id, id));
+    return contactUsData;
+  }
+
+  async createContactUs(contactUsData: InsertContactUs): Promise<ContactUs> {
+    const [newContactUs] = await db
+      .insert(contactUs)
+      .values(contactUsData)
+      .returning();
+    return newContactUs;
+  }
+
+  async updateContactUs(id: number, contactUsData: Partial<InsertContactUs>): Promise<ContactUs | undefined> {
+    const [updatedContactUs] = await db
+      .update(contactUs)
+      .set(contactUsData)
+      .where(eq(contactUs.id, id))
+      .returning();
+    return updatedContactUs;
+  }
+
+  async deleteContactUs(id: number): Promise<boolean> {
+    const result = await db.delete(contactUs).where(eq(contactUs.id, id));
     return (result.rowCount ?? 0) > 0;
   }
 }

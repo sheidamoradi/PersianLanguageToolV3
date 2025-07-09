@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, boolean, timestamp, jsonb, varchar, index } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, timestamp, jsonb, varchar, index, json } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -412,6 +412,56 @@ export const educationalVideos = pgTable("educational_videos", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+// About Us Page
+export const aboutUs = pgTable("about_us", {
+  id: serial("id").primaryKey(),
+  title: text("title").notNull(),
+  mainContent: text("main_content").notNull(),
+  mission: text("mission"),
+  vision: text("vision"),
+  values: text("values"),
+  mainImageUrl: text("main_image_url"),
+  foundingYear: text("founding_year"),
+  companySize: text("company_size"),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Subsidiary Companies
+export const subsidiaryCompanies = pgTable("subsidiary_companies", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  description: text("description"),
+  logoUrl: text("logo_url"),
+  website: text("website"),
+  industry: text("industry"),
+  establishedYear: text("established_year"),
+  location: text("location"),
+  order: integer("order").default(0),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Contact Us Page
+export const contactUs = pgTable("contact_us", {
+  id: serial("id").primaryKey(),
+  title: text("title").notNull(),
+  description: text("description"),
+  address: text("address"),
+  phone: text("phone"),
+  email: text("email"),
+  workingHours: text("working_hours"),
+  mapUrl: text("map_url"), // Google Maps embed URL
+  mapLatitude: text("map_latitude"),
+  mapLongitude: text("map_longitude"),
+  socialLinks: jsonb("social_links"), // {instagram: "", telegram: "", linkedin: ""}
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 // Insert Schemas
 export const insertUserSchema = createInsertSchema(users).omit({ id: true });
 export const insertCourseSchema = createInsertSchema(courses).omit({ id: true });
@@ -495,6 +545,9 @@ export const insertSlideSchema = createInsertSchema(slides).omit({ id: true, cre
 export const insertQuickAccessItemSchema = createInsertSchema(quickAccessItems).omit({ id: true, createdAt: true, updatedAt: true });
 export const insertWorkshopRegistrationSchema = createInsertSchema(workshopRegistrations).omit({ id: true, registrationDate: true });
 export const insertEducationalVideoSchema = createInsertSchema(educationalVideos).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertAboutUsSchema = createInsertSchema(aboutUs).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertSubsidiaryCompanySchema = createInsertSchema(subsidiaryCompanies).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertContactUsSchema = createInsertSchema(contactUs).omit({ id: true, createdAt: true, updatedAt: true });
 
 // Slide Types
 export type InsertSlide = z.infer<typeof insertSlideSchema>;
@@ -511,6 +564,18 @@ export type WorkshopRegistration = typeof workshopRegistrations.$inferSelect;
 // Educational Video Types
 export type InsertEducationalVideo = z.infer<typeof insertEducationalVideoSchema>;
 export type EducationalVideo = typeof educationalVideos.$inferSelect;
+
+// About Us Types
+export type InsertAboutUs = z.infer<typeof insertAboutUsSchema>;
+export type AboutUs = typeof aboutUs.$inferSelect;
+
+// Subsidiary Company Types
+export type InsertSubsidiaryCompany = z.infer<typeof insertSubsidiaryCompanySchema>;
+export type SubsidiaryCompany = typeof subsidiaryCompanies.$inferSelect;
+
+// Contact Us Types
+export type InsertContactUs = z.infer<typeof insertContactUsSchema>;
+export type ContactUs = typeof contactUs.$inferSelect;
 
 
 // User Course Access Table

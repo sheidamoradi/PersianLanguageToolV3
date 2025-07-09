@@ -26,7 +26,10 @@ import {
   insertWebinarSectionSchema,
   insertSlideSchema,
   insertWorkshopRegistrationSchema,
-  insertEducationalVideoSchema
+  insertEducationalVideoSchema,
+  insertAboutUsSchema,
+  insertSubsidiaryCompanySchema,
+  insertContactUsSchema
 } from "@shared/schema";
 
 // Configure multer for file uploads
@@ -1202,6 +1205,246 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
 
     return res.json({ message: "Video deleted successfully" });
+  });
+
+  // About Us API
+  app.get("/api/about-us", async (req, res) => {
+    const aboutUs = await storage.getAboutUs();
+    res.json(aboutUs);
+  });
+
+  app.get("/api/about-us/active", async (req, res) => {
+    const aboutUs = await storage.getActiveAboutUs();
+    res.json(aboutUs);
+  });
+
+  app.get("/api/about-us/:id", async (req, res) => {
+    const id = parseInt(req.params.id);
+
+    if (isNaN(id)) {
+      return res.status(400).json({ message: "Invalid about us ID" });
+    }
+
+    const aboutUs = await storage.getAboutUsById(id);
+
+    if (!aboutUs) {
+      return res.status(404).json({ message: "About us not found" });
+    }
+
+    return res.json(aboutUs);
+  });
+
+  app.post("/api/about-us", async (req, res) => {
+    try {
+      const aboutUsData = insertAboutUsSchema.parse(req.body);
+      const aboutUs = await storage.createAboutUs(aboutUsData);
+      return res.status(201).json(aboutUs);
+    } catch (error) {
+      if (error instanceof ZodError) {
+        return res.status(400).json({ message: fromZodError(error).toString() });
+      }
+      return res.status(500).json({ message: "خطا در ایجاد صفحه درباره ما" });
+    }
+  });
+
+  app.put("/api/about-us/:id", async (req, res) => {
+    const id = parseInt(req.params.id);
+
+    if (isNaN(id)) {
+      return res.status(400).json({ message: "Invalid about us ID" });
+    }
+
+    try {
+      const aboutUsData = insertAboutUsSchema.partial().parse(req.body);
+      const updatedAboutUs = await storage.updateAboutUs(id, aboutUsData);
+
+      if (!updatedAboutUs) {
+        return res.status(404).json({ message: "About us not found" });
+      }
+
+      return res.json(updatedAboutUs);
+    } catch (error) {
+      if (error instanceof ZodError) {
+        return res.status(400).json({ message: fromZodError(error).toString() });
+      }
+      return res.status(500).json({ message: "خطا در به‌روزرسانی صفحه درباره ما" });
+    }
+  });
+
+  app.delete("/api/about-us/:id", async (req, res) => {
+    const id = parseInt(req.params.id);
+
+    if (isNaN(id)) {
+      return res.status(400).json({ message: "Invalid about us ID" });
+    }
+
+    const deleted = await storage.deleteAboutUs(id);
+
+    if (!deleted) {
+      return res.status(404).json({ message: "About us not found" });
+    }
+
+    return res.json({ message: "About us deleted successfully" });
+  });
+
+  // Subsidiary Companies API
+  app.get("/api/subsidiary-companies", async (req, res) => {
+    const companies = await storage.getSubsidiaryCompanies();
+    res.json(companies);
+  });
+
+  app.get("/api/subsidiary-companies/active", async (req, res) => {
+    const companies = await storage.getActiveSubsidiaryCompanies();
+    res.json(companies);
+  });
+
+  app.get("/api/subsidiary-companies/:id", async (req, res) => {
+    const id = parseInt(req.params.id);
+
+    if (isNaN(id)) {
+      return res.status(400).json({ message: "Invalid company ID" });
+    }
+
+    const company = await storage.getSubsidiaryCompanyById(id);
+
+    if (!company) {
+      return res.status(404).json({ message: "Company not found" });
+    }
+
+    return res.json(company);
+  });
+
+  app.post("/api/subsidiary-companies", async (req, res) => {
+    try {
+      const companyData = insertSubsidiaryCompanySchema.parse(req.body);
+      const company = await storage.createSubsidiaryCompany(companyData);
+      return res.status(201).json(company);
+    } catch (error) {
+      if (error instanceof ZodError) {
+        return res.status(400).json({ message: fromZodError(error).toString() });
+      }
+      return res.status(500).json({ message: "خطا در ایجاد شرکت زیرمجموعه" });
+    }
+  });
+
+  app.put("/api/subsidiary-companies/:id", async (req, res) => {
+    const id = parseInt(req.params.id);
+
+    if (isNaN(id)) {
+      return res.status(400).json({ message: "Invalid company ID" });
+    }
+
+    try {
+      const companyData = insertSubsidiaryCompanySchema.partial().parse(req.body);
+      const updatedCompany = await storage.updateSubsidiaryCompany(id, companyData);
+
+      if (!updatedCompany) {
+        return res.status(404).json({ message: "Company not found" });
+      }
+
+      return res.json(updatedCompany);
+    } catch (error) {
+      if (error instanceof ZodError) {
+        return res.status(400).json({ message: fromZodError(error).toString() });
+      }
+      return res.status(500).json({ message: "خطا در به‌روزرسانی شرکت زیرمجموعه" });
+    }
+  });
+
+  app.delete("/api/subsidiary-companies/:id", async (req, res) => {
+    const id = parseInt(req.params.id);
+
+    if (isNaN(id)) {
+      return res.status(400).json({ message: "Invalid company ID" });
+    }
+
+    const deleted = await storage.deleteSubsidiaryCompany(id);
+
+    if (!deleted) {
+      return res.status(404).json({ message: "Company not found" });
+    }
+
+    return res.json({ message: "Company deleted successfully" });
+  });
+
+  // Contact Us API
+  app.get("/api/contact-us", async (req, res) => {
+    const contactUs = await storage.getContactUs();
+    res.json(contactUs);
+  });
+
+  app.get("/api/contact-us/active", async (req, res) => {
+    const contactUs = await storage.getActiveContactUs();
+    res.json(contactUs);
+  });
+
+  app.get("/api/contact-us/:id", async (req, res) => {
+    const id = parseInt(req.params.id);
+
+    if (isNaN(id)) {
+      return res.status(400).json({ message: "Invalid contact us ID" });
+    }
+
+    const contactUs = await storage.getContactUsById(id);
+
+    if (!contactUs) {
+      return res.status(404).json({ message: "Contact us not found" });
+    }
+
+    return res.json(contactUs);
+  });
+
+  app.post("/api/contact-us", async (req, res) => {
+    try {
+      const contactUsData = insertContactUsSchema.parse(req.body);
+      const contactUs = await storage.createContactUs(contactUsData);
+      return res.status(201).json(contactUs);
+    } catch (error) {
+      if (error instanceof ZodError) {
+        return res.status(400).json({ message: fromZodError(error).toString() });
+      }
+      return res.status(500).json({ message: "خطا در ایجاد صفحه تماس با ما" });
+    }
+  });
+
+  app.put("/api/contact-us/:id", async (req, res) => {
+    const id = parseInt(req.params.id);
+
+    if (isNaN(id)) {
+      return res.status(400).json({ message: "Invalid contact us ID" });
+    }
+
+    try {
+      const contactUsData = insertContactUsSchema.partial().parse(req.body);
+      const updatedContactUs = await storage.updateContactUs(id, contactUsData);
+
+      if (!updatedContactUs) {
+        return res.status(404).json({ message: "Contact us not found" });
+      }
+
+      return res.json(updatedContactUs);
+    } catch (error) {
+      if (error instanceof ZodError) {
+        return res.status(400).json({ message: fromZodError(error).toString() });
+      }
+      return res.status(500).json({ message: "خطا در به‌روزرسانی صفحه تماس با ما" });
+    }
+  });
+
+  app.delete("/api/contact-us/:id", async (req, res) => {
+    const id = parseInt(req.params.id);
+
+    if (isNaN(id)) {
+      return res.status(400).json({ message: "Invalid contact us ID" });
+    }
+
+    const deleted = await storage.deleteContactUs(id);
+
+    if (!deleted) {
+      return res.status(404).json({ message: "Contact us not found" });
+    }
+
+    return res.json({ message: "Contact us deleted successfully" });
   });
 
   const server = createServer(app);
