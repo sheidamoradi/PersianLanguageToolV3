@@ -123,6 +123,11 @@ Changelog:
   * Prepared sample demo files (logo, slides, webinar posters)
   * Fixed cache invalidation issues with staleTime: 0 configuration
   * Added refetchQueries to all mutations for immediate UI updates
+- July 9, 2025. Updated bottom navigation menu:
+  * Simplified navigation to 4 main items: خانه، علاقه‌مندی‌ها، پروفایل، دسته‌بندی
+  * Added expandable categories menu with: کارگاه آموزشی، وبینار آموزشی، فصلنامه رویش سبز، آرشیو پیستاط
+  * Improved user experience with clear category navigation
+  * Added FavoritesPage import and routing
 ```
 
 ## User Preferences
