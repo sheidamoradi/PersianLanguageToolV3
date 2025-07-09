@@ -412,23 +412,27 @@ export default function HomePage() {
       <div>
         {/* Green container box exactly like the reference image */}
         <div className="relative rounded-2xl overflow-hidden p-4" style={{backgroundColor: 'hsl(140, 60%, 35%)'}}>
-          {/* Header section */}
-          <div className="flex items-center justify-between mb-4">
-            <div></div>
-            <div className="text-center text-white">
-              <div className="mb-2">
-                <img 
-                  src="/uploads/logo.png" 
-                  alt="Pistat Logo" 
-                  className="w-12 h-12 mx-auto filter brightness-0 invert"
-                />
-              </div>
-              <h2 className="text-xl font-bold">ویدیو</h2>
-              <h3 className="text-lg">آموزشی</h3>
-              <div className="text-xs mt-1 opacity-90">پیستاط</div>
-            </div>
+          {/* Header section matching reference layout */}
+          <div className="flex items-start justify-between mb-4">
+            {/* Left side - view all link */}
             <div className="text-white text-sm cursor-pointer">
               مشاهده همه ←
+            </div>
+            
+            {/* Right side - title and logo */}
+            <div className="text-right text-white">
+              <h2 className="text-xl font-bold mb-1">ویدیو</h2>
+              <h3 className="text-lg mb-3">آموزشی</h3>
+              <div className="flex justify-end">
+                <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center">
+                  <img 
+                    src="/uploads/logo.png" 
+                    alt="Pistat Logo" 
+                    className="w-12 h-12"
+                  />
+                </div>
+              </div>
+              <div className="text-xs mt-2 opacity-90">پیستاط</div>
             </div>
           </div>
           {/* Videos grid layout */}
