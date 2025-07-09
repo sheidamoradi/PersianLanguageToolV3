@@ -565,18 +565,17 @@ function MagazineSection() {
   const activeMagazines = magazines?.filter(magazine => magazine.isActive) || [];
 
   return (
-    <div className="py-8 bg-gray-50">
-      <div className="max-w-6xl mx-auto px-4">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-bold text-gray-800 flex items-center">
-            <svg className="ml-2 h-6 w-6" fill="none" stroke="hsl(118, 54%, 40%)" viewBox="0 0 24 24" strokeWidth="2">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
-            فصلنامه رویش سبز
-          </h2>
-        </div>
+    <div>
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-xl font-bold text-gray-800 flex items-center">
+          <svg className="ml-2 h-6 w-6" fill="none" stroke="hsl(118, 54%, 40%)" viewBox="0 0 24 24" strokeWidth="2">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+          فصلنامه رویش سبز
+        </h2>
+      </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {activeMagazines.map((magazine) => (
             <div key={magazine.id} className="bg-white rounded-xl shadow-sm border hover:shadow-lg transition-shadow overflow-hidden">
               <div className="aspect-[4/3] bg-gray-100 flex items-center justify-center">
@@ -665,11 +664,10 @@ function MagazineSection() {
           )}
         </div>
         
-        <div className="mt-8 text-center">
-          <button className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">
-            مشاهده همه مجله‌ها
-          </button>
-        </div>
+      <div className="mt-8 text-center">
+        <button className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+          مشاهده همه مجله‌ها
+        </button>
       </div>
     </div>
   );
