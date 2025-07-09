@@ -540,7 +540,9 @@ export default function HomePage() {
     </div>
     
     {/* Magazine Section */}
-    <MagazineSection />
+    <div className="mt-8">
+      <MagazineSection />
+    </div>
     </>
   );
 }
