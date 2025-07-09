@@ -13,6 +13,9 @@ import ProtectedContentDemo from './pages/protected-content';
 import WebinarDetail from './pages/webinar-detail';
 import MagazineDetailPage from './pages/magazine-detail';
 import MediaLibraryPage from './pages/media-library';
+import MagazinesPage from './pages/magazines';
+import WebinarsPage from './pages/webinars';
+import VideosPage from './pages/videos';
 import Header from './components/layout/Header';
 
 const queryClient = new QueryClient({
@@ -87,9 +90,9 @@ function App() {
       case 'media-library': return <MediaLibraryPage />;
       case 'webinar': return selectedWebinarId ? <WebinarDetail webinarId={selectedWebinarId} /> : <HomePage />;
       case 'magazine': return selectedMagazineId ? <MagazineDetailPage magazineId={selectedMagazineId} /> : <HomePage />;
-      case 'magazines': return <LibraryPage />;
-      case 'webinars': return <LibraryPage />;
-      case 'videos': return <LibraryPage />;
+      case 'magazines': return <MagazinesPage />;
+      case 'webinars': return <WebinarsPage />;
+      case 'videos': return <VideosPage />;
       case 'protected': return <ProtectedContentDemo />;
       default: return <HomePage />;
     }

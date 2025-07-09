@@ -141,16 +141,16 @@ export default function HomePage() {
           <div key={item.id} className="text-center">
             <button 
               onClick={() => {
-                // Navigate based on item title or use linkUrl as fallback
-                if (item.title.includes('فصلنامه') || item.title.includes('مجله')) {
+                // Navigate based on exact item title matching section titles
+                if (item.title === 'فصلنامه رویش سبز' || item.title.includes('فصلنامه') || item.title.includes('مجله')) {
                   window.postMessage({ type: 'SWITCH_TAB', tab: 'magazines' }, '*');
-                } else if (item.title.includes('ویدیو') || item.title.includes('آموزشی')) {
+                } else if (item.title === 'ویدیو آموزشی' || item.title === 'ویدیوهای آموزشی' || item.title.includes('ویدیو')) {
                   window.postMessage({ type: 'SWITCH_TAB', tab: 'videos' }, '*');
-                } else if (item.title.includes('کتابخانه') || item.title.includes('آرشیو')) {
+                } else if (item.title === 'آرشیو پیستاط' || item.title === 'کتابخانه' || item.title.includes('آرشیو') || item.title.includes('کتابخانه')) {
                   window.postMessage({ type: 'SWITCH_TAB', tab: 'library' }, '*');
-                } else if (item.title.includes('کارگاه')) {
+                } else if (item.title === 'کارگاه‌های آموزشی' || item.title.includes('کارگاه')) {
                   window.postMessage({ type: 'SWITCH_TAB', tab: 'workshops' }, '*');
-                } else if (item.title.includes('وبینار')) {
+                } else if (item.title === 'وبینارهای آموزشی' || item.title.includes('وبینار')) {
                   window.postMessage({ type: 'SWITCH_TAB', tab: 'webinars' }, '*');
                 } else if (item.linkUrl) {
                   window.open(item.linkUrl, '_blank');
