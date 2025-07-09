@@ -931,7 +931,7 @@ function MagazinesTab() {
   });
 
   const createMutation = useMutation({
-    mutationFn: (data: any) => apiRequest('/api/magazines', 'POST', data),
+    mutationFn: (data: any) => apiRequest('/api/magazines', { method: 'POST', body: JSON.stringify(data) }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/magazines'] });
       setShowCreateForm(false);
@@ -944,24 +944,41 @@ function MagazinesTab() {
         isActive: true
       });
     },
+    onError: (error) => {
+      console.error('Error creating magazine:', error);
+      alert('خطا در ایجاد مجله: ' + error.message);
+    },
   });
 
   const updateMutation = useMutation({
-    mutationFn: (data: any) => apiRequest(`/api/magazines/${editingMagazine.id}`, 'PUT', data),
+    mutationFn: (data: any) => apiRequest(`/api/magazines/${editingMagazine.id}`, { method: 'PUT', body: JSON.stringify(data) }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/magazines'] });
       setEditingMagazine(null);
     },
+    onError: (error) => {
+      console.error('Error updating magazine:', error);
+      alert('خطا در بروزرسانی مجله: ' + error.message);
+    },
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id: number) => apiRequest(`/api/magazines/${id}`, 'DELETE'),
+    mutationFn: (id: number) => apiRequest(`/api/magazines/${id}`, { method: 'DELETE' }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/magazines'] });
+    },
+    onError: (error) => {
+      console.error('Error deleting magazine:', error);
+      alert('خطا در حذف مجله: ' + error.message);
     },
   });
 
   const handleCreateSubmit = () => {
+    if (!createData.title.trim()) {
+      alert('لطفاً عنوان مجله را وارد کنید');
+      return;
+    }
+    console.log('Creating magazine with data:', createData);
     createMutation.mutate(createData);
   };
 
