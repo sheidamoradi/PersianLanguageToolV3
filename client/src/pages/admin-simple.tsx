@@ -15,7 +15,7 @@ export default function AdminPage() {
         <div className="w-64 bg-white shadow-sm border-l min-h-screen">
           <div className="p-6 border-b">
             <h1 className="text-xl font-bold text-gray-900">پنل مدیریت</h1>
-            <p className="text-sm text-gray-600 mt-1">مدیریت محتوا و تنظیمات - به‌روزرسانی شده</p>
+            <p className="text-sm text-gray-600 mt-1">مدیریت محتوا و تنظیمات</p>
           </div>
           
           <nav className="p-4">
@@ -29,8 +29,8 @@ export default function AdminPage() {
                 { id: "quickaccess", label: "دسترسی سریع", icon: Zap },
                 { id: "magazines", label: "مجله‌ها", icon: Calendar },
                 { id: "media", label: "کتابخانه رسانه", icon: Upload },
-                { id: "aboutus", label: "درباره ما", icon: Building },
-                { id: "contactus", label: "تماس با ما", icon: Phone },
+                { id: "aboutus", label: "درباره ما 📋", icon: Building },
+                { id: "contactus", label: "تماس با ما 📞", icon: Phone },
                 { id: "users", label: "کاربران", icon: Lock }
               ].map(tab => {
                 const IconComponent = tab.icon;
