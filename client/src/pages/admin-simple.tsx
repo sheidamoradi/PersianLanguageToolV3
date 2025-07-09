@@ -6,7 +6,7 @@ import { Calendar, Edit, Eye, File, Folder, Image, Lock, LockOpen, MoreHorizonta
 import WorkshopsTab from "../components/admin/WorkshopsTab";
 
 export default function AdminPage() {
-  const [activeTab, setActiveTab] = useState("courses");
+  const [activeTab, setActiveTab] = useState("aboutus");
 
   return (
     <div dir="rtl" className="min-h-screen bg-gray-50">
@@ -29,8 +29,8 @@ export default function AdminPage() {
                 { id: "quickaccess", label: "دسترسی سریع", icon: Zap },
                 { id: "magazines", label: "مجله‌ها", icon: Calendar },
                 { id: "media", label: "کتابخانه رسانه", icon: Upload },
-                { id: "aboutus", label: "درباره ما 📋", icon: Building },
-                { id: "contactus", label: "تماس با ما 📞", icon: Phone },
+                { id: "aboutus", label: "درباره ما", icon: Building },
+                { id: "contactus", label: "تماس با ما", icon: Phone },
                 { id: "users", label: "کاربران", icon: Lock }
               ].map(tab => {
                 const IconComponent = tab.icon;
