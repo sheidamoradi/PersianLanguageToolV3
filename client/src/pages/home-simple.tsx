@@ -543,6 +543,11 @@ export default function HomePage() {
     <div className="mt-8">
       <MagazineSection />
     </div>
+    
+    {/* Archive Section */}
+    <div className="mt-8">
+      <ArchiveSection />
+    </div>
     </>
   );
 }
@@ -670,6 +675,135 @@ function MagazineSection() {
       <div className="mt-8 text-center">
         <button className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">
           مشاهده همه مجله‌ها
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function ArchiveSection() {
+  const { data: documents, isLoading } = useQuery<any[]>({
+    queryKey: ['/api/documents'],
+  });
+
+  const handleDocumentClick = (documentId: number) => {
+    window.postMessage({ 
+      type: 'OPEN_DOCUMENT', 
+      documentId: documentId 
+    }, '*');
+  };
+
+  if (isLoading) {
+    return (
+      <div className="py-8">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="flex items-center justify-center h-32">
+            <div className="text-gray-500">در حال بارگذاری...</div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const publishedDocuments = documents?.filter(doc => doc.status === 'published') || [];
+
+  return (
+    <div>
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-xl font-bold text-gray-800 flex items-center">
+          <svg className="ml-2 h-6 w-6" fill="none" stroke="hsl(118, 54%, 40%)" viewBox="0 0 24 24" strokeWidth="2">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2v0a2 2 0 002-2h14a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+          </svg>
+          آرشیو پیستاط
+        </h2>
+      </div>
+
+      <div className="grid grid-cols-3 gap-4 mb-4">
+          {publishedDocuments.map((document) => (
+            <div 
+              key={document.id} 
+              className="bg-white rounded-xl p-4 shadow-sm border cursor-pointer hover:shadow-lg transition-shadow"
+              onClick={() => handleDocumentClick(document.id)}
+            >
+              <div className="w-full h-32 rounded-lg mb-3 flex items-center justify-center overflow-hidden bg-gray-100">
+                {document.featuredImage ? (
+                  <img 
+                    src={document.featuredImage} 
+                    alt={document.title}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <svg className="w-10 h-10 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2v0a2 2 0 002-2h14a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+                  </svg>
+                )}
+              </div>
+              <h3 className="font-medium text-gray-800 text-sm mb-1" title={document.title}>
+                {document.title.length > 25 ? `${document.title.substring(0, 25)}...` : document.title}
+              </h3>
+              <p className="text-xs text-gray-500" title={document.excerpt}>
+                {document.excerpt ? 
+                  (document.excerpt.length > 30 ? `${document.excerpt.substring(0, 30)}...` : document.excerpt) 
+                  : 'خلاصه مقاله'}
+              </p>
+              <div className="flex items-center justify-between mt-2">
+                <span className="text-xs text-blue-600">{document.category}</span>
+                <span className="text-xs text-gray-500">{new Date(document.publishDate).toLocaleDateString('fa-IR')}</span>
+              </div>
+            </div>
+          ))}
+          
+          {/* Fallback when no documents exist */}
+          {(!documents || documents.length === 0) && (
+            <>
+              <div className="bg-white rounded-xl p-4 shadow-sm border">
+                <div className="w-full h-32 rounded-lg mb-3 flex items-center justify-center bg-gray-100">
+                  <svg className="w-10 h-10 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2v0a2 2 0 002-2h14a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+                  </svg>
+                </div>
+                <h3 className="font-medium text-gray-800 text-sm mb-1">کشاورزی ارگانیک</h3>
+                <p className="text-xs text-gray-500">روش‌های کشاورزی ارگانیک و مزایای آن</p>
+                <div className="flex items-center justify-between mt-2">
+                  <span className="text-xs text-blue-600">کشاورزی</span>
+                  <span className="text-xs text-gray-500">۱۴۰۳/۰۴/۲۰</span>
+                </div>
+              </div>
+              
+              <div className="bg-white rounded-xl p-4 shadow-sm border">
+                <div className="w-full h-32 rounded-lg mb-3 flex items-center justify-center bg-gray-100">
+                  <svg className="w-10 h-10 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2v0a2 2 0 002-2h14a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+                  </svg>
+                </div>
+                <h3 className="font-medium text-gray-800 text-sm mb-1">مدیریت آب</h3>
+                <p className="text-xs text-gray-500">تکنیک‌های نوین آبیاری و صرفه‌جویی</p>
+                <div className="flex items-center justify-between mt-2">
+                  <span className="text-xs text-blue-600">آبیاری</span>
+                  <span className="text-xs text-gray-500">۱۴۰۳/۰۴/۱۵</span>
+                </div>
+              </div>
+              
+              <div className="bg-white rounded-xl p-4 shadow-sm border">
+                <div className="w-full h-32 rounded-lg mb-3 flex items-center justify-center bg-gray-100">
+                  <svg className="w-10 h-10 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2v0a2 2 0 002-2h14a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+                  </svg>
+                </div>
+                <h3 className="font-medium text-gray-800 text-sm mb-1">تولید گلخانه‌ای</h3>
+                <p className="text-xs text-gray-500">نوآوری‌های تولید در گلخانه</p>
+                <div className="flex items-center justify-between mt-2">
+                  <span className="text-xs text-blue-600">گلخانه</span>
+                  <span className="text-xs text-gray-500">۱۴۰۳/۰۴/۱۰</span>
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+        
+      <div className="mt-8 text-center">
+        <button className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+          مشاهده همه مطالب
         </button>
       </div>
     </div>
