@@ -478,16 +478,6 @@ export default function HomePage() {
                     {video.duration && (
                       <span className="text-orange-600">⏱️ {video.duration}</span>
                     )}
-                    {video.level && (
-                      <span className={`px-2 py-1 rounded-full ${
-                        video.level === 'beginner' ? 'bg-green-100 text-green-700' :
-                        video.level === 'intermediate' ? 'bg-yellow-100 text-yellow-700' :
-                        'bg-red-100 text-red-700'
-                      }`}>
-                        {video.level === 'beginner' ? 'مبتدی' : 
-                         video.level === 'intermediate' ? 'متوسط' : 'پیشرفته'}
-                      </span>
-                    )}
                   </div>
                 </div>
               </div>
@@ -507,7 +497,6 @@ export default function HomePage() {
                     <p className="text-xs text-gray-500 mb-2">تکنیک‌های نوین کشت</p>
                     <div className="flex items-center justify-between text-xs">
                       <span className="text-orange-600">⏱️ ۱۵ دقیقه</span>
-                      <span className="px-2 py-1 rounded-full bg-green-100 text-green-700">مبتدی</span>
                     </div>
                   </div>
                 </div>
@@ -523,7 +512,6 @@ export default function HomePage() {
                     <p className="text-xs text-gray-500 mb-2">صرفه‌جویی در مصرف آب</p>
                     <div className="flex items-center justify-between text-xs">
                       <span className="text-orange-600">⏱️ ۲۰ دقیقه</span>
-                      <span className="px-2 py-1 rounded-full bg-yellow-100 text-yellow-700">متوسط</span>
                     </div>
                   </div>
                 </div>
@@ -539,7 +527,6 @@ export default function HomePage() {
                     <p className="text-xs text-gray-500 mb-2">تشخیص و درمان مشکلات خاک</p>
                     <div className="flex items-center justify-between text-xs">
                       <span className="text-orange-600">⏱️ ۳۰ دقیقه</span>
-                      <span className="px-2 py-1 rounded-full bg-red-100 text-red-700">پیشرفته</span>
                     </div>
                   </div>
                 </div>

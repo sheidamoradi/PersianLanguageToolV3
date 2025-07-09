@@ -1198,18 +1198,7 @@ function EducationalVideosTab() {
               />
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                توضیحات
-              </label>
-              <textarea
-                value={createData.description}
-                onChange={(e) => setCreateData({...createData, description: e.target.value})}
-                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                rows={3}
-                placeholder="توضیحات کامل ویدیو..."
-              />
-            </div>
+
 
             <div className="grid grid-cols-2 gap-4">
               <div>
@@ -1239,63 +1228,9 @@ function EducationalVideosTab() {
               </div>
             </div>
 
-            <div className="grid grid-cols-3 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  مدت زمان
-                </label>
-                <input
-                  type="text"
-                  value={createData.duration}
-                  onChange={(e) => setCreateData({...createData, duration: e.target.value})}
-                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="۱۵ دقیقه"
-                />
-              </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  مدرس
-                </label>
-                <input
-                  type="text"
-                  value={createData.instructor}
-                  onChange={(e) => setCreateData({...createData, instructor: e.target.value})}
-                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="نام مدرس..."
-                />
-              </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  دسته‌بندی
-                </label>
-                <input
-                  type="text"
-                  value={createData.category}
-                  onChange={(e) => setCreateData({...createData, category: e.target.value})}
-                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="کشاورزی، باغبانی، ..."
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-3 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  سطح
-                </label>
-                <select
-                  value={createData.level}
-                  onChange={(e) => setCreateData({...createData, level: e.target.value as 'beginner' | 'intermediate' | 'advanced'})}
-                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="beginner">مبتدی</option>
-                  <option value="intermediate">متوسط</option>
-                  <option value="advanced">پیشرفته</option>
-                </select>
-              </div>
-
+            <div className="grid grid-cols-1 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   ترتیب
@@ -1307,20 +1242,6 @@ function EducationalVideosTab() {
                   className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   min="0"
                 />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  وضعیت
-                </label>
-                <select
-                  value={createData.isActive ? 'true' : 'false'}
-                  onChange={(e) => setCreateData({...createData, isActive: e.target.value === 'true'})}
-                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="true">فعال</option>
-                  <option value="false">غیرفعال</option>
-                </select>
               </div>
             </div>
 
@@ -1372,15 +1293,8 @@ function EducationalVideosTab() {
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
                     <h5 className="font-semibold text-gray-900">{video.title}</h5>
-                    <p className="text-sm text-gray-600 mt-1">{video.description}</p>
                     <div className="flex items-center gap-4 mt-2 text-sm text-gray-500">
-                      <span>مدرس: {video.instructor}</span>
-                      <span>مدت: {video.duration}</span>
-                      <span>سطح: {video.level === 'beginner' ? 'مبتدی' : video.level === 'intermediate' ? 'متوسط' : 'پیشرفته'}</span>
-                      <span>دسته: {video.category}</span>
-                      <span className={`px-2 py-1 rounded text-xs ${video.isActive ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-                        {video.isActive ? 'فعال' : 'غیرفعال'}
-                      </span>
+                      <span>ترتیب: {video.order}</span>
                     </div>
                   </div>
                   <div className="flex gap-2">
@@ -1432,17 +1346,7 @@ function EducationalVideosTab() {
                   />
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    توضیحات
-                  </label>
-                  <textarea
-                    value={editingVideo.description}
-                    onChange={(e) => setEditingVideo({...editingVideo, description: e.target.value})}
-                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    rows={3}
-                  />
-                </div>
+
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
@@ -1470,60 +1374,9 @@ function EducationalVideosTab() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-3 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      مدت زمان
-                    </label>
-                    <input
-                      type="text"
-                      value={editingVideo.duration}
-                      onChange={(e) => setEditingVideo({...editingVideo, duration: e.target.value})}
-                      className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      مدرس
-                    </label>
-                    <input
-                      type="text"
-                      value={editingVideo.instructor}
-                      onChange={(e) => setEditingVideo({...editingVideo, instructor: e.target.value})}
-                      className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      دسته‌بندی
-                    </label>
-                    <input
-                      type="text"
-                      value={editingVideo.category}
-                      onChange={(e) => setEditingVideo({...editingVideo, category: e.target.value})}
-                      className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-3 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      سطح
-                    </label>
-                    <select
-                      value={editingVideo.level}
-                      onChange={(e) => setEditingVideo({...editingVideo, level: e.target.value})}
-                      className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    >
-                      <option value="beginner">مبتدی</option>
-                      <option value="intermediate">متوسط</option>
-                      <option value="advanced">پیشرفته</option>
-                    </select>
-                  </div>
-
+                <div className="grid grid-cols-1 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       ترتیب
@@ -1535,20 +1388,6 @@ function EducationalVideosTab() {
                       className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                       min="0"
                     />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      وضعیت
-                    </label>
-                    <select
-                      value={editingVideo.isActive ? 'true' : 'false'}
-                      onChange={(e) => setEditingVideo({...editingVideo, isActive: e.target.value === 'true'})}
-                      className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    >
-                      <option value="true">فعال</option>
-                      <option value="false">غیرفعال</option>
-                    </select>
                   </div>
                 </div>
 
