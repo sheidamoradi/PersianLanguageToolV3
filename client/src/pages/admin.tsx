@@ -807,13 +807,57 @@ function DocumentsTab() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">محتوا</label>
-                <textarea
-                  value={createData.content}
-                  onChange={(e) => setCreateData({...createData, content: e.target.value})}
-                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  rows={12}
-                  placeholder="محتوای پست..."
-                />
+                <div className="border rounded-lg">
+                  <div className="border-b p-2 bg-gray-50 flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const imageUrl = prompt('آدرس تصویر را وارد کنید:\n\n(راهنمایی: از کتابخانه رسانه در پنل ادمین می‌توانید تصاویر آپلود کنید و آدرس آنها را کپی کنید)');
+                        if (imageUrl) {
+                          const imageTag = `\n\n<img src="${imageUrl}" alt="تصویر" style="max-width: 100%; height: auto; margin: 10px 0;" />\n\n`;
+                          setCreateData({...createData, content: createData.content + imageTag});
+                        }
+                      }}
+                      className="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 flex items-center gap-1"
+                    >
+                      <Image className="h-4 w-4" />
+                      افزودن تصویر
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const mediaUrl = '/uploads/';
+                        alert('برای انتخاب تصویر، ابتدا از بخش "کتابخانه رسانه" تصویر مورد نظر را آپلود کنید، سپس آدرس آن را کپی کنید و در اینجا استفاده کنید.');
+                      }}
+                      className="px-3 py-1 text-sm bg-purple-600 text-white rounded hover:bg-purple-700 flex items-center gap-1"
+                    >
+                      <Image className="h-4 w-4" />
+                      کتابخانه رسانه
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const linkText = prompt('متن لینک را وارد کنید:');
+                        const linkUrl = prompt('آدرس لینک را وارد کنید:');
+                        if (linkText && linkUrl) {
+                          const linkTag = `[${linkText}](${linkUrl})`;
+                          setCreateData({...createData, content: createData.content + linkTag});
+                        }
+                      }}
+                      className="px-3 py-1 text-sm bg-green-600 text-white rounded hover:bg-green-700 flex items-center gap-1"
+                    >
+                      <Plus className="h-4 w-4" />
+                      افزودن لینک
+                    </button>
+                  </div>
+                  <textarea
+                    value={createData.content}
+                    onChange={(e) => setCreateData({...createData, content: e.target.value})}
+                    className="w-full px-3 py-2 border-0 rounded-b-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    rows={12}
+                    placeholder="محتوای پست... (برای افزودن تصویر از دکمه بالا استفاده کنید)"
+                  />
+                </div>
               </div>
 
               <div>
@@ -845,15 +889,32 @@ function DocumentsTab() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">دسته‌بندی</label>
-                <select
-                  value={createData.category}
-                  onChange={(e) => setCreateData({...createData, category: e.target.value})}
-                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  {categories.map(category => (
-                    <option key={category.value} value={category.value}>{category.label}</option>
-                  ))}
-                </select>
+                <div className="flex gap-2">
+                  <select
+                    value={createData.category}
+                    onChange={(e) => setCreateData({...createData, category: e.target.value})}
+                    className="flex-1 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    {categories.map(category => (
+                      <option key={category.value} value={category.value}>{category.label}</option>
+                    ))}
+                  </select>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const newCategoryName = prompt('نام دسته‌بندی جدید را وارد کنید:');
+                      if (newCategoryName) {
+                        const newCategoryValue = newCategoryName.toLowerCase().replace(/\s+/g, '-');
+                        const newCategory = { value: newCategoryValue, label: newCategoryName };
+                        categories.push(newCategory);
+                        setCreateData({...createData, category: newCategoryValue});
+                      }
+                    }}
+                    className="px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center justify-center"
+                  >
+                    <Plus className="h-4 w-4" />
+                  </button>
+                </div>
               </div>
 
               <div>
@@ -1029,12 +1090,56 @@ function DocumentsTab() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">محتوا</label>
-                  <textarea
-                    value={editingPost.content}
-                    onChange={(e) => setEditingPost({...editingPost, content: e.target.value})}
-                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    rows={12}
-                  />
+                  <div className="border rounded-lg">
+                    <div className="border-b p-2 bg-gray-50 flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const imageUrl = prompt('آدرس تصویر را وارد کنید:\n\n(راهنمایی: از کتابخانه رسانه در پنل ادمین می‌توانید تصاویر آپلود کنید و آدرس آنها را کپی کنید)');
+                          if (imageUrl) {
+                            const imageTag = `\n\n<img src="${imageUrl}" alt="تصویر" style="max-width: 100%; height: auto; margin: 10px 0;" />\n\n`;
+                            setEditingPost({...editingPost, content: editingPost.content + imageTag});
+                          }
+                        }}
+                        className="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 flex items-center gap-1"
+                      >
+                        <Image className="h-4 w-4" />
+                        افزودن تصویر
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          alert('برای انتخاب تصویر، ابتدا از بخش "کتابخانه رسانه" تصویر مورد نظر را آپلود کنید، سپس آدرس آن را کپی کنید و در اینجا استفاده کنید.');
+                        }}
+                        className="px-3 py-1 text-sm bg-purple-600 text-white rounded hover:bg-purple-700 flex items-center gap-1"
+                      >
+                        <Image className="h-4 w-4" />
+                        کتابخانه رسانه
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const linkText = prompt('متن لینک را وارد کنید:');
+                          const linkUrl = prompt('آدرس لینک را وارد کنید:');
+                          if (linkText && linkUrl) {
+                            const linkTag = `[${linkText}](${linkUrl})`;
+                            setEditingPost({...editingPost, content: editingPost.content + linkTag});
+                          }
+                        }}
+                        className="px-3 py-1 text-sm bg-green-600 text-white rounded hover:bg-green-700 flex items-center gap-1"
+                      >
+                        <Plus className="h-4 w-4" />
+                        افزودن لینک
+                      </button>
+                    </div>
+                    <textarea
+                      value={editingPost.content}
+                      onChange={(e) => setEditingPost({...editingPost, content: e.target.value})}
+                      className="w-full px-3 py-2 border-0 rounded-b-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      rows={12}
+                      placeholder="محتوای پست... (برای افزودن تصویر از دکمه بالا استفاده کنید)"
+                    />
+                  </div>
                 </div>
 
                 <div>
@@ -1065,15 +1170,32 @@ function DocumentsTab() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">دسته‌بندی</label>
-                  <select
-                    value={editingPost.category}
-                    onChange={(e) => setEditingPost({...editingPost, category: e.target.value})}
-                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  >
-                    {categories.map(category => (
-                      <option key={category.value} value={category.value}>{category.label}</option>
-                    ))}
-                  </select>
+                  <div className="flex gap-2">
+                    <select
+                      value={editingPost.category}
+                      onChange={(e) => setEditingPost({...editingPost, category: e.target.value})}
+                      className="flex-1 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                      {categories.map(category => (
+                        <option key={category.value} value={category.value}>{category.label}</option>
+                      ))}
+                    </select>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const newCategoryName = prompt('نام دسته‌بندی جدید را وارد کنید:');
+                        if (newCategoryName) {
+                          const newCategoryValue = newCategoryName.toLowerCase().replace(/\s+/g, '-');
+                          const newCategory = { value: newCategoryValue, label: newCategoryName };
+                          categories.push(newCategory);
+                          setEditingPost({...editingPost, category: newCategoryValue});
+                        }
+                      }}
+                      className="px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center justify-center"
+                    >
+                      <Plus className="h-4 w-4" />
+                    </button>
+                  </div>
                 </div>
 
                 <div>
