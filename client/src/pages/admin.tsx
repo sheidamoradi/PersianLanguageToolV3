@@ -920,7 +920,7 @@ function MagazinesTab() {
   const [createData, setCreateData] = useState({
     title: '',
     description: '',
-    issueNumber: '',
+    issueNumber: 1,
     publishDate: '',
     coverImageUrl: '',
     isActive: true
@@ -938,7 +938,7 @@ function MagazinesTab() {
       setCreateData({
         title: '',
         description: '',
-        issueNumber: '',
+        issueNumber: 1,
         publishDate: '',
         coverImageUrl: '',
         isActive: true
@@ -1027,11 +1027,12 @@ function MagazinesTab() {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">شماره</label>
               <input
-                type="text"
+                type="number"
                 value={createData.issueNumber}
-                onChange={(e) => setCreateData({...createData, issueNumber: e.target.value})}
+                onChange={(e) => setCreateData({...createData, issueNumber: parseInt(e.target.value) || 1})}
                 className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="شماره مجله"
+                min="1"
               />
             </div>
 
@@ -1182,10 +1183,11 @@ function MagazinesTab() {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">شماره</label>
                 <input
-                  type="text"
+                  type="number"
                   value={editingMagazine.issueNumber}
-                  onChange={(e) => setEditingMagazine({...editingMagazine, issueNumber: e.target.value})}
+                  onChange={(e) => setEditingMagazine({...editingMagazine, issueNumber: parseInt(e.target.value) || 1})}
                   className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  min="1"
                 />
               </div>
 
