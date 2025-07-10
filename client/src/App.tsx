@@ -68,6 +68,12 @@ function App() {
       } else if (event.data.type === 'OPEN_MAGAZINE') {
         setSelectedMagazineId(event.data.magazineId);
         setActiveTab('magazine');
+      } else if (event.data.type === 'NAVIGATE_TO_ADMIN') {
+        setActiveTab('admin');
+        // Send message to admin page to switch to specific tab
+        setTimeout(() => {
+          window.postMessage({ type: 'ADMIN_TAB_SWITCH', tab: event.data.tab }, '*');
+        }, 100);
       }
     };
 

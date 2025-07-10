@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { type Course, type Document, type MediaContent, type Magazine, type Article, type ArticleContent, type Slide, type Workshop, type WorkshopSection, type WorkshopRegistration } from "@shared/schema";
@@ -8,6 +8,18 @@ import WebinarSectionsTab from "@/components/admin/WebinarSectionsTab";
 
 export default function AdminPage() {
   const [activeTab, setActiveTab] = useState("workshop-registrations");
+
+  // Listen for admin tab switch messages
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      if (event.data.type === 'ADMIN_TAB_SWITCH') {
+        setActiveTab(event.data.tab);
+      }
+    };
+
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, []);
 
   const tabs = [
     { id: "courses", label: "دوره‌ها", icon: Video },

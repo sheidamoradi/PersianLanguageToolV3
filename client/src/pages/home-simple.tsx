@@ -154,6 +154,10 @@ export default function HomePage() {
                   window.postMessage({ type: 'SWITCH_TAB', tab: 'workshops' }, '*');
                 } else if (item.title === 'وبینارهای آموزشی' || item.title.includes('وبینار')) {
                   window.postMessage({ type: 'SWITCH_TAB', tab: 'webinars' }, '*');
+                } else if (item.title === 'درباره ما' || item.title.includes('درباره')) {
+                  window.postMessage({ type: 'NAVIGATE_TO_ADMIN', tab: 'about-us' }, '*');
+                } else if (item.title === 'تماس با ما' || item.title.includes('تماس')) {
+                  window.postMessage({ type: 'NAVIGATE_TO_ADMIN', tab: 'contact-us' }, '*');
                 } else if (item.linkUrl) {
                   window.open(item.linkUrl, '_blank');
                 }
