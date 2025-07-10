@@ -1,12 +1,26 @@
 import { Link, useLocation } from "wouter";
-import { User, Menu, X, Bell, Search } from "lucide-react";
+import { User, Menu, X, Bell, Search, LogOut } from "lucide-react";
 import { useState } from "react";
+import { useAuth } from "@/hooks/useAuth";
 import logoImage from "@assets/logo.png";
 
 export default function Header() {
   const [location] = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [logoClickCount, setLogoClickCount] = useState(0);
+  const { user, isAuthenticated, isLoading } = useAuth();
+
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/logout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      window.location.reload();
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+  };
   
   return (
     <header className="bg-white shadow-sm sticky top-0 z-20" dir="rtl">
@@ -85,24 +99,61 @@ export default function Header() {
               <div className="mt-6">
                 {/* User Profile Section */}
                 <div className="bg-gray-100 rounded-lg p-4 mb-6">
-                  <div className="flex items-center mb-3">
-                    <div className="h-12 w-12 rounded-full bg-blue-600 flex items-center justify-center text-white font-medium ml-3">
-                      کا
+                  {isLoading ? (
+                    <div className="animate-pulse">
+                      <div className="flex items-center mb-3">
+                        <div className="h-12 w-12 rounded-full bg-gray-300 ml-3"></div>
+                        <div>
+                          <div className="h-4 w-20 bg-gray-300 rounded mb-2"></div>
+                          <div className="h-3 w-16 bg-gray-300 rounded"></div>
+                        </div>
+                      </div>
                     </div>
+                  ) : isAuthenticated && user ? (
                     <div>
-                      <p className="font-medium text-gray-700">کاربر مهمان</p>
-                      <p className="text-sm text-gray-500">عضویت ساده</p>
+                      <div className="flex items-center mb-3">
+                        <div className="h-12 w-12 rounded-full bg-green-600 flex items-center justify-center text-white font-medium ml-3">
+                          {user.name ? user.name.charAt(0) : user.username?.charAt(0) || 'ک'}
+                        </div>
+                        <div>
+                          <p className="font-medium text-gray-700">{user.name || user.username}</p>
+                          <p className="text-sm text-gray-500">
+                            {user.role === 'admin' ? 'مدیر سیستم' : 'کاربر عادی'}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <div>
+                          <p className="text-xs text-gray-500">پیشرفت</p>
+                          <p className="font-medium text-gray-700">75%</p>
+                        </div>
+                        <div className="h-2 w-24 bg-gray-300 rounded-full overflow-hidden">
+                          <div className="h-full bg-green-600 rounded-full" style={{ width: '75%' }}></div>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                  <div className="flex justify-between items-center">
+                  ) : (
                     <div>
-                      <p className="text-xs text-gray-500">پیشرفت</p>
-                      <p className="font-medium text-gray-700">0%</p>
+                      <div className="flex items-center mb-3">
+                        <div className="h-12 w-12 rounded-full bg-gray-400 flex items-center justify-center text-white font-medium ml-3">
+                          کا
+                        </div>
+                        <div>
+                          <p className="font-medium text-gray-700">کاربر مهمان</p>
+                          <p className="text-sm text-gray-500">عضویت ساده</p>
+                        </div>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <div>
+                          <p className="text-xs text-gray-500">پیشرفت</p>
+                          <p className="font-medium text-gray-700">0%</p>
+                        </div>
+                        <div className="h-2 w-24 bg-gray-300 rounded-full overflow-hidden">
+                          <div className="h-full bg-gray-400 rounded-full" style={{ width: '0%' }}></div>
+                        </div>
+                      </div>
                     </div>
-                    <div className="h-2 w-24 bg-gray-300 rounded-full overflow-hidden">
-                      <div className="h-full bg-blue-600 rounded-full" style={{ width: '0%' }}></div>
-                    </div>
-                  </div>
+                  )}
                 </div>
 
                 {/* Main Menu */}
@@ -170,22 +221,51 @@ export default function Header() {
                     <span>علاقه‌مندی‌ها</span>
                   </Link>
                   
-                  {/* Admin Link */}
+                  {/* User Actions */}
                   <div className="border-t pt-3 mt-3">
-                    <h3 className="text-xs uppercase text-gray-500 font-medium mb-3">مدیریت</h3>
-                    <button 
-                      onClick={() => {
-                        setIsMenuOpen(false);
-                        // Function to switch to admin tab would be passed as prop
-                        // For now using a simple approach
-                        if (window.location.pathname !== '/admin') {
-                          window.location.hash = 'admin';
-                        }
-                      }}
-                      className="flex items-center p-3 rounded-lg transition-colors text-gray-600 hover:bg-gray-100 w-full text-right"
-                    >
-                      <span>پنل مدیریت</span>
-                    </button>
+                    {isAuthenticated && user ? (
+                      <div>
+                        <h3 className="text-xs uppercase text-gray-500 font-medium mb-3">عملیات کاربری</h3>
+                        
+                        {/* Admin Link - Only for admin users */}
+                        {user.role === 'admin' && (
+                          <button 
+                            onClick={() => {
+                              setIsMenuOpen(false);
+                              window.postMessage({ type: 'SHOW_ADMIN_PANEL' }, '*');
+                            }}
+                            className="flex items-center p-3 rounded-lg transition-colors text-gray-600 hover:bg-gray-100 w-full text-right mb-2"
+                          >
+                            <span>پنل مدیریت</span>
+                          </button>
+                        )}
+                        
+                        <button 
+                          onClick={() => {
+                            setIsMenuOpen(false);
+                            handleLogout();
+                          }}
+                          className="flex items-center p-3 rounded-lg transition-colors text-red-600 hover:bg-red-50 w-full text-right"
+                        >
+                          <LogOut className="h-4 w-4 ml-2" />
+                          <span>خروج</span>
+                        </button>
+                      </div>
+                    ) : (
+                      <div>
+                        <h3 className="text-xs uppercase text-gray-500 font-medium mb-3">احراز هویت</h3>
+                        <button 
+                          onClick={() => {
+                            setIsMenuOpen(false);
+                            window.postMessage({ type: 'SWITCH_TAB', tab: 'profile' }, '*');
+                          }}
+                          className="flex items-center p-3 rounded-lg transition-colors text-green-600 hover:bg-green-50 w-full text-right"
+                        >
+                          <User className="h-4 w-4 ml-2" />
+                          <span>ورود / ثبت نام</span>
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
