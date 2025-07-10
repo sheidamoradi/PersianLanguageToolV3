@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { useState, useEffect } from 'react';
 
 export interface User {
   id: number;
@@ -8,25 +9,42 @@ export interface User {
   role: 'admin' | 'user';
 }
 
+// Simple auth state management
+let authState = {
+  user: null as User | null,
+  isLoading: true,
+  isAuthenticated: false,
+  checkedOnce: false
+};
+
 export function useAuth() {
+  const [, forceUpdate] = useState({});
+
   const { data: user, isLoading, error } = useQuery<User>({
     queryKey: ['/api/auth/user'],
     retry: false,
     refetchOnWindowFocus: false,
-    refetchOnMount: true,
+    refetchOnMount: false,
     refetchOnReconnect: false,
-    staleTime: 10 * 60 * 1000, // 10 minutes
-    enabled: true,
+    staleTime: Infinity,
+    enabled: !authState.checkedOnce, // Only check once
   });
 
-  // Handle 401 errors gracefully - user is not authenticated
-  const isAuthError = error && (error as any).message?.includes('401');
-  
+  useEffect(() => {
+    if (!authState.checkedOnce && (!isLoading || error)) {
+      authState.checkedOnce = true;
+      authState.user = user || null;
+      authState.isAuthenticated = !!user;
+      authState.isLoading = false;
+      forceUpdate({});
+    }
+  }, [user, isLoading, error]);
+
   return {
-    user,
-    isLoading: isLoading && !isAuthError,
-    isAuthenticated: !!user && !isAuthError,
-    isAdmin: user?.role === 'admin',
-    error: isAuthError ? null : error
+    user: authState.user,
+    isLoading: authState.isLoading,
+    isAuthenticated: authState.isAuthenticated,
+    isAdmin: authState.user?.role === 'admin',
+    error: null
   };
 }
