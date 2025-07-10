@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { type Slide } from "@shared/schema";
 import { useAuth } from "@/hooks/useAuth";
-import { GuestContent } from "@/components/AuthGuard";
 
 export default function HomePage() {
   const { isAuthenticated } = useAuth();
@@ -250,7 +249,7 @@ export default function HomePage() {
             .map((workshop: any) => (
             <div 
               key={workshop.id} 
-              className="bg-white rounded-xl p-4 shadow-sm border cursor-pointer hover:shadow-lg transition-shadow"
+              className="bg-white rounded-xl p-4 shadow-sm border cursor-pointer hover:shadow-lg transition-shadow card-interactive"
               onClick={() => {
                 // Switch to workshops tab to show workshop details
                 window.parent.postMessage({ type: 'SWITCH_TAB', tab: 'workshops' }, '*');
@@ -358,7 +357,7 @@ export default function HomePage() {
             .map((webinar: any) => (
             <div 
               key={webinar.id} 
-              className="bg-white rounded-xl p-4 shadow-sm border cursor-pointer hover:shadow-lg transition-shadow"
+              className="bg-white rounded-xl p-4 shadow-sm border cursor-pointer hover:shadow-lg transition-shadow card-interactive"
               onClick={() => {
                 // Switch to a dedicated webinar view
                 window.parent.postMessage({ 
@@ -581,35 +580,18 @@ export default function HomePage() {
   );
 
   return (
-    <>
-      {isAuthenticated ? (
-        <div>
-          {homeContent}
-          {/* Magazine Section */}
-          <div className="mt-8">
-            <MagazineSection />
-          </div>
-          
-          {/* Archive Section */}
-          <div className="mt-8">
-            <ArchiveSection />
-          </div>
-        </div>
-      ) : (
-        <GuestContent>
-          {homeContent}
-          {/* Magazine Section */}
-          <div className="mt-8">
-            <MagazineSection />
-          </div>
-          
-          {/* Archive Section */}
-          <div className="mt-8">
-            <ArchiveSection />
-          </div>
-        </GuestContent>
-      )}
-    </>
+    <div>
+      {homeContent}
+      {/* Magazine Section */}
+      <div className="mt-8">
+        <MagazineSection />
+      </div>
+      
+      {/* Archive Section */}
+      <div className="mt-8">
+        <ArchiveSection />
+      </div>
+    </div>
   );
 }
 
@@ -660,7 +642,7 @@ function MagazineSection() {
           {activeMagazines.slice(0, 4).map((magazine) => (
             <div 
               key={magazine.id} 
-              className="bg-white rounded-xl p-4 shadow-sm border cursor-pointer hover:shadow-lg transition-shadow"
+              className="bg-white rounded-xl p-4 shadow-sm border cursor-pointer hover:shadow-lg transition-shadow card-interactive"
               onClick={() => handleMagazineClick(magazine.id)}
             >
               <div className="w-full h-32 rounded-lg mb-3 flex items-center justify-center overflow-hidden">
@@ -793,7 +775,7 @@ function ArchiveSection() {
           {publishedDocuments.slice(0, 4).map((document) => (
             <div 
               key={document.id} 
-              className="bg-white rounded-xl p-4 shadow-sm border cursor-pointer hover:shadow-lg transition-shadow"
+              className="bg-white rounded-xl p-4 shadow-sm border cursor-pointer hover:shadow-lg transition-shadow card-interactive"
               onClick={() => handleDocumentClick(document.id)}
             >
               <div className="w-full h-32 rounded-lg mb-3 flex items-center justify-center overflow-hidden bg-gray-100">

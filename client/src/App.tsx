@@ -20,6 +20,8 @@ import MagazinesPage from './pages/magazines';
 import WebinarsPage from './pages/webinars';
 import VideosPage from './pages/videos';
 import Header from './components/layout/Header';
+import { AuthGuard } from './components/AuthGuard';
+import { useAuth } from './hooks/useAuth';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -44,6 +46,7 @@ interface NavButtonProps {
 }
 
 function App() {
+  const { user, isAuthenticated } = useAuth();
   const [activeTab, setActiveTab] = useState('home');
   const [selectedWebinarId, setSelectedWebinarId] = useState<number | null>(null);
   const [selectedMagazineId, setSelectedMagazineId] = useState<number | null>(null);
@@ -112,24 +115,47 @@ function App() {
   };
 
   const renderCurrentPage = () => {
+    // Check if user is admin and redirect to admin panel
+    if (isAuthenticated && user?.role === 'admin' && activeTab !== 'admin') {
+      setActiveTab('admin');
+      return <AdminPage />;
+    }
+
     switch (activeTab) {
-      case 'home': return <HomePage />;
-      case 'courses': return <CoursesPage />;
-      case 'projects': return <ProjectsPage />;
-      case 'workshops': return <WorkshopsPage />;
-      case 'library': return <LibraryPage />;
-      case 'profile': return <ProfilePage />;
-      case 'favorites': return <FavoritesPage />;
-      case 'admin': return <AdminPage />;
-      case 'media-library': return <MediaLibraryPage />;
-      case 'webinar': return selectedWebinarId ? <WebinarDetail webinarId={selectedWebinarId} /> : <HomePage />;
-      case 'magazine': return selectedMagazineId ? <MagazineDetailPage magazineId={selectedMagazineId} /> : <HomePage />;
-      case 'magazines': return <MagazinesPage />;
-      case 'webinars': return <WebinarsPage />;
-      case 'videos': return <VideosPage />;
-      case 'protected': return <ProtectedContentDemo />;
-      case 'register': return <RegisterPage />;
-      default: return <HomePage />;
+      case 'home': 
+        return <HomePage />;
+      case 'courses': 
+        return <AuthGuard><CoursesPage /></AuthGuard>;
+      case 'projects': 
+        return <AuthGuard><ProjectsPage /></AuthGuard>;
+      case 'workshops': 
+        return <AuthGuard><WorkshopsPage /></AuthGuard>;
+      case 'library': 
+        return <AuthGuard><LibraryPage /></AuthGuard>;
+      case 'profile': 
+        return <ProfilePage />;
+      case 'favorites': 
+        return <AuthGuard><FavoritesPage /></AuthGuard>;
+      case 'admin': 
+        return <AdminPage />;
+      case 'media-library': 
+        return <AuthGuard><MediaLibraryPage /></AuthGuard>;
+      case 'webinar': 
+        return selectedWebinarId ? <AuthGuard><WebinarDetail webinarId={selectedWebinarId} /></AuthGuard> : <HomePage />;
+      case 'magazine': 
+        return selectedMagazineId ? <AuthGuard><MagazineDetailPage magazineId={selectedMagazineId} /></AuthGuard> : <HomePage />;
+      case 'magazines': 
+        return <AuthGuard><MagazinesPage /></AuthGuard>;
+      case 'webinars': 
+        return <AuthGuard><WebinarsPage /></AuthGuard>;
+      case 'videos': 
+        return <AuthGuard><VideosPage /></AuthGuard>;
+      case 'protected': 
+        return <AuthGuard><ProtectedContentDemo /></AuthGuard>;
+      case 'register': 
+        return <RegisterPage />;
+      default: 
+        return <HomePage />;
     }
   };
 
