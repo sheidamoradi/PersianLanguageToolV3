@@ -3876,7 +3876,7 @@ function AboutUsTab() {
                   <label className="block text-sm font-medium text-gray-700 mb-2">عنوان</label>
                   <input
                     type="text"
-                    value={editingAbout.title}
+                    value={editingAbout.title || ''}
                     onChange={(e) => setEditingAbout({...editingAbout, title: e.target.value})}
                     className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
@@ -3885,7 +3885,7 @@ function AboutUsTab() {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">محتوای اصلی</label>
                   <textarea
-                    value={editingAbout.mainContent}
+                    value={editingAbout.mainContent || ''}
                     onChange={(e) => setEditingAbout({...editingAbout, mainContent: e.target.value})}
                     className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     rows={6}
@@ -3895,7 +3895,7 @@ function AboutUsTab() {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">ماموریت</label>
                   <textarea
-                    value={editingAbout.mission}
+                    value={editingAbout.mission || ''}
                     onChange={(e) => setEditingAbout({...editingAbout, mission: e.target.value})}
                     className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     rows={3}
@@ -3905,7 +3905,7 @@ function AboutUsTab() {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">چشم‌انداز</label>
                   <textarea
-                    value={editingAbout.vision}
+                    value={editingAbout.vision || ''}
                     onChange={(e) => setEditingAbout({...editingAbout, vision: e.target.value})}
                     className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     rows={3}
@@ -3915,7 +3915,7 @@ function AboutUsTab() {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">ارزش‌ها</label>
                   <textarea
-                    value={editingAbout.values}
+                    value={editingAbout.values || ''}
                     onChange={(e) => setEditingAbout({...editingAbout, values: e.target.value})}
                     className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     rows={3}
@@ -3927,7 +3927,7 @@ function AboutUsTab() {
                     <label className="block text-sm font-medium text-gray-700 mb-2">سال تأسیس</label>
                     <input
                       type="text"
-                      value={editingAbout.foundingYear}
+                      value={editingAbout.foundingYear || ''}
                       onChange={(e) => setEditingAbout({...editingAbout, foundingYear: e.target.value})}
                       className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
@@ -3937,7 +3937,7 @@ function AboutUsTab() {
                     <label className="block text-sm font-medium text-gray-700 mb-2">اندازه شرکت</label>
                     <input
                       type="text"
-                      value={editingAbout.companySize}
+                      value={editingAbout.companySize || ''}
                       onChange={(e) => setEditingAbout({...editingAbout, companySize: e.target.value})}
                       className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
@@ -3948,7 +3948,7 @@ function AboutUsTab() {
                   <label className="block text-sm font-medium text-gray-700 mb-2">تصویر اصلی</label>
                   <input
                     type="url"
-                    value={editingAbout.mainImageUrl}
+                    value={editingAbout.mainImageUrl || ''}
                     onChange={(e) => setEditingAbout({...editingAbout, mainImageUrl: e.target.value})}
                     className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="https://example.com/image.jpg"
@@ -4331,7 +4331,10 @@ function ContactUsTab() {
                         {item.isActive ? 'فعال' : 'غیرفعال'}
                       </span>
                       <button
-                        onClick={() => setEditingContact(item)}
+                        onClick={() => setEditingContact({
+                          ...item,
+                          socialLinks: item.socialLinks || {}
+                        })}
                         className="text-blue-600 hover:text-blue-800"
                       >
                         <Edit className="h-4 w-4" />
@@ -4375,7 +4378,7 @@ function ContactUsTab() {
                   <label className="block text-sm font-medium text-gray-700 mb-2">عنوان</label>
                   <input
                     type="text"
-                    value={editingContact.title}
+                    value={editingContact.title || ''}
                     onChange={(e) => setEditingContact({...editingContact, title: e.target.value})}
                     className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
@@ -4384,7 +4387,7 @@ function ContactUsTab() {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">توضیحات</label>
                   <textarea
-                    value={editingContact.description}
+                    value={editingContact.description || ''}
                     onChange={(e) => setEditingContact({...editingContact, description: e.target.value})}
                     className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     rows={3}
@@ -4394,7 +4397,7 @@ function ContactUsTab() {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">آدرس</label>
                   <textarea
-                    value={editingContact.address}
+                    value={editingContact.address || ''}
                     onChange={(e) => setEditingContact({...editingContact, address: e.target.value})}
                     className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     rows={2}
@@ -4406,7 +4409,7 @@ function ContactUsTab() {
                     <label className="block text-sm font-medium text-gray-700 mb-2">تلفن</label>
                     <input
                       type="text"
-                      value={editingContact.phone}
+                      value={editingContact.phone || ''}
                       onChange={(e) => setEditingContact({...editingContact, phone: e.target.value})}
                       className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
@@ -4416,7 +4419,7 @@ function ContactUsTab() {
                     <label className="block text-sm font-medium text-gray-700 mb-2">ایمیل</label>
                     <input
                       type="email"
-                      value={editingContact.email}
+                      value={editingContact.email || ''}
                       onChange={(e) => setEditingContact({...editingContact, email: e.target.value})}
                       className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
@@ -4427,7 +4430,7 @@ function ContactUsTab() {
                   <label className="block text-sm font-medium text-gray-700 mb-2">ساعات کاری</label>
                   <input
                     type="text"
-                    value={editingContact.workingHours}
+                    value={editingContact.workingHours || ''}
                     onChange={(e) => setEditingContact({...editingContact, workingHours: e.target.value})}
                     className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="شنبه تا پنج‌شنبه، 8 صبح تا 5 عصر"
@@ -4438,7 +4441,7 @@ function ContactUsTab() {
                   <label className="block text-sm font-medium text-gray-700 mb-2">لینک نقشه</label>
                   <input
                     type="url"
-                    value={editingContact.mapUrl}
+                    value={editingContact.mapUrl || ''}
                     onChange={(e) => setEditingContact({...editingContact, mapUrl: e.target.value})}
                     className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="https://maps.google.com/..."
@@ -4450,7 +4453,7 @@ function ContactUsTab() {
                     <label className="block text-sm font-medium text-gray-700 mb-2">عرض جغرافیایی</label>
                     <input
                       type="text"
-                      value={editingContact.mapLatitude}
+                      value={editingContact.mapLatitude || ''}
                       onChange={(e) => setEditingContact({...editingContact, mapLatitude: e.target.value})}
                       className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                       placeholder="35.7219"
@@ -4461,7 +4464,7 @@ function ContactUsTab() {
                     <label className="block text-sm font-medium text-gray-700 mb-2">طول جغرافیایی</label>
                     <input
                       type="text"
-                      value={editingContact.mapLongitude}
+                      value={editingContact.mapLongitude || ''}
                       onChange={(e) => setEditingContact({...editingContact, mapLongitude: e.target.value})}
                       className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                       placeholder="51.3347"
