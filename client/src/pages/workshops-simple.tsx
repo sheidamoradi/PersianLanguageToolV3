@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { queryClient } from "@/lib/queryClient";
-import { Calendar, Clock, MapPin, Users, User } from "lucide-react";
+import { Calendar, Clock, MapPin, Users, User, ArrowRight } from "lucide-react";
 import { AuthGuard } from "@/components/AuthGuard";
 
 export default function WorkshopsPage() {
@@ -68,6 +68,13 @@ export default function WorkshopsPage() {
       <div className="container mx-auto px-4 py-8">
       {/* Header */}
       <div className="text-center mb-8">
+        <button 
+          onClick={() => window.postMessage({ type: 'SHOW_HOME' }, '*')}
+          className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-4"
+        >
+          <ArrowRight className="h-5 w-5" />
+          بازگشت
+        </button>
         <h1 className="text-3xl font-bold text-gray-900 mb-4">کارگاه‌های آموزشی</h1>
         <p className="text-gray-600 max-w-2xl mx-auto">
           در کارگاه‌های آموزشی ما، آخرین تکنیک‌ها و روش‌های کشاورزی مدرن را یاد بگیرید

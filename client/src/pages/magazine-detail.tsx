@@ -97,7 +97,7 @@ export default function MagazineDetailPage({ magazineId }: MagazineDetailPagePro
         <div className="max-w-4xl mx-auto px-4 py-6">
           <div className="flex items-center gap-4 mb-6">
             <button 
-              onClick={() => window.history.back()}
+              onClick={() => window.postMessage({ type: 'SHOW_HOME' }, '*')}
               className="flex items-center gap-2 text-gray-600 hover:text-gray-900"
             >
               <ArrowRight className="h-5 w-5" />

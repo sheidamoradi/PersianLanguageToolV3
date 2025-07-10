@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
+import { ArrowRight } from 'lucide-react';
 
 export default function MagazinesPage() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -31,6 +32,13 @@ export default function MagazinesPage() {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-6">
+        <button 
+          onClick={() => window.postMessage({ type: 'SHOW_HOME' }, '*')}
+          className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-4"
+        >
+          <ArrowRight className="h-5 w-5" />
+          بازگشت
+        </button>
         <h1 className="text-2xl font-bold text-gray-800 mb-4">فصلنامه رویش سبز</h1>
         
         <div className="flex gap-4 mb-4">

@@ -14,7 +14,8 @@ import {
   Award,
   Heart,
   Bell,
-  FileText
+  FileText,
+  ArrowRight
 } from "lucide-react";
 
 interface User {
@@ -93,6 +94,14 @@ export default function Profile() {
 
   return (
     <div className="p-4 pb-24" dir="rtl">
+      <button 
+        onClick={() => window.postMessage({ type: 'SHOW_HOME' }, '*')}
+        className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-4"
+      >
+        <ArrowRight className="h-5 w-5" />
+        بازگشت
+      </button>
+      
       {/* Profile Header */}
       <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
         <div className="text-center">

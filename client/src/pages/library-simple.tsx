@@ -12,7 +12,8 @@ import {
   BookOpen,
   FileType,
   Clock,
-  TrendingUp
+  TrendingUp,
+  ArrowRight
 } from "lucide-react";
 import { type Document } from "@shared/schema";
 import { AuthGuard } from "@/components/AuthGuard";
@@ -61,6 +62,13 @@ export default function Library() {
       <div className="p-4 pb-24" dir="rtl">
       {/* Header */}
       <div className="mb-6">
+        <button 
+          onClick={() => window.postMessage({ type: 'SHOW_HOME' }, '*')}
+          className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-4"
+        >
+          <ArrowRight className="h-5 w-5" />
+          بازگشت
+        </button>
         <h1 className="text-2xl font-bold text-gray-900 mb-2">کتابخانه دیجیتال</h1>
         <p className="text-gray-600">مجموعه کامل منابع و مستندات</p>
       </div>

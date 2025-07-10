@@ -37,7 +37,7 @@ export default function WebinarDetail({ webinarId }: WebinarDetailProps) {
       <div className="bg-white border-b">
         <div className="container mx-auto px-4 py-4">
           <button 
-            onClick={() => window.history.back()}
+            onClick={() => window.postMessage({ type: 'SHOW_HOME' }, '*')}
             className="flex items-center text-blue-600 hover:text-blue-800 mb-4"
           >
             <ArrowRight className="h-4 w-4 ml-2" />

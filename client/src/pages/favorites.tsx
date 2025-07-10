@@ -9,7 +9,8 @@ import {
   Eye,
   Download,
   Calendar,
-  Trash2
+  Trash2,
+  ArrowRight
 } from "lucide-react";
 
 export default function Favorites() {
@@ -68,6 +69,14 @@ export default function Favorites() {
 
   return (
     <div className="container mx-auto px-4 py-8 pb-20" dir="rtl">
+      <button 
+        onClick={() => window.postMessage({ type: 'SHOW_HOME' }, '*')}
+        className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-4"
+      >
+        <ArrowRight className="h-5 w-5" />
+        بازگشت
+      </button>
+      
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">علاقه‌مندی‌ها</h1>
