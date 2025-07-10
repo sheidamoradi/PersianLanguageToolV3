@@ -27,7 +27,7 @@ export default function Register() {
     },
     onSuccess: () => {
       refetch();
-      window.location.href = "/";
+      window.parent.postMessage({ type: 'SWITCH_TAB', tab: 'home' }, '*');
     },
     onError: (error: any) => {
       if (error.message.includes("نام کاربری")) {

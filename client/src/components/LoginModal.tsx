@@ -125,7 +125,7 @@ export function LoginModal({ isOpen, onClose, message }: LoginModalProps) {
             <button
               onClick={() => {
                 onClose();
-                window.location.href = "/register";
+                window.parent.postMessage({ type: 'SWITCH_TAB', tab: 'register' }, '*');
               }}
               className="text-green-600 hover:text-green-700 font-medium"
             >

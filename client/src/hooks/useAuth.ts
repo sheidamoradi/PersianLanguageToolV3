@@ -20,7 +20,7 @@ let authState = {
 export function useAuth() {
   const [, forceUpdate] = useState({});
 
-  const { data: user, isLoading, error } = useQuery<User>({
+  const { data: user, isLoading, error, refetch } = useQuery<User>({
     queryKey: ['/api/auth/user'],
     retry: false,
     refetchOnWindowFocus: false,
@@ -40,11 +40,22 @@ export function useAuth() {
     }
   }, [user, isLoading, error]);
 
+  const refreshAuth = async () => {
+    const result = await refetch();
+    if (result.data) {
+      authState.user = result.data;
+      authState.isAuthenticated = true;
+      authState.isLoading = false;
+      forceUpdate({});
+    }
+  };
+
   return {
     user: authState.user,
     isLoading: authState.isLoading,
     isAuthenticated: authState.isAuthenticated,
     isAdmin: authState.user?.role === 'admin',
-    error: null
+    error: null,
+    refetch: refreshAuth
   };
 }
