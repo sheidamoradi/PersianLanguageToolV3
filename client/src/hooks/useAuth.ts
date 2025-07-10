@@ -12,14 +12,21 @@ export function useAuth() {
   const { data: user, isLoading, error } = useQuery<User>({
     queryKey: ['/api/auth/user'],
     retry: false,
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    refetchOnWindowFocus: false,
+    refetchOnMount: true,
+    refetchOnReconnect: false,
+    staleTime: 10 * 60 * 1000, // 10 minutes
+    enabled: true,
   });
 
+  // Handle 401 errors gracefully - user is not authenticated
+  const isAuthError = error && (error as any).message?.includes('401');
+  
   return {
     user,
-    isLoading,
-    isAuthenticated: !!user,
+    isLoading: isLoading && !isAuthError,
+    isAuthenticated: !!user && !isAuthError,
     isAdmin: user?.role === 'admin',
-    error
+    error: isAuthError ? null : error
   };
 }
