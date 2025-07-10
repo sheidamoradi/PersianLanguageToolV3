@@ -19,6 +19,8 @@ import MediaLibraryPage from './pages/media-library';
 import MagazinesPage from './pages/magazines';
 import WebinarsPage from './pages/webinars';
 import VideosPage from './pages/videos';
+import AboutUsPage from './pages/about-us';
+import ContactUsPage from './pages/contact-us';
 import Header from './components/layout/Header';
 import { AuthGuard } from './components/AuthGuard';
 import { useAuth } from './hooks/useAuth';
@@ -160,6 +162,10 @@ function App() {
         return <AuthGuard><ProtectedContentDemo /></AuthGuard>;
       case 'register': 
         return <RegisterPage />;
+      case 'about-us': 
+        return <AboutUsPage />;
+      case 'contact-us': 
+        return <ContactUsPage />;
       default: 
         return <HomePage />;
     }
@@ -169,13 +175,13 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <Router>
         <div className="min-h-screen bg-gradient-to-br from-gray-50 to-green-50" dir="rtl">
-          {activeTab !== 'admin' && activeTab !== 'webinar' && activeTab !== 'magazine' && <Header />}
-          <div className={`${activeTab !== 'admin' && activeTab !== 'webinar' && activeTab !== 'magazine' ? 'container mx-auto px-4 py-6 pb-24 max-w-7xl pt-20' : ''}`}>
+          {activeTab !== 'admin' && activeTab !== 'webinar' && activeTab !== 'magazine' && activeTab !== 'about-us' && activeTab !== 'contact-us' && <Header />}
+          <div className={`${activeTab !== 'admin' && activeTab !== 'webinar' && activeTab !== 'magazine' && activeTab !== 'about-us' && activeTab !== 'contact-us' ? 'container mx-auto px-4 py-6 pb-24 max-w-7xl pt-20' : ''}`}>
             {renderCurrentPage()}
           </div>
 
           {/* Bottom Navigation - Hide in admin, webinar and magazine mode */}
-          {activeTab !== 'admin' && activeTab !== 'webinar' && activeTab !== 'magazine' && (
+          {activeTab !== 'admin' && activeTab !== 'webinar' && activeTab !== 'magazine' && activeTab !== 'about-us' && activeTab !== 'contact-us' && (
             <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-lg border-t border-gray-200 shadow-2xl">
               {/* Categories Menu */}
               {showCategoriesMenu && (
