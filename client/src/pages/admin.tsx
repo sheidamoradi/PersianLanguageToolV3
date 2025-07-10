@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { type Course, type Document, type MediaContent, type Magazine, type Article, type ArticleContent, type Slide, type Workshop, type WorkshopSection, type WorkshopRegistration } from "@shared/schema";
-import { Calendar, Edit, Eye, File, Folder, Image, Lock, LockOpen, MoreHorizontal, Plus, RefreshCw, Trash, Upload, Video, X } from "lucide-react";
+import { Calendar, Edit, Eye, File, Folder, Image, Lock, LockOpen, MoreHorizontal, Plus, RefreshCw, Trash, Upload, Video, X, Info, Phone } from "lucide-react";
 import WorkshopsTab from "@/components/admin/WorkshopsTab";
 import WebinarSectionsTab from "@/components/admin/WebinarSectionsTab";
 
@@ -22,6 +22,8 @@ export default function AdminPage() {
     { id: "articles", label: "مقاله‌ها", icon: File },
     { id: "workshops", label: "کارگاه‌ها", icon: Calendar },
     { id: "workshop-registrations", label: "ثبت‌نام کارگاه‌ها", icon: Edit },
+    { id: "about-us", label: "درباره ما", icon: Info },
+    { id: "contact-us", label: "تماس با ما", icon: Phone },
     { id: "users", label: "کاربران", icon: Lock }
   ];
 
@@ -74,6 +76,8 @@ export default function AdminPage() {
           {activeTab === "articles" && <ArticlesTab />}
           {activeTab === "workshops" && <WorkshopsTab />}
           {activeTab === "workshop-registrations" && <WorkshopRegistrationsTab />}
+          {activeTab === "about-us" && <AboutUsTab />}
+          {activeTab === "contact-us" && <ContactUsTab />}
           {activeTab === "users" && <UsersTab />}
         </div>
       </div>
@@ -3555,6 +3559,997 @@ function EducationalVideosTab() {
                   </button>
                   <button
                     onClick={() => setEditingVideo(null)}
+                    className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600"
+                  >
+                    لغو
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function AboutUsTab() {
+  const [showCreateForm, setShowCreateForm] = useState(false);
+  const [editingAbout, setEditingAbout] = useState<any>(null);
+  const [createData, setCreateData] = useState({
+    title: '',
+    mainContent: '',
+    mission: '',
+    vision: '',
+    values: '',
+    mainImageUrl: '',
+    foundingYear: '',
+    companySize: '',
+    isActive: true
+  });
+
+  const { data: aboutUsData, isLoading } = useQuery<any[]>({
+    queryKey: ['/api/about-us'],
+  });
+
+  const createMutation = useMutation({
+    mutationFn: async (data: any) => {
+      const response = await fetch('/api/about-us', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+      });
+      
+      if (!response.ok) {
+        throw new Error('خطا در ایجاد محتوا');
+      }
+      
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/about-us'] });
+      setShowCreateForm(false);
+      setCreateData({
+        title: '',
+        mainContent: '',
+        mission: '',
+        vision: '',
+        values: '',
+        mainImageUrl: '',
+        foundingYear: '',
+        companySize: '',
+        isActive: true
+      });
+    },
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: async (data: any) => {
+      const response = await fetch(`/api/about-us/${data.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+      });
+      
+      if (!response.ok) {
+        throw new Error('خطا در بروزرسانی محتوا');
+      }
+      
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/about-us'] });
+      setEditingAbout(null);
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: async (id: number) => {
+      const response = await fetch(`/api/about-us/${id}`, {
+        method: 'DELETE'
+      });
+      
+      if (!response.ok) {
+        throw new Error('خطا در حذف محتوا');
+      }
+      
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/about-us'] });
+    },
+  });
+
+  const handleCreateSubmit = () => {
+    if (!createData.title.trim() || !createData.mainContent.trim()) {
+      alert('لطفاً عنوان و محتوای اصلی را وارد کنید');
+      return;
+    }
+    createMutation.mutate(createData);
+  };
+
+  const handleUpdateSubmit = () => {
+    if (!editingAbout.title.trim() || !editingAbout.mainContent.trim()) {
+      alert('لطفاً عنوان و محتوای اصلی را وارد کنید');
+      return;
+    }
+    updateMutation.mutate(editingAbout);
+  };
+
+  if (isLoading) {
+    return <div className="flex justify-center items-center h-64">در حال بارگذاری...</div>;
+  }
+
+  return (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold">مدیریت درباره ما</h2>
+        <button
+          onClick={() => setShowCreateForm(true)}
+          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center gap-2"
+        >
+          <Plus className="h-4 w-4" />
+          افزودن محتوا
+        </button>
+      </div>
+
+      {showCreateForm && (
+        <div className="bg-white p-6 rounded-lg border">
+          <h3 className="text-lg font-semibold mb-4">افزودن محتوای جدید</h3>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">عنوان</label>
+              <input
+                type="text"
+                value={createData.title}
+                onChange={(e) => setCreateData({...createData, title: e.target.value})}
+                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">محتوای اصلی</label>
+              <textarea
+                value={createData.mainContent}
+                onChange={(e) => setCreateData({...createData, mainContent: e.target.value})}
+                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                rows={6}
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">ماموریت</label>
+              <textarea
+                value={createData.mission}
+                onChange={(e) => setCreateData({...createData, mission: e.target.value})}
+                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                rows={3}
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">چشم‌انداز</label>
+              <textarea
+                value={createData.vision}
+                onChange={(e) => setCreateData({...createData, vision: e.target.value})}
+                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                rows={3}
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">ارزش‌ها</label>
+              <textarea
+                value={createData.values}
+                onChange={(e) => setCreateData({...createData, values: e.target.value})}
+                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                rows={3}
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">سال تأسیس</label>
+                <input
+                  type="text"
+                  value={createData.foundingYear}
+                  onChange={(e) => setCreateData({...createData, foundingYear: e.target.value})}
+                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">اندازه شرکت</label>
+                <input
+                  type="text"
+                  value={createData.companySize}
+                  onChange={(e) => setCreateData({...createData, companySize: e.target.value})}
+                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">تصویر اصلی</label>
+              <input
+                type="url"
+                value={createData.mainImageUrl}
+                onChange={(e) => setCreateData({...createData, mainImageUrl: e.target.value})}
+                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="https://example.com/image.jpg"
+              />
+            </div>
+
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={createData.isActive}
+                onChange={(e) => setCreateData({...createData, isActive: e.target.checked})}
+                className="rounded"
+              />
+              <label className="text-sm text-gray-700">فعال</label>
+            </div>
+
+            <div className="flex gap-2">
+              <button
+                onClick={handleCreateSubmit}
+                disabled={createMutation.isPending}
+                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50"
+              >
+                {createMutation.isPending ? 'در حال ایجاد...' : 'ایجاد محتوا'}
+              </button>
+              <button
+                onClick={() => setShowCreateForm(false)}
+                className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600"
+              >
+                لغو
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="bg-white rounded-lg border">
+        {aboutUsData && aboutUsData.length > 0 ? (
+          <div className="p-6">
+            <h3 className="text-lg font-semibold mb-4">محتوای موجود</h3>
+            <div className="space-y-4">
+              {aboutUsData.map((item: any) => (
+                <div key={item.id} className="border rounded-lg p-4">
+                  <div className="flex justify-between items-start mb-2">
+                    <div>
+                      <h4 className="font-medium text-gray-900">{item.title}</h4>
+                      <p className="text-sm text-gray-600 mt-1">{item.mainContent.substring(0, 150)}...</p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className={`px-2 py-1 rounded text-xs ${
+                        item.isActive ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                      }`}>
+                        {item.isActive ? 'فعال' : 'غیرفعال'}
+                      </span>
+                      <button
+                        onClick={() => setEditingAbout(item)}
+                        className="text-blue-600 hover:text-blue-800"
+                      >
+                        <Edit className="h-4 w-4" />
+                      </button>
+                      <button
+                        onClick={() => deleteMutation.mutate(item.id)}
+                        disabled={deleteMutation.isPending}
+                        className="text-red-600 hover:text-red-800 disabled:opacity-50"
+                      >
+                        <Trash className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <div className="p-6 text-center text-gray-500">
+            هیچ محتوایی یافت نشد. محتوای جدید اضافه کنید.
+          </div>
+        )}
+      </div>
+
+      {editingAbout && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg font-semibold">ویرایش محتوا</h3>
+                <button
+                  onClick={() => setEditingAbout(null)}
+                  className="text-gray-500 hover:text-gray-700"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+              
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">عنوان</label>
+                  <input
+                    type="text"
+                    value={editingAbout.title}
+                    onChange={(e) => setEditingAbout({...editingAbout, title: e.target.value})}
+                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">محتوای اصلی</label>
+                  <textarea
+                    value={editingAbout.mainContent}
+                    onChange={(e) => setEditingAbout({...editingAbout, mainContent: e.target.value})}
+                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    rows={6}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">ماموریت</label>
+                  <textarea
+                    value={editingAbout.mission}
+                    onChange={(e) => setEditingAbout({...editingAbout, mission: e.target.value})}
+                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    rows={3}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">چشم‌انداز</label>
+                  <textarea
+                    value={editingAbout.vision}
+                    onChange={(e) => setEditingAbout({...editingAbout, vision: e.target.value})}
+                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    rows={3}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">ارزش‌ها</label>
+                  <textarea
+                    value={editingAbout.values}
+                    onChange={(e) => setEditingAbout({...editingAbout, values: e.target.value})}
+                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    rows={3}
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">سال تأسیس</label>
+                    <input
+                      type="text"
+                      value={editingAbout.foundingYear}
+                      onChange={(e) => setEditingAbout({...editingAbout, foundingYear: e.target.value})}
+                      className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">اندازه شرکت</label>
+                    <input
+                      type="text"
+                      value={editingAbout.companySize}
+                      onChange={(e) => setEditingAbout({...editingAbout, companySize: e.target.value})}
+                      className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">تصویر اصلی</label>
+                  <input
+                    type="url"
+                    value={editingAbout.mainImageUrl}
+                    onChange={(e) => setEditingAbout({...editingAbout, mainImageUrl: e.target.value})}
+                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="https://example.com/image.jpg"
+                  />
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={editingAbout.isActive}
+                    onChange={(e) => setEditingAbout({...editingAbout, isActive: e.target.checked})}
+                    className="rounded"
+                  />
+                  <label className="text-sm text-gray-700">فعال</label>
+                </div>
+
+                <div className="flex gap-2">
+                  <button
+                    onClick={handleUpdateSubmit}
+                    disabled={updateMutation.isPending}
+                    className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                  >
+                    {updateMutation.isPending ? 'در حال ذخیره...' : 'ذخیره تغییرات'}
+                  </button>
+                  <button
+                    onClick={() => setEditingAbout(null)}
+                    className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600"
+                  >
+                    لغو
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ContactUsTab() {
+  const [showCreateForm, setShowCreateForm] = useState(false);
+  const [editingContact, setEditingContact] = useState<any>(null);
+  const [createData, setCreateData] = useState({
+    title: '',
+    description: '',
+    address: '',
+    phone: '',
+    email: '',
+    workingHours: '',
+    mapUrl: '',
+    mapLatitude: '',
+    mapLongitude: '',
+    socialLinks: {
+      instagram: '',
+      telegram: '',
+      linkedin: '',
+      whatsapp: ''
+    },
+    isActive: true
+  });
+
+  const { data: contactUsData, isLoading } = useQuery<any[]>({
+    queryKey: ['/api/contact-us'],
+  });
+
+  const createMutation = useMutation({
+    mutationFn: async (data: any) => {
+      const response = await fetch('/api/contact-us', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+      });
+      
+      if (!response.ok) {
+        throw new Error('خطا در ایجاد اطلاعات تماس');
+      }
+      
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/contact-us'] });
+      setShowCreateForm(false);
+      setCreateData({
+        title: '',
+        description: '',
+        address: '',
+        phone: '',
+        email: '',
+        workingHours: '',
+        mapUrl: '',
+        mapLatitude: '',
+        mapLongitude: '',
+        socialLinks: {
+          instagram: '',
+          telegram: '',
+          linkedin: '',
+          whatsapp: ''
+        },
+        isActive: true
+      });
+    },
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: async (data: any) => {
+      const response = await fetch(`/api/contact-us/${data.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+      });
+      
+      if (!response.ok) {
+        throw new Error('خطا در بروزرسانی اطلاعات تماس');
+      }
+      
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/contact-us'] });
+      setEditingContact(null);
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: async (id: number) => {
+      const response = await fetch(`/api/contact-us/${id}`, {
+        method: 'DELETE'
+      });
+      
+      if (!response.ok) {
+        throw new Error('خطا در حذف اطلاعات تماس');
+      }
+      
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/contact-us'] });
+    },
+  });
+
+  const handleCreateSubmit = () => {
+    if (!createData.title.trim()) {
+      alert('لطفاً عنوان را وارد کنید');
+      return;
+    }
+    createMutation.mutate(createData);
+  };
+
+  const handleUpdateSubmit = () => {
+    if (!editingContact.title.trim()) {
+      alert('لطفاً عنوان را وارد کنید');
+      return;
+    }
+    updateMutation.mutate(editingContact);
+  };
+
+  if (isLoading) {
+    return <div className="flex justify-center items-center h-64">در حال بارگذاری...</div>;
+  }
+
+  return (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold">مدیریت تماس با ما</h2>
+        <button
+          onClick={() => setShowCreateForm(true)}
+          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center gap-2"
+        >
+          <Plus className="h-4 w-4" />
+          افزودن اطلاعات تماس
+        </button>
+      </div>
+
+      {showCreateForm && (
+        <div className="bg-white p-6 rounded-lg border">
+          <h3 className="text-lg font-semibold mb-4">افزودن اطلاعات تماس جدید</h3>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">عنوان</label>
+              <input
+                type="text"
+                value={createData.title}
+                onChange={(e) => setCreateData({...createData, title: e.target.value})}
+                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">توضیحات</label>
+              <textarea
+                value={createData.description}
+                onChange={(e) => setCreateData({...createData, description: e.target.value})}
+                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                rows={3}
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">آدرس</label>
+              <textarea
+                value={createData.address}
+                onChange={(e) => setCreateData({...createData, address: e.target.value})}
+                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                rows={2}
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">تلفن</label>
+                <input
+                  type="text"
+                  value={createData.phone}
+                  onChange={(e) => setCreateData({...createData, phone: e.target.value})}
+                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">ایمیل</label>
+                <input
+                  type="email"
+                  value={createData.email}
+                  onChange={(e) => setCreateData({...createData, email: e.target.value})}
+                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">ساعات کاری</label>
+              <input
+                type="text"
+                value={createData.workingHours}
+                onChange={(e) => setCreateData({...createData, workingHours: e.target.value})}
+                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="شنبه تا پنج‌شنبه، 8 صبح تا 5 عصر"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">لینک نقشه</label>
+              <input
+                type="url"
+                value={createData.mapUrl}
+                onChange={(e) => setCreateData({...createData, mapUrl: e.target.value})}
+                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="https://maps.google.com/..."
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">عرض جغرافیایی</label>
+                <input
+                  type="text"
+                  value={createData.mapLatitude}
+                  onChange={(e) => setCreateData({...createData, mapLatitude: e.target.value})}
+                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="35.7219"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">طول جغرافیایی</label>
+                <input
+                  type="text"
+                  value={createData.mapLongitude}
+                  onChange={(e) => setCreateData({...createData, mapLongitude: e.target.value})}
+                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="51.3347"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">شبکه‌های اجتماعی</label>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs text-gray-500 mb-1">اینستاگرام</label>
+                  <input
+                    type="url"
+                    value={createData.socialLinks.instagram}
+                    onChange={(e) => setCreateData({...createData, socialLinks: {...createData.socialLinks, instagram: e.target.value}})}
+                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="https://instagram.com/..."
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs text-gray-500 mb-1">تلگرام</label>
+                  <input
+                    type="url"
+                    value={createData.socialLinks.telegram}
+                    onChange={(e) => setCreateData({...createData, socialLinks: {...createData.socialLinks, telegram: e.target.value}})}
+                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="https://t.me/..."
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs text-gray-500 mb-1">لینکدین</label>
+                  <input
+                    type="url"
+                    value={createData.socialLinks.linkedin}
+                    onChange={(e) => setCreateData({...createData, socialLinks: {...createData.socialLinks, linkedin: e.target.value}})}
+                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="https://linkedin.com/..."
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs text-gray-500 mb-1">واتساپ</label>
+                  <input
+                    type="url"
+                    value={createData.socialLinks.whatsapp}
+                    onChange={(e) => setCreateData({...createData, socialLinks: {...createData.socialLinks, whatsapp: e.target.value}})}
+                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="https://wa.me/..."
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={createData.isActive}
+                onChange={(e) => setCreateData({...createData, isActive: e.target.checked})}
+                className="rounded"
+              />
+              <label className="text-sm text-gray-700">فعال</label>
+            </div>
+
+            <div className="flex gap-2">
+              <button
+                onClick={handleCreateSubmit}
+                disabled={createMutation.isPending}
+                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50"
+              >
+                {createMutation.isPending ? 'در حال ایجاد...' : 'ایجاد اطلاعات'}
+              </button>
+              <button
+                onClick={() => setShowCreateForm(false)}
+                className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600"
+              >
+                لغو
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="bg-white rounded-lg border">
+        {contactUsData && contactUsData.length > 0 ? (
+          <div className="p-6">
+            <h3 className="text-lg font-semibold mb-4">اطلاعات تماس موجود</h3>
+            <div className="space-y-4">
+              {contactUsData.map((item: any) => (
+                <div key={item.id} className="border rounded-lg p-4">
+                  <div className="flex justify-between items-start mb-2">
+                    <div>
+                      <h4 className="font-medium text-gray-900">{item.title}</h4>
+                      <p className="text-sm text-gray-600 mt-1">{item.description}</p>
+                      <div className="mt-2 text-sm text-gray-500 space-y-1">
+                        {item.phone && <div>📞 {item.phone}</div>}
+                        {item.email && <div>✉️ {item.email}</div>}
+                        {item.address && <div>📍 {item.address}</div>}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className={`px-2 py-1 rounded text-xs ${
+                        item.isActive ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                      }`}>
+                        {item.isActive ? 'فعال' : 'غیرفعال'}
+                      </span>
+                      <button
+                        onClick={() => setEditingContact(item)}
+                        className="text-blue-600 hover:text-blue-800"
+                      >
+                        <Edit className="h-4 w-4" />
+                      </button>
+                      <button
+                        onClick={() => deleteMutation.mutate(item.id)}
+                        disabled={deleteMutation.isPending}
+                        className="text-red-600 hover:text-red-800 disabled:opacity-50"
+                      >
+                        <Trash className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <div className="p-6 text-center text-gray-500">
+            هیچ اطلاعات تماسی یافت نشد. اطلاعات جدید اضافه کنید.
+          </div>
+        )}
+      </div>
+
+      {editingContact && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg font-semibold">ویرایش اطلاعات تماس</h3>
+                <button
+                  onClick={() => setEditingContact(null)}
+                  className="text-gray-500 hover:text-gray-700"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+              
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">عنوان</label>
+                  <input
+                    type="text"
+                    value={editingContact.title}
+                    onChange={(e) => setEditingContact({...editingContact, title: e.target.value})}
+                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">توضیحات</label>
+                  <textarea
+                    value={editingContact.description}
+                    onChange={(e) => setEditingContact({...editingContact, description: e.target.value})}
+                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    rows={3}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">آدرس</label>
+                  <textarea
+                    value={editingContact.address}
+                    onChange={(e) => setEditingContact({...editingContact, address: e.target.value})}
+                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    rows={2}
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">تلفن</label>
+                    <input
+                      type="text"
+                      value={editingContact.phone}
+                      onChange={(e) => setEditingContact({...editingContact, phone: e.target.value})}
+                      className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">ایمیل</label>
+                    <input
+                      type="email"
+                      value={editingContact.email}
+                      onChange={(e) => setEditingContact({...editingContact, email: e.target.value})}
+                      className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">ساعات کاری</label>
+                  <input
+                    type="text"
+                    value={editingContact.workingHours}
+                    onChange={(e) => setEditingContact({...editingContact, workingHours: e.target.value})}
+                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="شنبه تا پنج‌شنبه، 8 صبح تا 5 عصر"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">لینک نقشه</label>
+                  <input
+                    type="url"
+                    value={editingContact.mapUrl}
+                    onChange={(e) => setEditingContact({...editingContact, mapUrl: e.target.value})}
+                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="https://maps.google.com/..."
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">عرض جغرافیایی</label>
+                    <input
+                      type="text"
+                      value={editingContact.mapLatitude}
+                      onChange={(e) => setEditingContact({...editingContact, mapLatitude: e.target.value})}
+                      className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="35.7219"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">طول جغرافیایی</label>
+                    <input
+                      type="text"
+                      value={editingContact.mapLongitude}
+                      onChange={(e) => setEditingContact({...editingContact, mapLongitude: e.target.value})}
+                      className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="51.3347"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">شبکه‌های اجتماعی</label>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-xs text-gray-500 mb-1">اینستاگرام</label>
+                      <input
+                        type="url"
+                        value={editingContact.socialLinks?.instagram || ''}
+                        onChange={(e) => setEditingContact({
+                          ...editingContact,
+                          socialLinks: { ...editingContact.socialLinks, instagram: e.target.value }
+                        })}
+                        className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder="https://instagram.com/..."
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs text-gray-500 mb-1">تلگرام</label>
+                      <input
+                        type="url"
+                        value={editingContact.socialLinks?.telegram || ''}
+                        onChange={(e) => setEditingContact({
+                          ...editingContact,
+                          socialLinks: { ...editingContact.socialLinks, telegram: e.target.value }
+                        })}
+                        className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder="https://t.me/..."
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs text-gray-500 mb-1">لینکدین</label>
+                      <input
+                        type="url"
+                        value={editingContact.socialLinks?.linkedin || ''}
+                        onChange={(e) => setEditingContact({
+                          ...editingContact,
+                          socialLinks: { ...editingContact.socialLinks, linkedin: e.target.value }
+                        })}
+                        className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder="https://linkedin.com/..."
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs text-gray-500 mb-1">واتساپ</label>
+                      <input
+                        type="url"
+                        value={editingContact.socialLinks?.whatsapp || ''}
+                        onChange={(e) => setEditingContact({
+                          ...editingContact,
+                          socialLinks: { ...editingContact.socialLinks, whatsapp: e.target.value }
+                        })}
+                        className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder="https://wa.me/..."
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={editingContact.isActive}
+                    onChange={(e) => setEditingContact({...editingContact, isActive: e.target.checked})}
+                    className="rounded"
+                  />
+                  <label className="text-sm text-gray-700">فعال</label>
+                </div>
+
+                <div className="flex gap-2">
+                  <button
+                    onClick={handleUpdateSubmit}
+                    disabled={updateMutation.isPending}
+                    className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                  >
+                    {updateMutation.isPending ? 'در حال ذخیره...' : 'ذخیره تغییرات'}
+                  </button>
+                  <button
+                    onClick={() => setEditingContact(null)}
                     className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600"
                   >
                     لغو
