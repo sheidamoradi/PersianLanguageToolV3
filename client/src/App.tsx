@@ -24,6 +24,7 @@ import ContactUsPage from './pages/contact-us';
 import Header from './components/layout/Header';
 import { AuthGuard } from './components/AuthGuard';
 import { useAuth } from './hooks/useAuth';
+import { SearchModal } from './components/SearchModal';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -53,6 +54,7 @@ function App() {
   const [selectedWebinarId, setSelectedWebinarId] = useState<number | null>(null);
   const [selectedMagazineId, setSelectedMagazineId] = useState<number | null>(null);
   const [showCategoriesMenu, setShowCategoriesMenu] = useState(false);
+  const [showSearchModal, setShowSearchModal] = useState(false);
 
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
@@ -76,6 +78,10 @@ function App() {
         setTimeout(() => {
           window.postMessage({ type: 'ADMIN_TAB_SWITCH', tab: event.data.tab }, '*');
         }, 100);
+      } else if (event.data.type === 'SHOW_SEARCH') {
+        setShowSearchModal(true);
+      } else if (event.data.type === 'SHOW_PROFILE') {
+        setActiveTab('profile');
       }
     };
 
@@ -277,6 +283,12 @@ function App() {
             </div>
           )}
         </div>
+        
+        {/* Search Modal */}
+        <SearchModal 
+          isOpen={showSearchModal} 
+          onClose={() => setShowSearchModal(false)} 
+        />
       </Router>
     </QueryClientProvider>
   );

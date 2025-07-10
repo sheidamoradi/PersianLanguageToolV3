@@ -60,7 +60,10 @@ export default function Header() {
         {/* Right side icons */}
         <div className="flex items-center gap-2">
           {/* Search Icon */}
-          <button className="p-2 rounded-full hover:bg-green-50 group transition-colors">
+          <button 
+            onClick={() => window.postMessage({ type: 'SHOW_SEARCH' }, '*')}
+            className="p-2 rounded-full hover:bg-green-50 group transition-colors"
+          >
             <Search className="h-6 w-6 text-gray-500 group-hover:text-green-600 transition-colors" />
           </button>
           
@@ -74,9 +77,12 @@ export default function Header() {
           </button>
           
           {/* User Profile Icon */}
-          <Link href="/profile" className="p-2 rounded-full hover:bg-green-50 group transition-colors">
+          <button 
+            onClick={() => window.postMessage({ type: 'SHOW_PROFILE' }, '*')}
+            className="p-2 rounded-full hover:bg-green-50 group transition-colors"
+          >
             <User className="h-6 w-6 text-gray-500 group-hover:text-green-600 transition-colors" />
-          </Link>
+          </button>
         </div>
       </div>
 
