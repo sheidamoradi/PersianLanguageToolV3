@@ -128,6 +128,12 @@ Changelog:
   * Added expandable categories menu with: کارگاه آموزشی، وبینار آموزشی، فصلنامه رویش سبز، آرشیو پیستاط
   * Improved user experience with clear category navigation
   * Added FavoritesPage import and routing
+- July 12, 2025. Completed migration from Replit Agent to standard Replit environment:
+  * Successfully migrated codebase with proper database setup
+  * Added PostgreSQL database with all required tables
+  * Fixed routing and workflow configuration 
+  * Added "درباره ما" (About Us) button to bottom navigation after categories
+  * Application now running cleanly on Replit with admin user: admin/730895015
 - July 12, 2025. Migration to Replit and navigation enhancement:
   * Successfully migrated project from Replit Agent to standard Replit environment
   * Set up PostgreSQL database with proper migrations
